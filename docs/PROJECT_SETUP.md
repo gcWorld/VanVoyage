@@ -170,12 +170,18 @@ Key files:
 
 Sensitive data like API keys are stored in `lib/secrets.dart` (gitignored).
 
-**Setup**:
+**Local Development Setup**:
 1. Copy `lib/secrets.dart.template` to `lib/secrets.dart`
 2. Add your API keys:
    ```dart
    const String mapboxApiKey = 'pk.your_actual_key_here';
    ```
+
+**CI/CD Setup**:
+The GitHub Actions workflow automatically creates `lib/secrets.dart` from the `MAPBOX_TOKEN` repository secret. The file is generated at build time, ensuring:
+- Secure storage of API keys in GitHub Secrets
+- No need to commit secrets to the repository
+- Automatic injection during CI/CD builds
 
 Required API keys:
 - **Mapbox**: Get from https://account.mapbox.com/
@@ -193,18 +199,20 @@ GitHub Actions workflow defined in `.github/workflows/flutter-ci.yml`:
 #### build-and-test
 1. Checkout code
 2. Setup Flutter (v3.24.x stable)
-3. Install dependencies (`flutter pub get`)
-4. Verify code formatting (`dart format`)
-5. Run static analysis (`flutter analyze`)
-6. Execute tests (`flutter test`)
-7. Build debug APK (`flutter build apk --debug`)
+3. Create `secrets.dart` from `MAPBOX_TOKEN` secret
+4. Install dependencies (`flutter pub get`)
+5. Verify code formatting (`dart format`)
+6. Run static analysis (`flutter analyze`)
+7. Execute tests (`flutter test`)
+8. Build debug APK (`flutter build apk --debug`)
 
 #### lint
 1. Checkout code
 2. Setup Flutter
-3. Install dependencies
-4. Check formatting
-5. Analyze code (with fatal-infos disabled)
+3. Create `secrets.dart` from `MAPBOX_TOKEN` secret
+4. Install dependencies
+5. Check formatting
+6. Analyze code (with fatal-infos disabled)
 
 ## Testing Strategy
 

@@ -104,6 +104,8 @@ cp lib/secrets.dart.template lib/secrets.dart
 # Edit lib/secrets.dart and add your Mapbox API key
 ```
 
+**Note**: In CI/CD, this step is automatic. The workflow uses the `MAPBOX_TOKEN` repository secret to generate `lib/secrets.dart`.
+
 ### Step 3: Verify Code Quality
 ```bash
 # Check formatting
@@ -187,6 +189,24 @@ After verifying the setup:
 - Ensure all dependencies are installed
 - Check that no breaking changes were introduced
 - Review test output for specific errors
+
+### Issue: CI/CD builds fail due to missing Mapbox key
+**Solution**: 
+- Ensure the `MAPBOX_TOKEN` repository secret is set in GitHub Settings → Secrets and variables → Actions
+- The secret value should be your valid Mapbox API key
+- The workflow automatically creates `lib/secrets.dart` from this secret
+
+## CI/CD Secrets Setup
+
+For repository administrators, configure the Mapbox API key as a repository secret:
+
+1. Go to GitHub repository **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret**
+3. Name: `MAPBOX_TOKEN`
+4. Value: Your Mapbox API key (e.g., `pk.eyJ1...`)
+5. Click **Add secret**
+
+The CI/CD workflow will automatically use this secret to create `lib/secrets.dart` during builds.
 
 ## Support
 

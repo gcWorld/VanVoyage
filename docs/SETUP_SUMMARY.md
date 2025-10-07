@@ -142,22 +142,25 @@ Comprehensive CI/CD workflow created in `.github/workflows/flutter-ci.yml`:
 
 **build-and-test**:
 1. Setup Flutter (v3.24.x stable)
-2. Install dependencies
-3. Verify code formatting
-4. Run static analysis
-5. Execute tests
-6. Build debug APK
+2. Create `secrets.dart` from `MAPBOX_TOKEN` repository secret
+3. Install dependencies
+4. Verify code formatting
+5. Run static analysis
+6. Execute tests
+7. Build debug APK
 
 **lint**:
 1. Setup Flutter
-2. Check formatting
-3. Run static analysis
+2. Create `secrets.dart` from `MAPBOX_TOKEN` repository secret
+3. Check formatting
+4. Run static analysis
 
 **Features**:
 - Automated quality checks
 - Parallel jobs for efficiency
 - Clear feedback on code quality
 - Build verification
+- Automatic secrets injection from repository secrets
 
 ### 6. Additional Dependencies ✅
 

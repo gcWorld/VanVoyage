@@ -41,6 +41,8 @@ Your `lib/secrets.dart` should look like:
 const String mapboxApiKey = 'pk.eyJ1IjoieW91cnVzZXJuYW1lIiwi...';
 ```
 
+> **Note for CI/CD**: The GitHub Actions workflow automatically creates `lib/secrets.dart` from the `MAPBOX_TOKEN` repository secret. No manual setup is needed for automated builds.
+
 ### 4. Verify Setup
 ```bash
 # Check Flutter installation

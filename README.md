@@ -65,6 +65,8 @@ Comprehensive architecture documentation is available in the [`/docs/architectur
      ```dart
      const String mapboxApiKey = 'your-api-key-here';
      ```
+   
+   **Note**: For CI/CD, the repository secret `MAPBOX_TOKEN` is automatically used to generate `lib/secrets.dart` during builds.
 
 4. **Run the app**:
    ```bash
