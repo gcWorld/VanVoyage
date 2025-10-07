@@ -26,9 +26,18 @@ VanVoyage is an application focused on planning camper van trips with flexible t
 ### Mobile Application (MVP)
 - **Framework**: Flutter for cross-platform development (Android focus initially)
 - **Maps**: Mapbox for interactive mapping features
-- **State Management**: [To be decided]
+- **State Management**: BLoC pattern with Riverpod
 - **Local Storage**: SQLite for offline data persistence
 - **Geolocation**: Flutter location services
+
+### Architecture Documentation
+Comprehensive architecture documentation is available in the [`/docs/architecture`](docs/architecture/) directory:
+- [Domain Models](docs/architecture/01-domain-models.md) - Core entities and relationships
+- [State Management](docs/architecture/02-state-management.md) - BLoC pattern with Riverpod
+- [Data Persistence](docs/architecture/03-data-persistence.md) - SQLite database schema and repositories
+- [UI Navigation](docs/architecture/04-ui-navigation.md) - Screen hierarchy and navigation flows
+- [Class Diagrams](docs/architecture/05-class-diagrams.md) - Detailed class structures
+- [Data Flow](docs/architecture/06-data-flow.md) - How data flows through the application
 
 ### Future Extensions
 - Web application
