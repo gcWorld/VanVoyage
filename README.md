@@ -48,32 +48,54 @@ Comprehensive architecture documentation is available in the [`/docs/architectur
 ## Development Setup
 
 1. **Prerequisites**:
-   - Flutter SDK (latest stable version)
-   - Android Studio / VS Code
-   - Mapbox API key
+   - Flutter SDK 3.0.0 or higher ([Install Flutter](https://docs.flutter.dev/get-started/install))
+   - Android Studio / VS Code with Flutter extensions
+   - Mapbox API key ([Get one here](https://account.mapbox.com/))
 
 2. **Installation**:
-   ```
+   ```bash
    git clone https://github.com/gcWorld/VanVoyage.git
    cd VanVoyage
    flutter pub get
    ```
 
 3. **Configuration**:
-   - Create a `secrets.dart` file in the `lib` directory
-   - Add your Mapbox API key:
+   - Copy `lib/secrets.dart.template` to `lib/secrets.dart`
+   - Add your Mapbox API key to `lib/secrets.dart`:
      ```dart
-     const MAPBOX_API_KEY = 'your-api-key-here';
+     const String mapboxApiKey = 'your-api-key-here';
      ```
 
 4. **Run the app**:
-   ```
+   ```bash
+   # Check that Flutter is set up correctly
+   flutter doctor
+
+   # Run the app
    flutter run
+   ```
+
+5. **Testing**:
+   ```bash
+   # Run tests
+   flutter test
+
+   # Check code formatting
+   dart format .
+
+   # Analyze code
+   flutter analyze
    ```
 
 ## Current Status
 
-The project is in the initial planning phase. See the GitHub Issues for current development tasks and progress.
+The project has completed initial setup with:
+- ✅ Flutter project structure
+- ✅ Dependency configuration (Mapbox GL, sqflite, Riverpod)
+- ✅ CI/CD pipeline with GitHub Actions
+- ✅ Architecture documentation
+
+See the GitHub Issues for current development tasks and progress.
 
 ## Contributing
 
