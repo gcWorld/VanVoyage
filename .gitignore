@@ -53,6 +53,7 @@ coverage/
 # Generated files
 *.g.dart
 *.freezed.dart
+*.mocks.dart
 
 # Web related
 /web/

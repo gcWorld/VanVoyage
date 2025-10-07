@@ -141,6 +141,7 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
           // Map widget
           MapWidget(
             key: const ValueKey('mapWidget'),
+            resourceOptions: ResourceOptions(accessToken: mapboxApiKey),
             cameraOptions: CameraOptions(
               center: _currentPosition != null
                   ? Point(
