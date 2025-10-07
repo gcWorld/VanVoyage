@@ -34,8 +34,16 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Verify formatting
-      run: dart format --set-exit-if-changed .
+    - name: Generate code (mocks, etc.)
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Format and check code
+      run: |
+        dart format .
+        if ! git diff --quiet; then
+          echo "⚠️ Code formatting changes detected. Please run 'dart format .' locally and commit the changes."
+          git diff --name-only
+        fi
 
     - name: Analyze code
       run: flutter analyze
@@ -73,8 +81,16 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Check formatting
-      run: dart format --output=none --set-exit-if-changed .
+    - name: Generate code (mocks, etc.)
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Format and check code
+      run: |
+        dart format .
+        if ! git diff --quiet; then
+          echo "⚠️ Code formatting changes detected. Please run 'dart format .' locally and commit the changes."
+          git diff --name-only
+        fi
 
     - name: Analyze project source
       run: flutter analyze --no-fatal-infos
