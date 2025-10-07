@@ -51,7 +51,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
     _mapboxMap!.gestures.addOnMapClickListener(_onMapClick);
   }
   
-  Future<void> _onMapClick(MapContentGestureContext context) async {
+  Future<bool> _onMapClick(MapContentGestureContext context) async {
     setState(() {
       _selectedPosition = context.point.coordinates;
     });

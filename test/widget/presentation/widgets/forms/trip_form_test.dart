@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vanvoyage/presentation/widgets/forms/trip_form.dart';
 import 'package:vanvoyage/domain/entities/trip.dart';
-import 'package:vanvoyage/domain/enums/trip_status.dart';
 
 void main() {
   group('TripForm Widget Tests', () {
