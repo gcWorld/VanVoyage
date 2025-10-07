@@ -63,22 +63,8 @@ class _DestinationPickerState extends State<DestinationPicker> {
   }
   
   Future<void> _updateMarker() async {
-    if (_selectedPosition == null) return;
-    
-    // Create annotation manager if needed
-    final annotationManager = await _mapboxMap!.annotations.createPointAnnotationManager();
-    
-    // Clear existing annotations
-    await annotationManager.deleteAll();
-    
-    // Add marker at selected position
-    final options = PointAnnotationOptions(
-      geometry: Point(coordinates: _selectedPosition!),
-      iconImage: 'marker',
-      iconSize: 1.5,
-    );
-    
-    await annotationManager.create(options);
+    // TODO: Implement marker visualization
+    // Currently the selected position is shown in the coordinate display card
   }
   
   void _confirmSelection() {

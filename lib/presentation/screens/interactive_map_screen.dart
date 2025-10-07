@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 import '../../infrastructure/services/location_service.dart';
 import '../../secrets.dart';
 
@@ -17,8 +17,7 @@ class InteractiveMapScreen extends ConsumerStatefulWidget {
 class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
   MapboxMap? _mapboxMap;
   final LocationService _locationService = LocationService();
-  Position? _currentPosition;
-  PointAnnotationManager? _pointAnnotationManager;
+  geolocator.Position? _currentPosition;
   bool _isTrackingLocation = false;
 
   @override
@@ -45,7 +44,7 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
     }
   }
 
-  void _updateUserLocation(Position position) {
+  void _updateUserLocation(geolocator.Position position) {
     if (_mapboxMap != null) {
       _mapboxMap!.setCamera(
         CameraOptions(

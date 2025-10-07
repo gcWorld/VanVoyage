@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../domain/entities/trip.dart';
-import '../../../domain/enums/trip_status.dart';
 
 /// A form widget for creating and editing trips
 class TripForm extends StatefulWidget {
