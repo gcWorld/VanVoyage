@@ -13,8 +13,10 @@ void main() {
       ),
     );
 
-    // Verify that the splash screen shows the app name
-    expect(find.text('VanVoyage'), findsOneWidget);
+    // Verify that the app shows the correct elements
+    expect(find.text('VanVoyage'), findsNWidgets(2)); // AppBar + body
     expect(find.text('Trip Planning for Van Life'), findsOneWidget);
+    expect(find.text('Create Trip'), findsOneWidget);
+    expect(find.text('Open Map'), findsOneWidget);
   });
 }

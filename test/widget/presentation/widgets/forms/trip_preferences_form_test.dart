@@ -18,12 +18,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify section titles
+      // Verify section titles - some may need scrolling
       expect(find.text('Driving Preferences'), findsOneWidget);
       expect(find.text('Route Preferences'), findsOneWidget);
-      expect(find.text('Rest Stop Settings'), findsOneWidget);
       
-      // Verify save button
+      // Scroll to see the rest stop settings
+      await tester.fling(find.byType(ListView), const Offset(0, -2000), 1000);
+      await tester.pumpAndSettle();
+      
+      expect(find.text('Rest Stop Settings'), findsOneWidget);
       expect(find.text('Save Preferences'), findsOneWidget);
     });
 
@@ -124,6 +127,10 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // Scroll to see the rest stop settings
+      await tester.fling(find.byType(ListView), const Offset(0, -2000), 1000);
+      await tester.pumpAndSettle();
+
       // Verify rest stop switch
       expect(find.text('Include Rest Stops'), findsOneWidget);
       
@@ -145,11 +152,15 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // Scroll to see the rest stop settings
+      await tester.fling(find.byType(ListView), const Offset(0, -2000), 1000);
+      await tester.pumpAndSettle();
+
       // Rest stop interval should be visible initially
       expect(find.text('Rest Stop Interval'), findsOneWidget);
 
       // Toggle off include rest stops
-      await tester.tap(find.byType(Switch).first);
+      await tester.tap(find.byType(SwitchListTile).last);
       await tester.pumpAndSettle();
 
       // Rest stop interval should now be hidden
@@ -188,6 +199,10 @@ void main() {
 
       await tester.pumpAndSettle();
 
+      // Scroll to see the save button
+      await tester.fling(find.byType(ListView), const Offset(0, -2000), 1000);
+      await tester.pumpAndSettle();
+
       // Tap save button
       await tester.tap(find.text('Save Preferences'));
       await tester.pumpAndSettle();
@@ -207,9 +222,14 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1200, // Force a large height to render all content
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
             ),
           ),
         ),
@@ -217,17 +237,23 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Should have 4 sliders: distance, time, speed, rest interval
-      expect(find.byType(Slider), findsNWidgets(4));
+      // Should have 4 sliders total: distance, time, speed, rest interval (when rest stops enabled)
+      final allSliders = find.byType(Slider);
+      expect(allSliders, findsNWidgets(4));
     });
 
     testWidgets('has correct number of switches', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1200, // Force a large height to render all content
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
             ),
           ),
         ),
