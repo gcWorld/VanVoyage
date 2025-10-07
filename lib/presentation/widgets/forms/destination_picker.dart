@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import '../../../secrets.dart';
 import '../../../domain/enums/waypoint_type.dart';
 
 /// A widget for picking destinations with map integration
@@ -23,18 +22,16 @@ class DestinationPicker extends StatefulWidget {
 
 class _DestinationPickerState extends State<DestinationPicker> {
   final _nameController = TextEditingController();
-  MapboxMap? _mapboxMap;
-  Position? _selectedPosition;
+  double? _selectedLatitude;
+  double? _selectedLongitude;
   WaypointType _selectedType = WaypointType.poi;
   
   @override
   void initState() {
     super.initState();
     if (widget.initialLocation != null) {
-      _selectedPosition = Position(
-        widget.initialLocation!.longitude,
-        widget.initialLocation!.latitude,
-      );
+      _selectedLatitude = widget.initialLocation!.latitude;
+      _selectedLongitude = widget.initialLocation!.longitude;
     }
   }
   
@@ -45,30 +42,61 @@ class _DestinationPickerState extends State<DestinationPicker> {
   }
   
   void _onMapCreated(MapboxMap mapboxMap) {
-    _mapboxMap = mapboxMap;
-    
-    // Add tap listener to select location
-    _mapboxMap!.gestures.addOnMapClickListener(_onMapClick);
+    // TODO: Implement map tap gesture handling
+    // The current Mapbox Flutter SDK version has changed gesture APIs
+    // For now, users can manually enter coordinates or use search
   }
   
-  Future<bool> _onMapClick(MapContentGestureContext context) async {
-    setState(() {
-      _selectedPosition = context.point.coordinates;
-    });
-    
-    // Show selected location indicator
-    _updateMarker();
-    
-    return true;
-  }
-  
-  Future<void> _updateMarker() async {
-    // TODO: Implement marker visualization
-    // Currently the selected position is shown in the coordinate display card
+  void _selectLocationManually() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Enter Coordinates'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Latitude',
+                hintText: 'e.g., 37.7749',
+              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (value) {
+                _selectedLatitude = double.tryParse(value);
+              },
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'Longitude',
+                hintText: 'e.g., -122.4194',
+              ),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              onChanged: (value) {
+                _selectedLongitude = double.tryParse(value);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {});
+              Navigator.of(context).pop();
+            },
+            child: const Text('Set Location'),
+          ),
+        ],
+      ),
+    );
   }
   
   void _confirmSelection() {
-    if (_selectedPosition == null) {
+    if (_selectedLatitude == null || _selectedLongitude == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a location on the map')),
       );
@@ -84,8 +112,8 @@ class _DestinationPickerState extends State<DestinationPicker> {
     
     widget.onLocationSelected(
       _nameController.text.trim(),
-      _selectedPosition!.coordinates.lat.toDouble(),
-      _selectedPosition!.coordinates.lng.toDouble(),
+      _selectedLatitude!,
+      _selectedLongitude!,
       _selectedType,
     );
   }
@@ -108,6 +136,15 @@ class _DestinationPickerState extends State<DestinationPicker> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.place),
                 ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Manual coordinate entry button
+              OutlinedButton.icon(
+                onPressed: _selectLocationManually,
+                icon: const Icon(Icons.edit_location),
+                label: const Text('Enter Coordinates Manually'),
               ),
               
               const SizedBox(height: 16),
@@ -139,7 +176,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
                 },
               ),
               
-              if (_selectedPosition != null) ...[
+              if (_selectedLatitude != null && _selectedLongitude != null) ...[
                 const SizedBox(height: 16),
                 Card(
                   child: Padding(
@@ -152,8 +189,8 @@ class _DestinationPickerState extends State<DestinationPicker> {
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 4),
-                        Text('Lat: ${_selectedPosition!.coordinates.lat.toStringAsFixed(6)}'),
-                        Text('Lng: ${_selectedPosition!.coordinates.lng.toStringAsFixed(6)}'),
+                        Text('Lat: ${_selectedLatitude!.toStringAsFixed(6)}'),
+                        Text('Lng: ${_selectedLongitude!.toStringAsFixed(6)}'),
                       ],
                     ),
                   ),
@@ -168,16 +205,14 @@ class _DestinationPickerState extends State<DestinationPicker> {
           child: Stack(
             children: [
               MapWidget(
-                resourceOptions: ResourceOptions(accessToken: mapboxApiKey),
+                key: const ValueKey('destinationPickerMap'),
                 cameraOptions: CameraOptions(
                   center: widget.initialLocation != null
-                      ? Point(
-                          coordinates: Position(
-                            widget.initialLocation!.longitude,
-                            widget.initialLocation!.latitude,
-                          ),
-                        )
-                      : Point(coordinates: Position(-122.4194, 37.7749)), // SF default
+                      ? {
+                          'lng': widget.initialLocation!.longitude,
+                          'lat': widget.initialLocation!.latitude,
+                        }
+                      : {'lng': -122.4194, 'lat': 37.7749}, // SF default
                   zoom: 12.0,
                 ),
                 styleUri: MapboxStyles.OUTDOORS,
@@ -198,7 +233,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Tap on the map to select a location',
+                            'Use "Enter Coordinates Manually" button above to select a location',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import '../../infrastructure/services/location_service.dart';
-import '../../secrets.dart';
 
 /// Interactive map screen with Mapbox GL integration
 class InteractiveMapScreen extends ConsumerStatefulWidget {
@@ -48,9 +47,7 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
     if (_mapboxMap != null) {
       _mapboxMap!.setCamera(
         CameraOptions(
-          center: Point(
-            coordinates: Position(position.longitude, position.latitude),
-          ),
+          center: {'lng': position.longitude, 'lat': position.latitude},
           zoom: 14.0,
         ),
       );
@@ -140,16 +137,10 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
           // Map widget
           MapWidget(
             key: const ValueKey('mapWidget'),
-            resourceOptions: ResourceOptions(accessToken: mapboxApiKey),
             cameraOptions: CameraOptions(
               center: _currentPosition != null
-                  ? Point(
-                      coordinates: Position(
-                        _currentPosition!.longitude,
-                        _currentPosition!.latitude,
-                      ),
-                    )
-                  : Point(coordinates: Position(-122.4194, 37.7749)), // SF default
+                  ? {'lng': _currentPosition!.longitude, 'lat': _currentPosition!.latitude}
+                  : {'lng': -122.4194, 'lat': 37.7749}, // SF default
               zoom: 12.0,
             ),
             styleUri: MapboxStyles.OUTDOORS,

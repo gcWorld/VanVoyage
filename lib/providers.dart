@@ -9,8 +9,8 @@ import 'infrastructure/database/database_provider.dart';
 import 'secrets.dart';
 
 // Database provider
-final databaseProvider = Provider<Future<Database>>((ref) {
-  return DatabaseProvider.database;
+final databaseProvider = FutureProvider<Database>((ref) async {
+  return await DatabaseProvider.database;
 });
 
 // Location service provider

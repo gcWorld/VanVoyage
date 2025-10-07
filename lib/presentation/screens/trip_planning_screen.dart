@@ -7,19 +7,19 @@ import '../../domain/enums/trip_status.dart';
 import '../../domain/enums/waypoint_type.dart';
 import '../../infrastructure/repositories/trip_repository.dart';
 import '../../infrastructure/repositories/waypoint_repository.dart';
-import '../../infrastructure/database/database_provider.dart';
 import '../widgets/forms/trip_form.dart';
 import '../widgets/forms/destination_picker.dart';
 import '../widgets/forms/trip_preferences_form.dart';
+import 'package:vanvoyage/providers.dart';
 
 // Providers for repositories
 final tripRepositoryProvider = FutureProvider<TripRepository>((ref) async {
-  final db = await ref.watch(databaseProvider);
+  final db = await ref.read(databaseProvider.future);
   return TripRepository(db);
 });
 
 final waypointRepositoryProvider = FutureProvider<WaypointRepository>((ref) async {
-  final db = await ref.watch(databaseProvider);
+  final db = await ref.read(databaseProvider.future);
   return WaypointRepository(db);
 });
 

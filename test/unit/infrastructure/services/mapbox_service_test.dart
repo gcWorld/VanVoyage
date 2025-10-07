@@ -1,22 +1,73 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:vanvoyage/infrastructure/services/mapbox_service.dart';
 
-import 'mapbox_service_test.mocks.dart';
+// Simple test implementation without complex mocking
+class TestHttpClient implements http.Client {
+  final Map<String, http.Response> _responses = {};
+  
+  void setResponse(String urlPattern, http.Response response) {
+    _responses[urlPattern] = response;
+  }
+  
+  @override
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
+    for (final pattern in _responses.keys) {
+      if (url.toString().contains(pattern)) {
+        return _responses[pattern]!;
+      }
+    }
+    return http.Response('Not found', 404);
+  }
+  
+  @override
+  void close() {}
+  
+  @override
+  Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<http.Response> head(Uri url, {Map<String, String>? headers}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<http.Response> patch(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<http.Response> post(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<http.Response> put(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<String> read(Uri url, {Map<String, String>? headers}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<Uint8List> readBytes(Uri url, {Map<String, String>? headers}) =>
+      throw UnimplementedError();
+      
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) =>
+      throw UnimplementedError();
+}
 
-@GenerateMocks([http.Client])
 void main() {
   group('MapboxService', () {
     late MapboxService mapboxService;
-    late MockClient mockHttpClient;
+    late TestHttpClient testHttpClient;
 
     setUp(() {
-      mockHttpClient = MockClient();
+      testHttpClient = TestHttpClient();
       mapboxService = MapboxService(
         apiKey: 'test_api_key',
-        httpClient: mockHttpClient,
+        httpClient: testHttpClient,
       );
     });
 
@@ -39,8 +90,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response(responseBody, 200),
         );
 
         final result = await mapboxService.geocode('San Francisco');
@@ -58,8 +110,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response(responseBody, 200),
         );
 
         final result = await mapboxService.geocode('NonexistentPlace12345');
@@ -68,8 +121,9 @@ void main() {
       });
 
       test('throws exception on API error', () async {
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response('Not Found', 404),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response('Not Found', 404),
         );
 
         final result = await mapboxService.geocode('test');
@@ -90,8 +144,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response(responseBody, 200),
         );
 
         final result = await mapboxService.reverseGeocode(37.7749, -122.4194);
@@ -107,8 +162,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response(responseBody, 200),
         );
 
         final result = await mapboxService.reverseGeocode(0.0, 0.0);
@@ -138,8 +194,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response(responseBody, 200),
         );
 
         final results = await mapboxService.searchPlaces('California');
@@ -156,8 +213,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'geocoding/v5/mapbox.places',
+          http.Response(responseBody, 200),
         );
 
         final results = await mapboxService.searchPlaces('NonexistentPlace');
@@ -183,8 +241,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'directions/v5/mapbox/driving',
+          http.Response(responseBody, 200),
         );
 
         final result = await mapboxService.calculateRoute(
@@ -206,8 +265,9 @@ void main() {
         }
         ''';
 
-        when(mockHttpClient.get(any)).thenAnswer(
-          (_) async => http.Response(responseBody, 200),
+        testHttpClient.setResponse(
+          'directions/v5/mapbox/driving',
+          http.Response(responseBody, 200),
         );
 
         final result = await mapboxService.calculateRoute(
