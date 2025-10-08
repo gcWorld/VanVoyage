@@ -65,6 +65,14 @@ jobs:
     - name: Run tests
       run: flutter test
 
+    - name: Debug Mapbox token
+      run: |
+        if [ -n "$MAPBOX_DOWNLOADS_TOKEN" ]; then
+          echo "Token is set (length: ${#MAPBOX_DOWNLOADS_TOKEN})"
+        else
+          echo "Token is NOT set"
+        fi
+
     - name: Build APK (Android)
       run: flutter build apk --debug
 
