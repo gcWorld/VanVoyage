@@ -40,7 +40,11 @@ jobs:
         mkdir -p android
         echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
         echo "sdk.dir=$ANDROID_SDK_ROOT" >> android/local.properties || true
-        # Add Mapbox downloads token to gradle.properties as backup
+        # Add Mapbox downloads token to local.properties (Gradle reads this first)
+        if [ -n "$MAPBOX_DOWNLOADS_TOKEN" ]; then
+          echo "MAPBOX_DOWNLOADS_TOKEN=$MAPBOX_DOWNLOADS_TOKEN" >> android/local.properties
+        fi
+        # Also add to gradle.properties as backup
         if [ -n "$MAPBOX_DOWNLOADS_TOKEN" ]; then
           echo "MAPBOX_DOWNLOADS_TOKEN=$MAPBOX_DOWNLOADS_TOKEN" >> android/gradle.properties
         fi

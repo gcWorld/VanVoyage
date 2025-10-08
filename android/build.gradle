@@ -39,8 +39,22 @@ subprojects {
 subprojects {
     // Define Flutter extension properties for plugins before they evaluate
     beforeEvaluate {
-        // Make MAPBOX_DOWNLOADS_TOKEN available as project property if it's in environment
-        def mapboxToken = System.getenv("MAPBOX_DOWNLOADS_TOKEN") ?: findProperty("MAPBOX_DOWNLOADS_TOKEN")
+        // Read MAPBOX_DOWNLOADS_TOKEN from local.properties, environment, or gradle.properties
+        def localPropsFile = rootProject.file('local.properties')
+        def mapboxToken = null
+        
+        if (localPropsFile.exists()) {
+            def Properties localProps = new Properties()
+            localPropsFile.withReader('UTF-8') { reader -> localProps.load(reader) }
+            mapboxToken = localProps.getProperty('MAPBOX_DOWNLOADS_TOKEN')
+        }
+        
+        // Fallback to environment variable or gradle.properties
+        if (!mapboxToken) {
+            mapboxToken = System.getenv("MAPBOX_DOWNLOADS_TOKEN") ?: findProperty("MAPBOX_DOWNLOADS_TOKEN")
+        }
+        
+        // Make token available as project property for plugin validation
         if (mapboxToken && !project.hasProperty("MAPBOX_DOWNLOADS_TOKEN")) {
             project.ext.set("MAPBOX_DOWNLOADS_TOKEN", mapboxToken)
         }
@@ -53,7 +67,6 @@ subprojects {
         flutterExt.buildToolsVersion = findProperty('flutter.buildToolsVersion') ?: '34.0.0'
 
         // Try to read flutter.sdk from local.properties if present so Gradle plugin can locate the SDK
-        def localPropsFile = rootProject.file('local.properties')
         if (localPropsFile.exists()) {
             def Properties localProps = new Properties()
             localPropsFile.withReader('UTF-8') { reader -> localProps.load(reader) }
