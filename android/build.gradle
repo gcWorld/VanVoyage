@@ -21,22 +21,15 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
-    project.evaluationDependsOn(':app')
-}
-
-// Define Flutter extension properties for plugins
-subprojects {
-    project.ext {
-        flutter = [
-            compileSdkVersion: project.findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
-            targetSdkVersion: project.findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
-            minSdkVersion: project.findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
-            ndkVersion: project.findProperty('flutter.ndkVersion') ?: '25.1.8937393',
-            buildToolsVersion: project.findProperty('flutter.buildToolsVersion') ?: '34.0.0'
-        ]
-    }
+    
+    // Define Flutter extension properties for plugins
+    ext.flutter = [
+        compileSdkVersion: findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
+        targetSdkVersion: findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
+        minSdkVersion: findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
+        ndkVersion: findProperty('flutter.ndkVersion') ?: '25.1.8937393',
+        buildToolsVersion: findProperty('flutter.buildToolsVersion') ?: '34.0.0'
+    ]
 }
 
 tasks.register("clean", Delete) {

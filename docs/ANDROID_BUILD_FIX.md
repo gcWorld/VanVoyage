@@ -26,20 +26,21 @@ A two-part solution:
    - Added `android.nonTransitiveRClass=false` to ensure R classes are properly generated
 
 2. **android/build.gradle**
-   - Added a `subprojects` block that creates a `flutter` extension object for each subproject:
+   - Added a `flutter` extension object in the `subprojects` block for all subprojects:
      ```gradle
      subprojects {
-         project.ext {
-             flutter = [
-                 compileSdkVersion: project.findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
-                 targetSdkVersion: project.findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
-                 minSdkVersion: project.findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
-                 ndkVersion: project.findProperty('flutter.ndkVersion') ?: '25.1.8937393',
-                 buildToolsVersion: project.findProperty('flutter.buildToolsVersion') ?: '34.0.0'
-             ]
-         }
+         project.buildDir = "${rootProject.buildDir}/${project.name}"
+         
+         ext.flutter = [
+             compileSdkVersion: findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
+             targetSdkVersion: findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
+             minSdkVersion: findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
+             ndkVersion: findProperty('flutter.ndkVersion') ?: '25.1.8937393',
+             buildToolsVersion: findProperty('flutter.buildToolsVersion') ?: '34.0.0'
+         ]
      }
      ```
+   - Removed `evaluationDependsOn(':app')` to avoid circular dependency issues
 
 3. **android/app/build.gradle**
    - Uses the `flutter` extension object directly:
