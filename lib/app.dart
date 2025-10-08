@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'presentation/screens/interactive_map_screen.dart';
+import 'presentation/screens/trip_planning_screen.dart';
 
 class VanVoyageApp extends ConsumerWidget {
   const VanVoyageApp({super.key});
@@ -48,6 +49,19 @@ class HomeScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 40),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TripPlanningScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.add_road),
+              label: const Text('Create Trip'),
+            ),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
