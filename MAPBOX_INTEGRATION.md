@@ -169,6 +169,24 @@ Users must obtain a Mapbox API key:
 const String mapboxApiKey = 'YOUR_ACTUAL_KEY_HERE';
 ```
 
+### 2. Mapbox Downloads Token (for Android builds)
+
+For Android builds, you also need a Mapbox Downloads token:
+
+1. Visit https://account.mapbox.com/access-tokens/
+2. Create a secret token with `DOWNLOADS:READ` scope
+3. Add it as an environment variable:
+   ```bash
+   export MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
+   ```
+   
+Or add it directly to `android/gradle.properties`:
+```properties
+MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
+```
+
+**Note**: The downloads token is different from the public API key and should be kept secret.
+
 ### 2. Platform Permissions
 
 **Already Configured**:

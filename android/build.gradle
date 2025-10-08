@@ -21,30 +21,34 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-    
-    // Define Flutter extension properties for plugins
-    def flutterExt = [:]
-    flutterExt.compileSdkVersion = findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34
-    flutterExt.targetSdkVersion = findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34
-    flutterExt.minSdkVersion = findProperty('flutter.minSdkVersion')?.toInteger() ?: 21
-    flutterExt.ndkVersion = findProperty('flutter.ndkVersion') ?: '25.1.8937393'
-    flutterExt.buildToolsVersion = findProperty('flutter.buildToolsVersion') ?: '34.0.0'
+}
 
-    // Try to read flutter.sdk from local.properties if present so Gradle plugin can locate the SDK
-    def localPropsFile = rootProject.file('local.properties')
-    if (localPropsFile.exists()) {
-        def Properties localProps = new Properties()
-        localPropsFile.withReader('UTF-8') { reader -> localProps.load(reader) }
-        if (localProps.getProperty('flutter.sdk')) {
-            flutterExt.sdk = localProps.getProperty('flutter.sdk')
+subprojects {
+    // Define Flutter extension properties for plugins before they evaluate
+    beforeEvaluate {
+        def flutterExt = [:]
+        flutterExt.compileSdkVersion = findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34
+        flutterExt.targetSdkVersion = findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34
+        flutterExt.minSdkVersion = findProperty('flutter.minSdkVersion')?.toInteger() ?: 21
+        flutterExt.ndkVersion = findProperty('flutter.ndkVersion') ?: '25.1.8937393'
+        flutterExt.buildToolsVersion = findProperty('flutter.buildToolsVersion') ?: '34.0.0'
+
+        // Try to read flutter.sdk from local.properties if present so Gradle plugin can locate the SDK
+        def localPropsFile = rootProject.file('local.properties')
+        if (localPropsFile.exists()) {
+            def Properties localProps = new Properties()
+            localPropsFile.withReader('UTF-8') { reader -> localProps.load(reader) }
+            if (localProps.getProperty('flutter.sdk')) {
+                flutterExt.sdk = localProps.getProperty('flutter.sdk')
+            }
         }
+
+        // Provide the Flutter source directory relative to the android folder (project root)
+        // This is used by the new Flutter Gradle plugin which expects a `flutter.source` property.
+        flutterExt.source = rootProject.projectDir.parentFile?.absolutePath ?: project.rootDir.parentFile?.absolutePath
+
+        ext.flutter = flutterExt
     }
-
-    // Provide the Flutter source directory relative to the android folder (project root)
-    // This is used by the new Flutter Gradle plugin which expects a `flutter.source` property.
-    flutterExt.source = rootProject.projectDir.parentFile?.absolutePath ?: project.rootDir.parentFile?.absolutePath
-
-    ext.flutter = flutterExt
 }
 
 tasks.register("clean", Delete) {

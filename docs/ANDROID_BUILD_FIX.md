@@ -67,6 +67,23 @@ A two-part solution:
 - Compatible with Android Gradle Plugin 8.1.0
 - Works with all current project dependencies including geolocator, mapbox_maps_flutter, etc.
 
+## Additional Configuration for Mapbox
+
+If you see an error about "SDK Registry token is null" from mapbox_maps_flutter:
+
+1. Get a Mapbox Downloads token from https://account.mapbox.com/access-tokens/
+2. Create a secret token with `DOWNLOADS:READ` scope
+3. Set it as an environment variable:
+   ```bash
+   export MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
+   ```
+   Or add it to `android/gradle.properties`:
+   ```properties
+   MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
+   ```
+
+This is separate from the public Mapbox API key and is required for downloading the Mapbox Android SDK.
+
 ## Future Updates
 When updating to newer Android SDK versions:
 1. Update the Flutter SDK properties in `android/gradle.properties`
