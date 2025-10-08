@@ -49,6 +49,9 @@ jobs:
           echo "MAPBOX_DOWNLOADS_TOKEN=$MAPBOX_DOWNLOADS_TOKEN" >> android/gradle.properties
         fi
 
+    - name: flutter clean
+      run: flutter clean
+
     - name: Install dependencies
       run: flutter pub get
 
