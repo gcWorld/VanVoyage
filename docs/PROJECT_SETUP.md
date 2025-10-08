@@ -147,9 +147,11 @@ Configured to exclude:
 
 ### Android (android/)
 - **Minimum SDK**: 21 (Android 5.0 Lollipop)
-- **Target SDK**: Latest (configured via Flutter)
+- **Compile SDK**: 34 (Android 14)
+- **Target SDK**: 34 (Android 14)
 - **Language**: Kotlin
 - **Gradle**: 8.1.0
+- **NDK Version**: 25.1.8937393
 - **Permissions**: Internet, Location (fine and coarse)
 
 Key files:

@@ -58,7 +58,7 @@ Added all required dependencies to `pubspec.yaml`:
 ### 3. Platform Configuration ✅
 
 #### Android
-- ✅ Gradle configuration (Kotlin support, Android SDK 21+)
+- ✅ Gradle configuration (Kotlin support, Android SDK 21+ minSdk, 34 compileSdk/targetSdk)
 - ✅ AndroidManifest.xml with required permissions
 - ✅ MainActivity.kt
 - ✅ Resource files and styles
