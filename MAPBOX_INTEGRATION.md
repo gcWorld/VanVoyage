@@ -175,17 +175,20 @@ For Android builds, you also need a Mapbox Downloads token:
 
 1. Visit https://account.mapbox.com/access-tokens/
 2. Create a secret token with `DOWNLOADS:READ` scope
-3. Add it as an environment variable:
+3. **Set it as an environment variable** (preferred method):
    ```bash
    export MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
    ```
    
-Or add it directly to `android/gradle.properties`:
-```properties
-MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
-```
+   **Alternative**: Add it to `android/gradle.properties`:
+   ```properties
+   MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
+   ```
 
-**Note**: The downloads token is different from the public API key and should be kept secret.
+**Important Notes**:
+- The downloads token is different from the public API key and must be kept secret
+- **The environment variable method is preferred** as Gradle reads it before processing configuration files
+- For CI/CD (GitHub Actions), set it as a repository secret named `MAPBOX_DOWNLOADS_TOKEN`
 
 ### 2. Platform Permissions
 

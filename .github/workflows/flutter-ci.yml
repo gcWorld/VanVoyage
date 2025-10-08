@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    
+    env:
+      MAPBOX_DOWNLOADS_TOKEN: ${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}
 
     steps:
     - name: Checkout code
@@ -31,6 +34,17 @@ jobs:
         EOF
       shell: bash
 
+    - name: Configure Android build
+      run: |
+        # Ensure android/local.properties contains flutter.sdk so the Gradle plugin can locate the Flutter SDK
+        mkdir -p android
+        echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+        echo "sdk.dir=$ANDROID_SDK_ROOT" >> android/local.properties || true
+        # Add Mapbox downloads token to gradle.properties as backup
+        if [ -n "$MAPBOX_DOWNLOADS_TOKEN" ]; then
+          echo "MAPBOX_DOWNLOADS_TOKEN=$MAPBOX_DOWNLOADS_TOKEN" >> android/gradle.properties
+        fi
+
     - name: Install dependencies
       run: flutter pub get
 
@@ -52,16 +66,7 @@ jobs:
       run: flutter test
 
     - name: Build APK (Android)
-      run: |
-        # Ensure android/local.properties contains flutter.sdk so the Gradle plugin can locate the Flutter SDK
-        mkdir -p android
-        echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
-        echo "sdk.dir=$ANDROID_SDK_ROOT" >> android/local.properties || true
-        # Add Mapbox downloads token if available
-        if [ -n "${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" ]; then
-          echo "MAPBOX_DOWNLOADS_TOKEN=${{ secrets.MAPBOX_DOWNLOADS_TOKEN }}" >> android/gradle.properties
-        fi
-        flutter build apk --debug
+      run: flutter build apk --debug
 
   lint:
     runs-on: ubuntu-latest

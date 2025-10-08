@@ -73,16 +73,20 @@ If you see an error about "SDK Registry token is null" from mapbox_maps_flutter:
 
 1. Get a Mapbox Downloads token from https://account.mapbox.com/access-tokens/
 2. Create a secret token with `DOWNLOADS:READ` scope
-3. Set it as an environment variable:
+3. **Set it as an environment variable** (preferred method):
    ```bash
    export MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
    ```
-   Or add it to `android/gradle.properties`:
+   
+   **Alternative**: Add it to `android/gradle.properties`:
    ```properties
    MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
    ```
 
-This is separate from the public Mapbox API key and is required for downloading the Mapbox Android SDK.
+**Important**: 
+- This is separate from the public Mapbox API key and is required for downloading the Mapbox Android SDK
+- **The environment variable method is critical** - Gradle reads environment variables before processing gradle.properties
+- For CI/CD, set `MAPBOX_DOWNLOADS_TOKEN` as a repository secret and configure it as a job-level environment variable
 
 ## Future Updates
 When updating to newer Android SDK versions:
