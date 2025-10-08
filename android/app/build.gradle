@@ -24,8 +24,8 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.vanvoyage.app"
-    compileSdk project.property('flutter.compileSdkVersion').toInteger()
-    ndkVersion project.property('flutter.ndkVersion')
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -42,8 +42,8 @@ android {
 
     defaultConfig {
         applicationId "com.vanvoyage.app"
-        minSdk project.property('flutter.minSdkVersion').toInteger()
-        targetSdk project.property('flutter.targetSdkVersion').toInteger()
+        minSdk flutter.minSdkVersion
+        targetSdk flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
