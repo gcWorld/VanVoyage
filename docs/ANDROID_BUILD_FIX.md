@@ -6,21 +6,29 @@ The Android build was failing with the following errors:
 2. Error in geolocator_android build.gradle: "Could not get unknown property 'flutter' for extension 'android'"
 
 ## Root Cause
-The build configuration was using Flutter extension properties (`flutter.compileSdkVersion`, `flutter.targetSdkVersion`, `flutter.ndkVersion`) which are not always properly resolved in all Gradle/Flutter plugin combinations, particularly when building Flutter plugins that depend on these values.
+Flutter plugins (like `geolocator_android`) need to access Flutter SDK properties (`flutter.compileSdkVersion`, `flutter.targetSdkVersion`, etc.) during their build process. These properties were not being properly made available to subprojects/plugins, causing build failures.
 
 ## Solution
-Changed from dynamic Flutter extension properties to explicit SDK version values in `android/app/build.gradle`:
+Define Flutter SDK properties in `gradle.properties` so they are accessible to all projects and subprojects (including plugins), then reference them in the app's `build.gradle`.
 
 ### Changes Made
 
-1. **android/app/build.gradle**
-   - Changed `compileSdk flutter.compileSdkVersion` → `compileSdk 34`
-   - Changed `targetSdk flutter.targetSdkVersion` → `targetSdk 34`
-   - Changed `ndkVersion flutter.ndkVersion` → `ndkVersion "25.1.8937393"`
-
-2. **android/gradle.properties**
+1. **android/gradle.properties**
+   - Added Flutter SDK properties that plugins can access:
+     - `flutter.compileSdkVersion=34`
+     - `flutter.targetSdkVersion=34`
+     - `flutter.minSdkVersion=21`
+     - `flutter.ndkVersion=25.1.8937393`
+     - `flutter.buildToolsVersion=34.0.0`
    - Added `android.defaults.buildfeatures.buildconfig=true` for better plugin compatibility
    - Added `android.nonTransitiveRClass=false` to ensure R classes are properly generated
+
+2. **android/app/build.gradle**
+   - Changed to reference properties from gradle.properties:
+     - `compileSdk project.property('flutter.compileSdkVersion').toInteger()`
+     - `targetSdk project.property('flutter.targetSdkVersion').toInteger()`
+     - `minSdk project.property('flutter.minSdkVersion').toInteger()`
+     - `ndkVersion project.property('flutter.ndkVersion')`
 
 ### SDK Version Rationale
 - **compileSdk 34**: Android 14 (latest stable at time of fix)
@@ -42,6 +50,7 @@ Changed from dynamic Flutter extension properties to explicit SDK version values
 
 ## Future Updates
 When updating to newer Android SDK versions:
-1. Update `compileSdk` and `targetSdk` values in `android/app/build.gradle`
-2. Update `ndkVersion` if required by Flutter
-3. Update documentation in `docs/PROJECT_SETUP.md` to reflect new versions
+1. Update the Flutter SDK properties in `android/gradle.properties`
+2. Update documentation in `docs/PROJECT_SETUP.md` to reflect new versions
+
+This centralized approach ensures all plugins automatically use the same SDK versions.
