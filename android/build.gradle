@@ -39,6 +39,12 @@ subprojects {
 subprojects {
     // Define Flutter extension properties for plugins before they evaluate
     beforeEvaluate {
+        // Make MAPBOX_DOWNLOADS_TOKEN available as project property if it's in environment
+        def mapboxToken = System.getenv("MAPBOX_DOWNLOADS_TOKEN") ?: findProperty("MAPBOX_DOWNLOADS_TOKEN")
+        if (mapboxToken && !project.hasProperty("MAPBOX_DOWNLOADS_TOKEN")) {
+            project.ext.set("MAPBOX_DOWNLOADS_TOKEN", mapboxToken)
+        }
+        
         def flutterExt = [:]
         flutterExt.compileSdkVersion = findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34
         flutterExt.targetSdkVersion = findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34

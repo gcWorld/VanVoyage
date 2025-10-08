@@ -39,18 +39,26 @@ A two-part solution:
          }
      }
      ```
-   - Added a `flutter` extension object in the `subprojects` block for all subprojects:
+   - Added a `flutter` extension object in the `subprojects` block for all subprojects
+   - Made `MAPBOX_DOWNLOADS_TOKEN` available as a project property from environment variable:
      ```gradle
      subprojects {
-         project.buildDir = "${rootProject.buildDir}/${project.name}"
-         
-         ext.flutter = [
-             compileSdkVersion: findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
-             targetSdkVersion: findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
-             minSdkVersion: findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
-             ndkVersion: findProperty('flutter.ndkVersion') ?: '25.1.8937393',
-             buildToolsVersion: findProperty('flutter.buildToolsVersion') ?: '34.0.0'
-         ]
+         beforeEvaluate {
+             // Make MAPBOX_DOWNLOADS_TOKEN available as project property
+             def mapboxToken = System.getenv("MAPBOX_DOWNLOADS_TOKEN") ?: findProperty("MAPBOX_DOWNLOADS_TOKEN")
+             if (mapboxToken && !project.hasProperty("MAPBOX_DOWNLOADS_TOKEN")) {
+                 project.ext.set("MAPBOX_DOWNLOADS_TOKEN", mapboxToken)
+             }
+             
+             // Flutter extension properties
+             ext.flutter = [
+                 compileSdkVersion: findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
+                 targetSdkVersion: findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
+                 minSdkVersion: findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
+                 ndkVersion: findProperty('flutter.ndkVersion') ?: '25.1.8937393',
+                 buildToolsVersion: findProperty('flutter.buildToolsVersion') ?: '34.0.0'
+             ]
+         }
      }
      ```
    - Removed `evaluationDependsOn(':app')` to avoid circular dependency issues
@@ -98,8 +106,10 @@ If you see an error about "SDK Registry token is null" from mapbox_maps_flutter:
 
 **Important**: 
 - This is separate from the public Mapbox API key and is required for downloading the Mapbox Android SDK
-- **The token must be configured in the Maven repository credentials** in `android/build.gradle`
-- The repository configuration reads from environment variable first, then gradle.properties as fallback
+- **The token must be configured in two places**:
+  1. Maven repository credentials in `allprojects` repositories
+  2. As a project property in `subprojects` beforeEvaluate (for plugin validation)
+- The token is read from environment variable first, then gradle.properties as fallback
 - For CI/CD, set `MAPBOX_DOWNLOADS_TOKEN` as a repository secret and configure it as a job-level environment variable
 
 ## Future Updates
