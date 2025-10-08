@@ -26,6 +26,19 @@ A two-part solution:
    - Added `android.nonTransitiveRClass=false` to ensure R classes are properly generated
 
 2. **android/build.gradle**
+   - Added Mapbox Maven repository with authentication in `allprojects`:
+     ```gradle
+     maven {
+         url 'https://api.mapbox.com/downloads/v2/releases/maven'
+         authentication {
+             basic(BasicAuthentication)
+         }
+         credentials {
+             username = 'mapbox'
+             password = System.getenv("MAPBOX_DOWNLOADS_TOKEN") ?: project.findProperty("MAPBOX_DOWNLOADS_TOKEN") ?: ""
+         }
+     }
+     ```
    - Added a `flutter` extension object in the `subprojects` block for all subprojects:
      ```gradle
      subprojects {
@@ -85,7 +98,8 @@ If you see an error about "SDK Registry token is null" from mapbox_maps_flutter:
 
 **Important**: 
 - This is separate from the public Mapbox API key and is required for downloading the Mapbox Android SDK
-- **The environment variable method is critical** - Gradle reads environment variables before processing gradle.properties
+- **The token must be configured in the Maven repository credentials** in `android/build.gradle`
+- The repository configuration reads from environment variable first, then gradle.properties as fallback
 - For CI/CD, set `MAPBOX_DOWNLOADS_TOKEN` as a repository secret and configure it as a job-level environment variable
 
 ## Future Updates
