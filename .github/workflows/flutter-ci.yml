@@ -52,7 +52,12 @@ jobs:
       run: flutter test
 
     - name: Build APK (Android)
-      run: flutter build apk --debug
+      run: |
+        # Ensure android/local.properties contains flutter.sdk so the Gradle plugin can locate the Flutter SDK
+        mkdir -p android
+        echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+        echo "sdk.dir=$ANDROID_SDK_ROOT" >> android/local.properties || true
+        flutter build apk --debug
 
   lint:
     runs-on: ubuntu-latest
