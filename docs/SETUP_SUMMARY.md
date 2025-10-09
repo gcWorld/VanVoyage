@@ -82,7 +82,7 @@ VanVoyage/
 
 Mapbox has been properly configured:
 
-**Dependency**: `mapbox_maps_flutter: ^1.1.0`
+**Dependency**: `mapbox_maps_flutter: ^2.3.0` (updated from v1.1.0)
 
 **Configuration Steps**:
 - Added dependency to `pubspec.yaml`
@@ -291,18 +291,18 @@ The setup provides an excellent developer experience:
 
 | Category | Package | Version | Purpose |
 |----------|---------|---------|---------|
-| State | flutter_riverpod | ^2.4.9 | State management |
-| State | riverpod_annotation | ^2.3.3 | Code generation |
-| Maps | mapbox_maps_flutter | ^1.1.0 | Interactive maps |
-| Database | sqflite | ^2.3.0 | Local storage |
-| Location | geolocator | ^10.1.0 | GPS services |
-| Location | geocoding | ^2.1.1 | Address conversion |
-| Navigation | go_router | ^12.1.1 | Routing |
-| Utils | uuid | ^4.2.1 | ID generation |
-| Utils | intl | ^0.18.1 | Formatting |
-| Utils | equatable | ^2.0.5 | Equality |
-| Dev | flutter_lints | ^3.0.1 | Linting |
-| Dev | build_runner | ^2.4.7 | Codegen |
+| State | flutter_riverpod | ^2.6.1 | State management |
+| State | riverpod_annotation | ^2.6.1 | Code generation |
+| Maps | mapbox_maps_flutter | ^2.3.0 | Interactive maps |
+| Database | sqflite | ^2.4.1 | Local storage |
+| Location | geolocator | ^13.0.2 | GPS services |
+| Location | geocoding | ^3.0.0 | Address conversion |
+| Navigation | go_router | ^14.6.2 | Routing |
+| Utils | uuid | ^4.5.1 | ID generation |
+| Utils | intl | ^0.20.0 | Formatting |
+| Utils | equatable | ^2.0.7 | Equality |
+| Dev | flutter_lints | ^5.0.0 | Linting |
+| Dev | build_runner | ^2.4.13 | Codegen |
 | Dev | mockito | ^5.4.4 | Testing |
 
 ## 🚀 Next Steps

@@ -149,8 +149,8 @@ Future<MapboxRoute?> calculateRoute(startLat, startLng, endLat, endLng)
 - `http: ^1.1.0` - For Mapbox API calls
 
 ### Used
-- `mapbox_maps_flutter: ^1.1.0` - Map widget
-- `geolocator: ^10.1.0` - GPS services
+- `mapbox_maps_flutter: ^2.3.0` - Map widget (updated from v1.1.0)
+- `geolocator: ^13.0.2` - GPS services (updated from v10.1.0)
 - `flutter_riverpod: ^2.4.9` - State management
 
 ## Configuration Required

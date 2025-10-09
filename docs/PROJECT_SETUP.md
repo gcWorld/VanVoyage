@@ -28,19 +28,22 @@ This combination provides:
 - Type safety
 
 ### Maps & Location
-- **mapbox_maps_flutter** (^1.1.0): Interactive maps with Mapbox GL
+- **mapbox_maps_flutter** (^2.3.0): Interactive maps with Mapbox GL
   - Requires Mapbox API key
   - Supports offline maps
   - Rich styling capabilities
+  - Updated to v2.x with improved API
   
-- **geolocator** (^10.1.0): GPS location services
+- **geolocator** (^13.0.2): GPS location services
   - Current location tracking
   - Position streaming
   - Permission handling
+  - Updated with improved Android 14+ support
   
-- **geocoding** (^2.1.1): Address <-> Coordinates conversion
+- **geocoding** (^3.0.0): Address <-> Coordinates conversion
   - Forward geocoding (address to coordinates)
   - Reverse geocoding (coordinates to address)
+  - Updated with improved error handling
 
 ### Data Persistence
 - **sqflite** (^2.3.0): SQLite database for offline storage

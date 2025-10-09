@@ -14,7 +14,7 @@ class InteractiveMapScreen extends ConsumerStatefulWidget {
 }
 
 class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
-  MapboxMap? _mapboxMap;
+  MapboxMap? _mapController;
   final LocationService _locationService = LocationService();
   geolocator.Position? _currentPosition;
   bool _isTrackingLocation = false;
@@ -44,10 +44,12 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
   }
 
   void _updateUserLocation(geolocator.Position position) {
-    if (_mapboxMap != null) {
-      _mapboxMap!.setCamera(
+    if (_mapController != null) {
+      _mapController!.setCamera(
         CameraOptions(
-          center: {'lng': position.longitude, 'lat': position.latitude},
+          center: Point(
+            coordinates: Position(position.longitude, position.latitude),
+          ),
           zoom: 14.0,
         ),
       );
@@ -88,14 +90,13 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
   }
 
   void _onMapCreated(MapboxMap mapboxMap) {
-    _mapboxMap = mapboxMap;
+    _mapController = mapboxMap;
 
     // Enable location component
-    _mapboxMap!.location.updateSettings(
+    _mapController!.location.updateSettings(
       LocationComponentSettings(
         enabled: true,
         pulsingEnabled: true,
-        pulsingColor: Colors.blue.value,
       ),
     );
 
@@ -106,8 +107,8 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
   }
 
   void _zoomIn() {
-    _mapboxMap?.getCameraState().then((cameraState) {
-      _mapboxMap!.setCamera(
+    _mapController?.getCameraState().then((cameraState) {
+      _mapController!.setCamera(
         CameraOptions(
           zoom: (cameraState.zoom) + 1.0,
         ),
@@ -116,8 +117,8 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
   }
 
   void _zoomOut() {
-    _mapboxMap?.getCameraState().then((cameraState) {
-      _mapboxMap!.setCamera(
+    _mapController?.getCameraState().then((cameraState) {
+      _mapController!.setCamera(
         CameraOptions(
           zoom: (cameraState.zoom) - 1.0,
         ),
@@ -139,12 +140,18 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
             key: const ValueKey('mapWidget'),
             cameraOptions: CameraOptions(
               center: _currentPosition != null
-                  ? {'lng': _currentPosition!.longitude, 'lat': _currentPosition!.latitude}
-                  : {'lng': -122.4194, 'lat': 37.7749}, // SF default
+                  ? Point(
+                      coordinates: Position(
+                        _currentPosition!.longitude,
+                        _currentPosition!.latitude,
+                      ),
+                    )
+                  : Point(
+                      coordinates: Position(-122.4194, 37.7749),
+                    ), // SF default
               zoom: 12.0,
             ),
             styleUri: MapboxStyles.OUTDOORS,
-            textureView: true,
             onMapCreated: _onMapCreated,
           ),
 
@@ -241,7 +248,7 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
 
   @override
   void dispose() {
-    _mapboxMap = null;
+    _mapController = null;
     super.dispose();
   }
 }
