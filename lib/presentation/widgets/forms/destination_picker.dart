@@ -208,11 +208,15 @@ class _DestinationPickerState extends State<DestinationPicker> {
                 key: const ValueKey('destinationPickerMap'),
                 cameraOptions: CameraOptions(
                   center: widget.initialLocation != null
-                      ? {
-                          'lng': widget.initialLocation!.longitude,
-                          'lat': widget.initialLocation!.latitude,
-                        }
-                      : {'lng': -122.4194, 'lat': 37.7749}, // SF default
+                      ? Point(
+                          coordinates: Position(
+                            widget.initialLocation!.longitude,
+                            widget.initialLocation!.latitude,
+                          ),
+                        )
+                      : Point(
+                          coordinates: Position(-122.4194, 37.7749),
+                        ), // SF default
                   zoom: 12.0,
                 ),
                 styleUri: MapboxStyles.OUTDOORS,
