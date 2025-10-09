@@ -17,7 +17,7 @@ A two-part solution:
 
 1. **android/gradle.properties**
    - Added Flutter SDK properties that serve as the source of truth:
-     - `flutter.compileSdkVersion=34`
+     - `flutter.compileSdkVersion=35`
      - `flutter.targetSdkVersion=34`
      - `flutter.minSdkVersion=21`
      - `flutter.ndkVersion=25.1.8937393`
@@ -52,7 +52,7 @@ A two-part solution:
              
              // Flutter extension properties
              ext.flutter = [
-                 compileSdkVersion: findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34,
+                 compileSdkVersion: findProperty('flutter.compileSdkVersion')?.toInteger() ?: 35,
                  targetSdkVersion: findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34,
                  minSdkVersion: findProperty('flutter.minSdkVersion')?.toInteger() ?: 21,
                  ndkVersion: findProperty('flutter.ndkVersion') ?: '25.1.8937393',
@@ -71,7 +71,7 @@ A two-part solution:
      - `ndkVersion flutter.ndkVersion`
 
 ### SDK Version Rationale
-- **compileSdk 34**: Android 14 (latest stable at time of fix)
+- **compileSdk 35**: Android 15 (required by flutter_plugin_android_lifecycle)
 - **targetSdk 34**: Android 14 (matches compile SDK)
 - **minSdk 21**: Android 5.0 Lollipop (unchanged, provides wide device support)
 - **NDK 25.1.8937393**: Stable NDK version compatible with Flutter 3.24.x

@@ -218,7 +218,7 @@ Complete development environment configured:
 - `analysis_options.yaml` - Flutter linting rules enabled
 
 **Platform Support**:
-- Android: Minimum SDK 21 (Android 5.0+), Compile SDK 34, Target SDK 34, Kotlin support
+- Android: Minimum SDK 21 (Android 5.0+), Compile SDK 35, Target SDK 34, Kotlin support
 - iOS: Basic configuration with location permissions
 
 **Build Configuration**:

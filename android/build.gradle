@@ -60,7 +60,7 @@ subprojects {
         }
         
         def flutterExt = [:]
-        flutterExt.compileSdkVersion = findProperty('flutter.compileSdkVersion')?.toInteger() ?: 34
+        flutterExt.compileSdkVersion = findProperty('flutter.compileSdkVersion')?.toInteger() ?: 35
         flutterExt.targetSdkVersion = findProperty('flutter.targetSdkVersion')?.toInteger() ?: 34
         flutterExt.minSdkVersion = findProperty('flutter.minSdkVersion')?.toInteger() ?: 21
         flutterExt.ndkVersion = findProperty('flutter.ndkVersion') ?: '25.1.8937393'
