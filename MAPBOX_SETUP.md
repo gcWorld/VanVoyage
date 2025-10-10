@@ -93,7 +93,7 @@ For GitHub Actions or other CI/CD systems:
 |------|---------|------------|-------------------|
 | `lib/secrets.dart` | Flutter runtime | Public (`pk.`) | ❌ No (.gitignored) |
 | `lib/secrets.dart.template` | Template | None | ✅ Yes |
-| `android/.../strings.xml` | Android runtime | Public (`pk.`) | ❌ No (contains real token) |
+| `android/.../strings.xml` | Android runtime | Public (`pk.`) | ❌ No (.gitignored) |
 | `android/.../strings.xml.template` | Template | None | ✅ Yes |
 | `android/local.properties` | Build time | Secret (`sk.`) | ❌ No (.gitignored) |
 | Environment variable | Build time | Secret (`sk.`) | N/A |
