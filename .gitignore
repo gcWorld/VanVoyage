@@ -45,6 +45,7 @@ app.*.map.json
 
 # Secrets and API keys
 lib/secrets.dart
+android/app/src/main/res/values/strings.xml
 
 # Coverage
 coverage/

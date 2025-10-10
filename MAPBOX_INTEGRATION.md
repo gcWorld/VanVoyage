@@ -157,37 +157,47 @@ Future<MapboxRoute?> calculateRoute(startLat, startLng, endLat, endLng)
 
 ### 1. Mapbox API Key
 
-Users must obtain a Mapbox API key:
+Users must obtain a Mapbox public access token:
 
-1. Visit https://account.mapbox.com/
+1. Visit https://account.mapbox.com/access-tokens/
 2. Create account (free tier available)
-3. Generate access token
+3. Use your default public token or create a new one (starts with `pk.`)
 4. Copy `lib/secrets.dart.template` to `lib/secrets.dart`
-5. Add key to `lib/secrets.dart`:
+5. Add the public token to `lib/secrets.dart`:
 
 ```dart
-const String mapboxApiKey = 'YOUR_ACTUAL_KEY_HERE';
+const String mapboxApiKey = 'pk.YOUR_PUBLIC_TOKEN_HERE';
+```
+
+6. Copy `android/app/src/main/res/values/strings.xml.template` to `strings.xml`
+7. Add the same public token to `strings.xml`:
+
+```xml
+<string name="mapbox_access_token">pk.YOUR_PUBLIC_TOKEN_HERE</string>
 ```
 
 ### 2. Mapbox Downloads Token (for Android builds)
 
-For Android builds, you also need a Mapbox Downloads token:
+For Android builds, you also need a Mapbox Downloads token (secret token):
 
 1. Visit https://account.mapbox.com/access-tokens/
-2. Create a secret token with `DOWNLOADS:READ` scope
+2. Create a secret token with `DOWNLOADS:READ` scope (starts with `sk.`)
 3. **Set it as an environment variable** (preferred method):
    ```bash
    export MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
    ```
    
-   **Alternative**: Add it to `android/gradle.properties`:
+   **Alternative**: Add it to `android/local.properties` (gitignored):
    ```properties
    MAPBOX_DOWNLOADS_TOKEN=sk.YOUR_SECRET_TOKEN_HERE
    ```
 
 **Important Notes**:
-- The downloads token is different from the public API key and must be kept secret
-- **The environment variable method is preferred** as Gradle reads it before processing configuration files
+- The downloads token is a **secret token** (starts with `sk.`) different from the public access token
+- The public access token (starts with `pk.`) is for map rendering and goes in `lib/secrets.dart` and `strings.xml`
+- The secret downloads token is for downloading Mapbox SDK during Android builds
+- **Never commit secret tokens to version control**
+- The `android/gradle.properties` file no longer contains placeholder syntax
 - For CI/CD (GitHub Actions), set it as a repository secret named `MAPBOX_DOWNLOADS_TOKEN`
 
 ### 2. Platform Permissions
