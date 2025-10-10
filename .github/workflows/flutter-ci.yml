@@ -48,6 +48,14 @@ jobs:
         if [ -n "$MAPBOX_DOWNLOADS_TOKEN" ]; then
           echo "MAPBOX_DOWNLOADS_TOKEN=$MAPBOX_DOWNLOADS_TOKEN" >> android/gradle.properties
         fi
+        # Create strings.xml with Mapbox public access token for map rendering
+        mkdir -p android/app/src/main/res/values
+        cat > android/app/src/main/res/values/strings.xml << EOF
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="mapbox_access_token">${{ secrets.MAPBOX_TOKEN }}</string>
+        </resources>
+        EOF
 
     - name: flutter clean
       run: flutter clean

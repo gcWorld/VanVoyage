@@ -60,13 +60,36 @@ Comprehensive architecture documentation is available in the [`/docs/architectur
    ```
 
 3. **Configuration**:
+   
+   **Dart secrets**:
    - Copy `lib/secrets.dart.template` to `lib/secrets.dart`
-   - Add your Mapbox API key to `lib/secrets.dart`:
+   - Add your Mapbox public access token to `lib/secrets.dart`:
      ```dart
-     const String mapboxApiKey = 'your-api-key-here';
+     const String mapboxApiKey = 'pk.your-public-token-here';
      ```
    
-   **Note**: For CI/CD, the repository secret `MAPBOX_TOKEN` is automatically used to generate `lib/secrets.dart` during builds.
+   **Android resources**:
+   - Copy `android/app/src/main/res/values/strings.xml.template` to `android/app/src/main/res/values/strings.xml`
+   - Add your Mapbox public access token to `strings.xml`:
+     ```xml
+     <string name="mapbox_access_token">pk.your-public-token-here</string>
+     ```
+   
+   **Mapbox downloads token** (for Android builds):
+   - Set as environment variable (recommended):
+     ```bash
+     export MAPBOX_DOWNLOADS_TOKEN=sk.your-secret-token-here
+     ```
+   - Or add to `android/local.properties` (gitignored):
+     ```properties
+     MAPBOX_DOWNLOADS_TOKEN=sk.your-secret-token-here
+     ```
+   
+   **Note**: 
+   - Get your tokens at https://account.mapbox.com/access-tokens/
+   - The **public token** (starts with `pk.`) is for map rendering
+   - The **secret downloads token** (starts with `sk.`) is for downloading Mapbox SDK during builds
+   - For CI/CD, the repository secret `MAPBOX_TOKEN` is automatically used during builds
 
 4. **Run the app**:
    ```bash
