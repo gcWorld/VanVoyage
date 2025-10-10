@@ -66,11 +66,13 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
   
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Padding(
       padding: const EdgeInsets.all(16.0),
-      children: [
-        // Driving Preferences Section
-        Text(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Driving Preferences Section
+          Text(
           'Driving Preferences',
           style: Theme.of(context).textTheme.titleLarge,
         ),
@@ -324,7 +326,8 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
             padding: const EdgeInsets.all(16.0),
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 }
