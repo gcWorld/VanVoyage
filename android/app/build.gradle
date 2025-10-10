@@ -38,6 +38,9 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        // Exclude .template files from resources
+        main.res.srcDirs = ['src/main/res']
+        main.res.excludes += ['**/*.template']
     }
 
     defaultConfig {
