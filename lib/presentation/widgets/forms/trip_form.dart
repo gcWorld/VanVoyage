@@ -83,11 +83,13 @@ class _TripFormState extends State<TripForm> {
     
     return Form(
       key: _formKey,
-      child: ListView(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
-        children: [
-          // Trip name field
-          TextFormField(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Trip name field
+            TextFormField(
             controller: _nameController,
             decoration: const InputDecoration(
               labelText: 'Trip Name',
@@ -181,6 +183,7 @@ class _TripFormState extends State<TripForm> {
             ),
           ),
         ],
+        ),
       ),
     );
   }
