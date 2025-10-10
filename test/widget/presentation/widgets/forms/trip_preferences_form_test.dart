@@ -8,9 +8,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -32,9 +34,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -53,9 +57,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -74,9 +80,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -95,9 +103,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -115,9 +125,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -137,9 +149,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {},
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
             ),
           ),
         ),
@@ -151,7 +165,9 @@ void main() {
       // Rest stop interval should be present
       expect(find.text('Rest Stop Interval'), findsWidgets);
 
-      // Toggle off include rest stops
+      // Toggle off include rest stops (scroll to make it visible first)
+      await tester.ensureVisible(find.byType(SwitchListTile).last);
+      await tester.pumpAndSettle();
       await tester.tap(find.byType(SwitchListTile).last);
       await tester.pumpAndSettle();
 
@@ -172,18 +188,20 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripPreferencesForm(
-              onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                      tolls, highways, scenic) {
-                savedMaxDistance = maxDistance;
-                savedMaxTime = maxTime;
-                savedSpeed = speed;
-                savedIncludeRest = includeRest;
-                savedInterval = interval;
-                savedAvoidTolls = tolls;
-                savedAvoidHighways = highways;
-                savedPreferScenic = scenic;
-              },
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {
+                  savedMaxDistance = maxDistance;
+                  savedMaxTime = maxTime;
+                  savedSpeed = speed;
+                  savedIncludeRest = includeRest;
+                  savedInterval = interval;
+                  savedAvoidTolls = tolls;
+                  savedAvoidHighways = highways;
+                  savedPreferScenic = scenic;
+                },
+              ),
             ),
           ),
         ),
