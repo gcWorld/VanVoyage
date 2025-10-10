@@ -165,7 +165,9 @@ void main() {
       // Rest stop interval should be present
       expect(find.text('Rest Stop Interval'), findsWidgets);
 
-      // Toggle off include rest stops
+      // Toggle off include rest stops (scroll to make it visible first)
+      await tester.ensureVisible(find.byType(SwitchListTile).last);
+      await tester.pumpAndSettle();
       await tester.tap(find.byType(SwitchListTile).last);
       await tester.pumpAndSettle();
 
