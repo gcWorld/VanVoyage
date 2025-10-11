@@ -9,11 +9,6 @@ import 'package:vanvoyage/providers.dart';
 void main() {
   group('DestinationPicker Autocomplete', () {
     testWidgets('shows search field', (WidgetTester tester) async {
-      String? selectedName;
-      double? selectedLat;
-      double? selectedLng;
-      WaypointType? selectedType;
-
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -25,10 +20,7 @@ void main() {
             home: Scaffold(
               body: DestinationPicker(
                 onLocationSelected: (name, lat, lng, type) {
-                  selectedName = name;
-                  selectedLat = lat;
-                  selectedLng = lng;
-                  selectedType = type;
+                  // Callback for location selection
                 },
               ),
             ),
