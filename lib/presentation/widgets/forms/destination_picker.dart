@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../../domain/enums/waypoint_type.dart';
+import '../../../infrastructure/services/mapbox_service.dart';
+import '../../../providers.dart';
 
 /// A widget for picking destinations with map integration
-class DestinationPicker extends StatefulWidget {
+class DestinationPicker extends ConsumerStatefulWidget {
   /// Callback when a location is selected
   final Function(String name, double latitude, double longitude, WaypointType type) onLocationSelected;
   
@@ -17,14 +21,19 @@ class DestinationPicker extends StatefulWidget {
   });
 
   @override
-  State<DestinationPicker> createState() => _DestinationPickerState();
+  ConsumerState<DestinationPicker> createState() => _DestinationPickerState();
 }
 
-class _DestinationPickerState extends State<DestinationPicker> {
+class _DestinationPickerState extends ConsumerState<DestinationPicker> {
   final _nameController = TextEditingController();
+  final _searchController = TextEditingController();
   double? _selectedLatitude;
   double? _selectedLongitude;
   WaypointType _selectedType = WaypointType.poi;
+  List<MapboxLocation> _searchResults = [];
+  bool _isSearching = false;
+  Timer? _debounceTimer;
+  MapboxMap? _mapboxMap;
   
   @override
   void initState() {
@@ -33,18 +42,113 @@ class _DestinationPickerState extends State<DestinationPicker> {
       _selectedLatitude = widget.initialLocation!.latitude;
       _selectedLongitude = widget.initialLocation!.longitude;
     }
+    _searchController.addListener(_onSearchChanged);
   }
   
   @override
   void dispose() {
     _nameController.dispose();
+    _searchController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
   
+  void _onSearchChanged() {
+    // Debounce search to avoid too many API calls
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (_searchController.text.isNotEmpty) {
+        _performSearch(_searchController.text);
+      } else {
+        setState(() {
+          _searchResults = [];
+          _isSearching = false;
+        });
+      }
+    });
+  }
+  
+  Future<void> _performSearch(String query) async {
+    setState(() {
+      _isSearching = true;
+    });
+    
+    try {
+      final mapboxService = ref.read(mapboxServiceProvider);
+      final results = await mapboxService.searchPlaces(query);
+      
+      if (mounted) {
+        setState(() {
+          _searchResults = results;
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSearching = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Search failed: $e')),
+        );
+      }
+    }
+  }
+  
+  void _selectSearchResult(MapboxLocation location) {
+    setState(() {
+      _selectedLatitude = location.latitude;
+      _selectedLongitude = location.longitude;
+      _nameController.text = location.placeName;
+      _searchController.clear();
+      _searchResults = [];
+    });
+    
+    // Update map camera to show selected location
+    if (_mapboxMap != null) {
+      _mapboxMap!.flyTo(
+        CameraOptions(
+          center: Point(
+            coordinates: Position(location.longitude, location.latitude),
+          ),
+          zoom: 14.0,
+        ),
+        MapAnimationOptions(duration: 1000),
+      );
+    }
+  }
+  
   void _onMapCreated(MapboxMap mapboxMap) {
-    // TODO: Implement map tap gesture handling
-    // The current Mapbox Flutter SDK version has changed gesture APIs
-    // For now, users can manually enter coordinates or use search
+    _mapboxMap = mapboxMap;
+    
+    // Add tap listener to map
+    mapboxMap.gestures.addOnMapClickListener(OnMapClickListener(
+      onMapClick: (Point point) {
+        setState(() {
+          _selectedLatitude = point.coordinates.lat;
+          _selectedLongitude = point.coordinates.lng;
+        });
+        
+        // Optionally reverse geocode to get place name
+        _reverseGeocode(point.coordinates.lat, point.coordinates.lng);
+        return true;
+      },
+    ));
+  }
+  
+  Future<void> _reverseGeocode(double lat, double lng) async {
+    try {
+      final mapboxService = ref.read(mapboxServiceProvider);
+      final placeName = await mapboxService.reverseGeocode(lat, lng);
+      
+      if (mounted && placeName != null && _nameController.text.isEmpty) {
+        setState(() {
+          _nameController.text = placeName;
+        });
+      }
+    } catch (e) {
+      // Silently fail - user can still enter name manually
+    }
   }
   
   void _selectLocationManually() {
@@ -122,17 +226,79 @@ class _DestinationPickerState extends State<DestinationPicker> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Location name input
+        // Location search and name input
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Search field with autocomplete
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Search Location',
+                  hintText: 'Search for a place...',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _isSearching
+                      ? const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchResults = [];
+                                });
+                              },
+                            )
+                          : null,
+                ),
+              ),
+              
+              // Search results dropdown
+              if (_searchResults.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(4),
+                    color: Theme.of(context).cardColor,
+                  ),
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _searchResults.length,
+                    itemBuilder: (context, index) {
+                      final location = _searchResults[index];
+                      return ListTile(
+                        leading: const Icon(Icons.location_on),
+                        title: Text(
+                          location.placeName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () => _selectSearchResult(location),
+                      );
+                    },
+                  ),
+                ),
+              
+              const SizedBox(height: 16),
+              
+              // Location name input (after search)
               TextField(
                 controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Location Name',
-                  hintText: 'Enter destination name',
+                  hintText: 'Enter or confirm destination name',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.place),
                 ),
@@ -237,7 +403,7 @@ class _DestinationPickerState extends State<DestinationPicker> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Use "Enter Coordinates Manually" button above to select a location',
+                            'Search for a location above or tap on the map to select',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
