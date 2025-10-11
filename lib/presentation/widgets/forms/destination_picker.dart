@@ -120,9 +120,44 @@ class _DestinationPickerState extends ConsumerState<DestinationPicker> {
   
   void _onMapCreated(MapboxMap mapboxMap) {
     _mapboxMap = mapboxMap;
-    // TODO: Implement map tap gesture handling
-    // The current Mapbox Flutter SDK version (2.3.0) has changed gesture APIs
-    // Map tap functionality will be added once the proper API is available
+  }
+  
+  Future<void> _onMapTap(Offset screenPosition) async {
+    if (_mapboxMap == null) return;
+    
+    try {
+      // Convert screen coordinates to geographic coordinates using Mapbox SDK
+      final point = await _mapboxMap!.coordinateForPixel(
+        ScreenCoordinate(x: screenPosition.dx, y: screenPosition.dy),
+      );
+      
+      setState(() {
+        _selectedLatitude = point.coordinates.lat.toDouble();
+        _selectedLongitude = point.coordinates.lng.toDouble();
+      });
+      
+      // Optionally reverse geocode to get place name
+      _reverseGeocode(point.coordinates.lat.toDouble(), point.coordinates.lng.toDouble());
+    } catch (e) {
+      // Handle error silently
+      debugPrint('Error converting tap to coordinates: $e');
+    }
+  }
+  
+  Future<void> _reverseGeocode(double lat, double lng) async {
+    try {
+      final mapboxService = ref.read(mapboxServiceProvider);
+      final placeName = await mapboxService.reverseGeocode(lat, lng);
+      
+      if (mounted && placeName != null && _nameController.text.isEmpty) {
+        setState(() {
+          _nameController.text = placeName;
+        });
+      }
+    } catch (e) {
+      // Silently fail - user can still enter name manually
+      debugPrint('Error reverse geocoding: $e');
+    }
   }
   
   void _selectLocationManually() {
@@ -344,23 +379,28 @@ class _DestinationPickerState extends ConsumerState<DestinationPicker> {
         Expanded(
           child: Stack(
             children: [
-              MapWidget(
-                key: const ValueKey('destinationPickerMap'),
-                cameraOptions: CameraOptions(
-                  center: widget.initialLocation != null
-                      ? Point(
-                          coordinates: Position(
-                            widget.initialLocation!.longitude,
-                            widget.initialLocation!.latitude,
-                          ),
-                        )
-                      : Point(
-                          coordinates: Position(-122.4194, 37.7749),
-                        ), // SF default
-                  zoom: 12.0,
+              GestureDetector(
+                onTapDown: (TapDownDetails details) {
+                  _onMapTap(details.localPosition);
+                },
+                child: MapWidget(
+                  key: const ValueKey('destinationPickerMap'),
+                  cameraOptions: CameraOptions(
+                    center: widget.initialLocation != null
+                        ? Point(
+                            coordinates: Position(
+                              widget.initialLocation!.longitude,
+                              widget.initialLocation!.latitude,
+                            ),
+                          )
+                        : Point(
+                            coordinates: Position(-122.4194, 37.7749),
+                          ), // SF default
+                    zoom: 12.0,
+                  ),
+                  styleUri: MapboxStyles.OUTDOORS,
+                  onMapCreated: _onMapCreated,
                 ),
-                styleUri: MapboxStyles.OUTDOORS,
-                onMapCreated: _onMapCreated,
               ),
               
               // Instruction overlay
@@ -377,7 +417,7 @@ class _DestinationPickerState extends ConsumerState<DestinationPicker> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Search for a location above or enter coordinates manually',
+                            'Search for a location above or tap on the map to select',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ),
