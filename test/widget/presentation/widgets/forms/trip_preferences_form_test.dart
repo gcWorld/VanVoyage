@@ -273,5 +273,138 @@ void main() {
       // Should have 4 switches: avoid tolls, avoid highways, prefer scenic, include rest stops
       expect(find.byType(SwitchListTile), findsNWidgets(4));
     });
+
+    testWidgets('displays warnings for values outside recommended range', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1400,
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Initially with default values, there should be no warnings
+      expect(find.text('Travel Constraint Warnings'), findsNothing);
+      
+      // Drag the max daily distance slider to a low value (below recommended)
+      final distanceSlider = find.byType(Slider).first;
+      await tester.drag(distanceSlider, const Offset(-300, 0));
+      await tester.pumpAndSettle();
+      
+      // Now there should be a warning section
+      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
+      
+      // Should have at least one warning card with warning icon
+      expect(find.byIcon(Icons.warning_amber_outlined), findsWidgets);
+    });
+
+    testWidgets('displays error for extreme values', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1400,
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Drag the max daily time slider to maximum value (10 hours = 600 minutes)
+      final timeSlider = find.byType(Slider).at(1);
+      await tester.drag(timeSlider, const Offset(300, 0));
+      await tester.pumpAndSettle();
+      
+      // Should display error icon for values exceeding safe limits
+      expect(find.byIcon(Icons.error_outline), findsWidgets);
+    });
+
+    testWidgets('warnings update dynamically when values change', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1400,
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Initially no warnings
+      expect(find.text('Travel Constraint Warnings'), findsNothing);
+      
+      // Change to a value that triggers warning
+      final distanceSlider = find.byType(Slider).first;
+      await tester.drag(distanceSlider, const Offset(-200, 0));
+      await tester.pumpAndSettle();
+      
+      // Warning should appear
+      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
+      
+      // Move back to a good value
+      await tester.drag(distanceSlider, const Offset(100, 0));
+      await tester.pumpAndSettle();
+      
+      // Warning section might still exist but with fewer warnings or might disappear
+      // depending on other values
+    });
+
+    testWidgets('displays consistency warnings', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1400,
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Set distance to max, time to min, and speed to low
+      // This should trigger a consistency warning
+      final distanceSlider = find.byType(Slider).first;
+      await tester.drag(distanceSlider, const Offset(300, 0));
+      await tester.pumpAndSettle();
+      
+      final timeSlider = find.byType(Slider).at(1);
+      await tester.drag(timeSlider, const Offset(-300, 0));
+      await tester.pumpAndSettle();
+      
+      // Should display warnings
+      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
+    });
   });
 }
