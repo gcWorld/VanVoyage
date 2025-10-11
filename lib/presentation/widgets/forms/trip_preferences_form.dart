@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../domain/entities/trip_preferences.dart';
+import '../../../domain/entities/constraint_violation.dart';
+import '../../../domain/entities/travel_constraint.dart';
+import '../../../domain/services/travel_constraint_validator.dart';
 
 /// A form widget for configuring trip planning preferences and travel constraints
 class TripPreferencesForm extends StatefulWidget {
@@ -38,6 +41,9 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
   late bool _avoidHighways;
   late bool _preferScenicRoutes;
   
+  final _validator = const TravelConstraintValidator();
+  List<ConstraintViolation> _violations = [];
+  
   @override
   void initState() {
     super.initState();
@@ -49,6 +55,26 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
     _avoidTolls = widget.preferences?.avoidTolls ?? false;
     _avoidHighways = widget.preferences?.avoidHighways ?? false;
     _preferScenicRoutes = widget.preferences?.preferScenicRoutes ?? false;
+    _validatePreferences();
+  }
+  
+  void _validatePreferences() {
+    final prefs = TripPreferences(
+      id: 'temp',
+      tripId: 'temp',
+      maxDailyDrivingDistance: _maxDailyDistance.toInt(),
+      maxDailyDrivingTime: _maxDailyTime.toInt(),
+      preferredDrivingSpeed: _preferredSpeed.toInt(),
+      includeRestStops: _includeRestStops,
+      restStopInterval: _includeRestStops ? _restStopInterval.toInt() : null,
+      avoidTolls: _avoidTolls,
+      avoidHighways: _avoidHighways,
+      preferScenicRoutes: _preferScenicRoutes,
+    );
+    
+    setState(() {
+      _violations = _validator.validate(prefs);
+    });
   }
   
   void _save() {
@@ -105,6 +131,7 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
                     setState(() {
                       _maxDailyDistance = value;
                     });
+                    _validatePreferences();
                   },
                 ),
                 Text(
@@ -147,6 +174,7 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
                     setState(() {
                       _maxDailyTime = value;
                     });
+                    _validatePreferences();
                   },
                 ),
                 Text(
@@ -189,6 +217,7 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
                     setState(() {
                       _preferredSpeed = value;
                     });
+                    _validatePreferences();
                   },
                 ),
                 Text(
@@ -270,6 +299,7 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
                   setState(() {
                     _includeRestStops = value;
                   });
+                  _validatePreferences();
                 },
               ),
               if (_includeRestStops) ...[
@@ -299,6 +329,7 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
                           setState(() {
                             _restStopInterval = value;
                           });
+                          _validatePreferences();
                         },
                       ),
                       Text(
@@ -317,6 +348,17 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
         
         const SizedBox(height: 32),
         
+        // Constraint Violations Section
+        if (_violations.isNotEmpty) ...[
+          Text(
+            'Travel Constraint Warnings',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          ..._violations.map((violation) => _buildViolationCard(context, violation)),
+          const SizedBox(height: 24),
+        ],
+        
         // Save button
         ElevatedButton.icon(
           onPressed: _save,
@@ -327,6 +369,68 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
           ),
         ),
         ],
+      ),
+    );
+  }
+  
+  Widget _buildViolationCard(BuildContext context, ConstraintViolation violation) {
+    Color backgroundColor;
+    Color iconColor;
+    IconData icon;
+    
+    switch (violation.severity) {
+      case ViolationSeverity.error:
+        backgroundColor = Theme.of(context).colorScheme.errorContainer;
+        iconColor = Theme.of(context).colorScheme.error;
+        icon = Icons.error_outline;
+        break;
+      case ViolationSeverity.warning:
+        backgroundColor = Colors.orange.shade50;
+        iconColor = Colors.orange.shade700;
+        icon = Icons.warning_amber_outlined;
+        break;
+      case ViolationSeverity.info:
+        backgroundColor = Theme.of(context).colorScheme.primaryContainer;
+        iconColor = Theme.of(context).colorScheme.primary;
+        icon = Icons.info_outline;
+        break;
+    }
+    
+    return Card(
+      color: backgroundColor,
+      margin: const EdgeInsets.only(bottom: 12.0),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: iconColor, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    violation.message,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: iconColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (violation.expectedValue != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      'Expected: ${violation.expectedValue}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: iconColor.withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
