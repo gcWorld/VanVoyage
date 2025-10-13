@@ -55,10 +55,12 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
     _avoidTolls = widget.preferences?.avoidTolls ?? false;
     _avoidHighways = widget.preferences?.avoidHighways ?? false;
     _preferScenicRoutes = widget.preferences?.preferScenicRoutes ?? false;
-    _validatePreferences();
+    
+    // Perform initial validation without setState since we're in initState
+    _violations = _validatePreferencesSync();
   }
   
-  void _validatePreferences() {
+  List<ConstraintViolation> _validatePreferencesSync() {
     final prefs = TripPreferences(
       id: 'temp',
       tripId: 'temp',
@@ -72,8 +74,12 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
       preferScenicRoutes: _preferScenicRoutes,
     );
     
+    return _validator.validate(prefs);
+  }
+  
+  void _validatePreferences() {
     setState(() {
-      _violations = _validator.validate(prefs);
+      _violations = _validatePreferencesSync();
     });
   }
   
