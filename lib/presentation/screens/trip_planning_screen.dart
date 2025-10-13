@@ -222,8 +222,8 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     );
     
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Trip preferences saved!'),
+      SnackBar(
+        content: const Text('Trip preferences saved!'),
         action: SnackBarAction(
           label: 'View Itinerary',
           onPressed: () {
