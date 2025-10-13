@@ -334,13 +334,10 @@ void main() {
 
       await tester.pumpAndSettle();
       
-      // Scroll to the bottom to ensure warnings are visible
-      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
-      await tester.pumpAndSettle();
-      
       // Should display error icons for values exceeding safe limits
-      expect(find.byIcon(Icons.error_outline), findsWidgets);
-      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
+      // Use skipOffstage: false to find widgets even if they're scrolled off-screen
+      expect(find.byIcon(Icons.error_outline, skipOffstage: false), findsWidgets);
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsOneWidget);
     });
 
     testWidgets('warnings update dynamically when values change', (WidgetTester tester) async {
@@ -361,7 +358,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Initially with default values (300 km, 4 hours, 80 km/h), no warnings
-      expect(find.text('Travel Constraint Warnings'), findsNothing);
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsNothing);
       
       // Now create a new widget with values that trigger warnings
       await tester.pumpWidget(
@@ -383,13 +380,10 @@ void main() {
       
       await tester.pumpAndSettle();
       
-      // Scroll to the bottom to ensure warnings are visible
-      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
-      await tester.pumpAndSettle();
-      
       // Warning should appear for below-recommended value
-      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
-      expect(find.byIcon(Icons.warning_amber_outlined), findsWidgets);
+      // Use skipOffstage: false to find widgets even if they're scrolled off-screen
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_outlined, skipOffstage: false), findsWidgets);
     });
 
     testWidgets('displays consistency warnings', (WidgetTester tester) async {
@@ -419,13 +413,10 @@ void main() {
 
       await tester.pumpAndSettle();
       
-      // Scroll to the bottom to ensure warnings are visible
-      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
-      await tester.pumpAndSettle();
-      
       // Should display warnings for inconsistent values
-      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
-      expect(find.byIcon(Icons.warning_amber_outlined), findsWidgets);
+      // Use skipOffstage: false to find widgets even if they're scrolled off-screen
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_outlined, skipOffstage: false), findsWidgets);
     });
   });
 }
