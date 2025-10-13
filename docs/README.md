@@ -28,6 +28,13 @@ Welcome to the VanVoyage documentation! This directory contains comprehensive gu
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute to the project | Contributors |
 | [CHANGELOG.md](../CHANGELOG.md) | Version history and changes | Everyone |
 
+### Features
+
+| Document | Purpose | Audience |
+|----------|---------|----------|
+| [TRIP_PLANNING_UI.md](TRIP_PLANNING_UI.md) | Trip planning interface documentation | Developers, Designers |
+| [STAY_PLANNING_FEATURES.md](STAY_PLANNING_FEATURES.md) | Stay planning and itinerary features | Developers, Users |
+
 ### Architecture
 
 | Document | Purpose | Audience |
