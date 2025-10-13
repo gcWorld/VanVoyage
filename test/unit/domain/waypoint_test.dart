@@ -133,6 +133,99 @@ void main() {
       expect(updatedWaypoint.id, originalWaypoint.id);
       expect(updatedWaypoint.latitude, originalWaypoint.latitude);
     });
+
+    test('should create waypoint with arrival and departure dates', () {
+      final arrivalDate = DateTime(2024, 6, 15, 14, 0);
+      final departureDate = DateTime(2024, 6, 18, 10, 0);
+      
+      final waypoint = Waypoint.create(
+        tripId: 'trip-123',
+        name: 'Camping Spot',
+        latitude: 45.0,
+        longitude: -100.0,
+        waypointType: WaypointType.overnightStay,
+        arrivalDate: arrivalDate,
+        departureDate: departureDate,
+        stayDuration: 3,
+        sequenceOrder: 0,
+      );
+
+      expect(waypoint.arrivalDate, arrivalDate);
+      expect(waypoint.departureDate, departureDate);
+      expect(waypoint.stayDuration, 3);
+      expect(waypoint.isValid(), true);
+    });
+
+    test('should invalidate waypoint with departure before arrival', () {
+      final arrivalDate = DateTime(2024, 6, 18, 14, 0);
+      final departureDate = DateTime(2024, 6, 15, 10, 0); // Before arrival
+      
+      final waypoint = Waypoint.create(
+        tripId: 'trip-123',
+        name: 'Camping Spot',
+        latitude: 45.0,
+        longitude: -100.0,
+        waypointType: WaypointType.overnightStay,
+        arrivalDate: arrivalDate,
+        departureDate: departureDate,
+        stayDuration: 3,
+        sequenceOrder: 0,
+      );
+
+      expect(waypoint.isValid(), false);
+    });
+
+    test('should serialize waypoint with dates correctly', () {
+      final arrivalDate = DateTime(2024, 6, 15, 14, 0);
+      final departureDate = DateTime(2024, 6, 18, 10, 0);
+      
+      final originalWaypoint = Waypoint.create(
+        tripId: 'trip-123',
+        name: 'Camping Spot',
+        latitude: 45.0,
+        longitude: -100.0,
+        waypointType: WaypointType.overnightStay,
+        arrivalDate: arrivalDate,
+        departureDate: departureDate,
+        stayDuration: 3,
+        sequenceOrder: 0,
+      );
+
+      final map = originalWaypoint.toMap();
+      final deserializedWaypoint = Waypoint.fromMap(map);
+
+      expect(
+        deserializedWaypoint.arrivalDate?.millisecondsSinceEpoch,
+        arrivalDate.millisecondsSinceEpoch,
+      );
+      expect(
+        deserializedWaypoint.departureDate?.millisecondsSinceEpoch,
+        departureDate.millisecondsSinceEpoch,
+      );
+      expect(deserializedWaypoint.stayDuration, 3);
+    });
+
+    test('should update stay duration in copy', () {
+      final waypoint = Waypoint.create(
+        tripId: 'trip-123',
+        name: 'Camping Spot',
+        latitude: 45.0,
+        longitude: -100.0,
+        waypointType: WaypointType.overnightStay,
+        stayDuration: 2,
+        sequenceOrder: 0,
+      );
+
+      final updatedWaypoint = waypoint.copyWith(
+        stayDuration: 5,
+        arrivalDate: DateTime(2024, 6, 15),
+        departureDate: DateTime(2024, 6, 20),
+      );
+
+      expect(updatedWaypoint.stayDuration, 5);
+      expect(updatedWaypoint.arrivalDate, isNotNull);
+      expect(updatedWaypoint.departureDate, isNotNull);
+    });
   });
 
   group('WaypointType', () {

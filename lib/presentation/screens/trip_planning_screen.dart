@@ -10,6 +10,8 @@ import '../../infrastructure/repositories/waypoint_repository.dart';
 import '../widgets/forms/trip_form.dart';
 import '../widgets/forms/destination_picker.dart';
 import '../widgets/forms/trip_preferences_form.dart';
+import '../widgets/trip_itinerary_timeline.dart';
+import 'waypoint_detail_screen.dart';
 import 'package:vanvoyage/providers.dart';
 
 // Providers for repositories
@@ -222,10 +224,38 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Trip preferences saved!'),
+        action: SnackBarAction(
+          label: 'View Itinerary',
+          onPressed: () {
+            setState(() {
+              _currentStep = 3; // Move to itinerary view
+            });
+          },
+        ),
       ),
     );
-    
-    // Navigate back or to trip detail screen
+  }
+
+  Future<void> _navigateToWaypointDetail(Waypoint waypoint) async {
+    final result = await Navigator.push<Waypoint>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WaypointDetailScreen(waypoint: waypoint),
+      ),
+    );
+
+    // If waypoint was updated, reload data
+    if (result != null && mounted) {
+      await _loadTrip();
+    }
+  }
+
+  void _finishPlanning() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Trip planning completed!'),
+      ),
+    );
     Navigator.of(context).pop();
   }
   
@@ -260,7 +290,44 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           onSave: _onPreferencesSave,
         ),
         isActive: _currentStep >= 2,
-        state: _currentStep == 2 ? StepState.indexed : StepState.disabled,
+        state: _currentStep > 2 ? StepState.complete : 
+               _currentStep == 2 ? StepState.indexed : StepState.disabled,
+      ),
+      Step(
+        title: const Text('Review Itinerary'),
+        subtitle: const Text('Configure stays and review timeline'),
+        content: _trip != null
+            ? SizedBox(
+                height: 500,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: TripItineraryTimeline(
+                          trip: _trip!,
+                          waypoints: _waypoints,
+                          onWaypointTap: _navigateToWaypointDetail,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _finishPlanning,
+                        icon: const Icon(Icons.check),
+                        label: const Text('Finish Planning'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : const Center(child: Text('Create trip first')),
+        isActive: _currentStep >= 3,
+        state: _currentStep == 3 ? StepState.indexed : StepState.disabled,
       ),
     ];
   }
@@ -294,7 +361,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           }
         },
         onStepContinue: () {
-          if (_currentStep < 2) {
+          if (_currentStep < 3) {
             setState(() {
               _currentStep += 1;
             });
@@ -314,7 +381,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
             padding: const EdgeInsets.only(top: 16.0),
             child: Row(
               children: [
-                if (_currentStep < 2 && _trip != null)
+                if (_currentStep < 3 && _trip != null)
                   ElevatedButton(
                     onPressed: details.onStepContinue,
                     child: const Text('Continue'),
