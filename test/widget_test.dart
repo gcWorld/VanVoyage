@@ -13,10 +13,18 @@ void main() {
       ),
     );
 
-    // Verify that the app shows the correct elements
-    expect(find.text('VanVoyage'), findsNWidgets(2)); // AppBar + body
-    expect(find.text('Trip Planning for Van Life'), findsOneWidget);
+    // Wait for the app to initialize and load
+    await tester.pumpAndSettle();
+
+    // Verify that the app shows the trip list screen
+    expect(find.text('My Trips'), findsOneWidget);
+    
+    // When no trips exist, should show empty state
+    expect(find.text('No trips yet'), findsOneWidget);
+    expect(find.text('Create your first trip to get started'), findsOneWidget);
+    expect(find.text('Create Your First Trip'), findsOneWidget);
+    
+    // Should also have the FAB with "Create Trip"
     expect(find.text('Create Trip'), findsOneWidget);
-    expect(find.text('Open Map'), findsOneWidget);
   });
 }
