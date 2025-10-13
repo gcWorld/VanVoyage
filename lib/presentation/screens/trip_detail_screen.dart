@@ -2,24 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/trip.dart';
 import '../../domain/entities/waypoint.dart';
-import '../../infrastructure/repositories/trip_repository.dart';
-import '../../infrastructure/repositories/waypoint_repository.dart';
 import '../../providers.dart';
 import 'trip_planning_screen.dart';
 import 'waypoint_detail_screen.dart';
 import 'trip_itinerary_screen.dart';
 import 'package:intl/intl.dart';
-
-// Providers for repositories
-final tripRepositoryProvider = FutureProvider<TripRepository>((ref) async {
-  final db = await ref.read(databaseProvider.future);
-  return TripRepository(db);
-});
-
-final waypointRepositoryProvider = FutureProvider<WaypointRepository>((ref) async {
-  final db = await ref.read(databaseProvider.future);
-  return WaypointRepository(db);
-});
 
 /// Screen that displays detailed information about a specific trip
 class TripDetailScreen extends ConsumerStatefulWidget {

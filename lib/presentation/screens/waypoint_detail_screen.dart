@@ -3,14 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../domain/entities/waypoint.dart';
 import '../../domain/enums/waypoint_type.dart';
-import '../../infrastructure/repositories/waypoint_repository.dart';
 import '../../providers.dart';
-
-/// Provider for waypoint repository
-final waypointRepositoryProvider = FutureProvider<WaypointRepository>((ref) async {
-  final db = await ref.read(databaseProvider.future);
-  return WaypointRepository(db);
-});
 
 /// Screen for viewing and editing waypoint details including stay information
 class WaypointDetailScreen extends ConsumerStatefulWidget {
