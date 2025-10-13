@@ -322,19 +322,20 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1400,
-                child: TripPreferencesForm(
-                  preferences: extremePrefs,
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
-                ),
+              child: TripPreferencesForm(
+                preferences: extremePrefs,
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
               ),
             ),
           ),
         ),
       );
 
+      await tester.pumpAndSettle();
+      
+      // Scroll to the bottom to ensure warnings are visible
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
       await tester.pumpAndSettle();
       
       // Should display error icons for values exceeding safe limits
@@ -348,12 +349,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1400,
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
               ),
             ),
           ),
@@ -370,22 +368,23 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1400,
-                child: TripPreferencesForm(
-                  preferences: TripPreferences.create(
-                    tripId: 'test-trip',
-                    maxDailyDrivingDistance: 200, // Below recommended
-                  ),
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
+              child: TripPreferencesForm(
+                preferences: TripPreferences.create(
+                  tripId: 'test-trip',
+                  maxDailyDrivingDistance: 200, // Below recommended
                 ),
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
               ),
             ),
           ),
         ),
       );
       
+      await tester.pumpAndSettle();
+      
+      // Scroll to the bottom to ensure warnings are visible
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
       await tester.pumpAndSettle();
       
       // Warning should appear for below-recommended value
@@ -408,19 +407,20 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1400,
-                child: TripPreferencesForm(
-                  preferences: inconsistentPrefs,
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
-                ),
+              child: TripPreferencesForm(
+                preferences: inconsistentPrefs,
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
               ),
             ),
           ),
         ),
       );
 
+      await tester.pumpAndSettle();
+      
+      // Scroll to the bottom to ensure warnings are visible
+      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
       await tester.pumpAndSettle();
       
       // Should display warnings for inconsistent values
