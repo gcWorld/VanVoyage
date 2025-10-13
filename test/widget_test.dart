@@ -22,9 +22,9 @@ void main() {
     // When no trips exist, should show empty state
     expect(find.text('No trips yet'), findsOneWidget);
     expect(find.text('Create your first trip to get started'), findsOneWidget);
-    expect(find.text('Create Your First Trip'), findsOneWidget);
     
-    // Should also have the FAB with "Create Trip"
-    expect(find.text('Create Trip'), findsOneWidget);
+    // Should have buttons to create a trip (empty state button and FAB)
+    expect(find.text('Create Your First Trip'), findsOneWidget);
+    expect(find.widgetWithText(FloatingActionButton, 'Create Trip'), findsOneWidget);
   });
 }
