@@ -256,7 +256,8 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
         content: Text('Trip planning completed!'),
       ),
     );
-    Navigator.of(context).pop();
+    // Return true to signal that the trip list should refresh
+    Navigator.of(context).pop(true);
   }
   
   List<Step> _buildSteps() {
