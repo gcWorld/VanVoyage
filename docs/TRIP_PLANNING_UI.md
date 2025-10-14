@@ -199,7 +199,12 @@ HomeScreen also has:
 
 ### TripPreferencesForm
 - All values have reasonable defaults
-- No explicit validation needed (sliders enforce ranges)
+- Real-time constraint validation with warnings and errors
+- Sliders enforce min/max ranges
+- Visual warnings for values outside recommended ranges
+- Error messages for values outside safe limits
+- Consistency validation between related preferences
+- See [TRAVEL_CONSTRAINTS.md](TRAVEL_CONSTRAINTS.md) for detailed validation rules
 
 ## Styling
 
@@ -223,7 +228,10 @@ HomeScreen also has:
 
 Widget tests created for:
 - TripForm: Form validation, field presence, edit mode, date pickers
-- TripPreferencesForm: Section presence, slider values, switch states, save functionality
+- TripPreferencesForm: Section presence, slider values, switch states, save functionality, constraint warnings
+
+Unit tests created for:
+- TravelConstraintValidator: 15 test cases covering all validation rules
 
 ## Future Enhancements
 

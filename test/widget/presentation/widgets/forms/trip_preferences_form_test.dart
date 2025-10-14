@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vanvoyage/domain/entities/trip_preferences.dart';
 import 'package:vanvoyage/presentation/widgets/forms/trip_preferences_form.dart';
 
 void main() {
@@ -272,6 +273,133 @@ void main() {
 
       // Should have 4 switches: avoid tolls, avoid highways, prefer scenic, include rest stops
       expect(find.byType(SwitchListTile), findsNWidgets(4));
+    });
+
+    testWidgets('displays warnings for values outside recommended range', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                height: 1400,
+                child: TripPreferencesForm(
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                          tolls, highways, scenic) {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Initially with default values, there should be no warnings
+      expect(find.text('Travel Constraint Warnings'), findsNothing);
+      
+      // Drag the max daily distance slider to a low value (below recommended)
+      final distanceSlider = find.byType(Slider).first;
+      await tester.drag(distanceSlider, const Offset(-300, 0));
+      await tester.pumpAndSettle();
+      
+      // Now there should be a warning section
+      expect(find.text('Travel Constraint Warnings'), findsOneWidget);
+      
+      // Should have at least one warning card with warning icon
+      expect(find.byIcon(Icons.warning_amber_outlined), findsWidgets);
+    });
+
+    testWidgets('displays error for extreme values', (WidgetTester tester) async {
+      // Create preferences with extreme values that trigger errors
+      final extremePrefs = TripPreferences.create(
+        tripId: 'test-trip',
+        maxDailyDrivingDistance: 1100, // Above maximum
+        maxDailyDrivingTime: 750, // Above maximum (12.5 hours)
+        preferredDrivingSpeed: 80,
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                preferences: extremePrefs,
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      
+      // Should display error icons for values exceeding safe limits
+      // Use skipOffstage: false to find widgets even if they're scrolled off-screen
+      expect(find.byIcon(Icons.error_outline, skipOffstage: false), findsWidgets);
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsOneWidget);
+    });
+
+    testWidgets('warnings update dynamically when values change', (WidgetTester tester) async {
+      // Test with a widget that has values triggering warnings
+      final prefsWithWarnings = TripPreferences.create(
+        tripId: 'test-trip',
+        maxDailyDrivingDistance: 200, // Below recommended (should trigger warning)
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                preferences: prefsWithWarnings,
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      
+      // Warning should appear for below-recommended value
+      // Use skipOffstage: false to find widgets even if they're scrolled off-screen
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_outlined, skipOffstage: false), findsWidgets);
+    });
+
+    testWidgets('displays consistency warnings', (WidgetTester tester) async {
+      // Create preferences with inconsistent values
+      // Distance 600 km, time 4 hours (240 min), speed 80 km/h
+      // Max achievable at 80 km/h for 4 hours is 320 km, so 600 km is unreachable
+      final inconsistentPrefs = TripPreferences.create(
+        tripId: 'test-trip',
+        maxDailyDrivingDistance: 600, // Unreachable with time and speed
+        maxDailyDrivingTime: 240, // 4 hours
+        preferredDrivingSpeed: 80, // 80 km/h
+      );
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: TripPreferencesForm(
+                preferences: inconsistentPrefs,
+                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
+                        tolls, highways, scenic) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      
+      // Should display warnings for inconsistent values
+      // Use skipOffstage: false to find widgets even if they're scrolled off-screen
+      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_outlined, skipOffstage: false), findsWidgets);
     });
   });
 }
