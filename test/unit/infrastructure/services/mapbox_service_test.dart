@@ -278,6 +278,67 @@ void main() {
         expect(result, isNull);
       });
     });
+
+    group('calculateRouteWithAlternatives', () {
+      test('returns multiple routes when available', () async {
+        final responseBody = '''
+        {
+          "routes": [
+            {
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [[-122.4194, 37.7749], [-118.2437, 34.0522]]
+              },
+              "distance": 559000.0,
+              "duration": 19800.0
+            },
+            {
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [[-122.4194, 37.7749], [-118.5000, 34.1000], [-118.2437, 34.0522]]
+              },
+              "distance": 575000.0,
+              "duration": 20100.0
+            }
+          ]
+        }
+        ''';
+
+        testHttpClient.setResponse(
+          'directions/v5/mapbox/driving',
+          http.Response(responseBody, 200),
+        );
+
+        final results = await mapboxService.calculateRouteWithAlternatives(
+          37.7749, -122.4194,
+          34.0522, -118.2437,
+        );
+
+        expect(results, hasLength(2));
+        expect(results[0].distanceMeters, equals(559000.0));
+        expect(results[1].distanceMeters, equals(575000.0));
+      });
+
+      test('returns empty list when no routes found', () async {
+        final responseBody = '''
+        {
+          "routes": []
+        }
+        ''';
+
+        testHttpClient.setResponse(
+          'directions/v5/mapbox/driving',
+          http.Response(responseBody, 200),
+        );
+
+        final results = await mapboxService.calculateRouteWithAlternatives(
+          37.7749, -122.4194,
+          34.0522, -118.2437,
+        );
+
+        expect(results, isEmpty);
+      });
+    });
   });
 
   group('MapboxRoute', () {
