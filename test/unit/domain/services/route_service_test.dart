@@ -27,10 +27,13 @@ class MockRouteRepository implements RouteRepository {
   
   @override
   Future<Route?> findByWaypoints(String fromWaypointId, String toWaypointId) async {
-    return _routes.values.firstWhere(
-      (r) => r.fromWaypointId == fromWaypointId && r.toWaypointId == toWaypointId,
-      orElse: () => null as Route,
-    );
+    try {
+      return _routes.values.firstWhere(
+        (r) => r.fromWaypointId == fromWaypointId && r.toWaypointId == toWaypointId,
+      );
+    } catch (e) {
+      return null;
+    }
   }
   
   @override
@@ -62,6 +65,7 @@ class MockMapboxService implements MapboxService {
     double endLat,
     double endLng, {
     bool alternatives = false,
+    RoutingProfile profile = RoutingProfile.driving,
   }) async {
     return MapboxRoute(
       geometry: '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
@@ -75,8 +79,9 @@ class MockMapboxService implements MapboxService {
     double startLat,
     double startLng,
     double endLat,
-    double endLng,
-  ) async {
+    double endLng, {
+    RoutingProfile profile = RoutingProfile.driving,
+  }) async {
     return [
       MapboxRoute(
         geometry: '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',

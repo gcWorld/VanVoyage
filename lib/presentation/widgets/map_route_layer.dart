@@ -171,11 +171,8 @@ class MapRouteLayer {
       final southwest = Point(coordinates: Position(minLng, minLat));
       final northeast = Point(coordinates: Position(maxLng, maxLat));
 
-      final bounds = CoordinateBounds(
-        southwest: southwest,
-        northeast: northeast,
-        infiniteBounds: false,
-      );
+      // Note: Mapbox Flutter SDK doesn't support direct bounds fitting yet
+      // Using center point instead
 
       await mapController.setCamera(
         CameraOptions(

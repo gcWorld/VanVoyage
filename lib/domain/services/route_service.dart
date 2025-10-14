@@ -187,7 +187,7 @@ class TripRouteSummary {
 
   String get formattedDuration {
     if (totalDurationHours > 0) {
-      return '$totalDurationHours hr ${remainingMinutes} min';
+      return '$totalDurationHours hr $remainingMinutes min';
     }
     return '$totalDurationMinutes min';
   }
