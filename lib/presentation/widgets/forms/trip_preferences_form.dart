@@ -47,17 +47,23 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
   @override
   void initState() {
     super.initState();
-    _maxDailyDistance = (widget.preferences?.maxDailyDrivingDistance ?? 300).toDouble();
-    _maxDailyTime = (widget.preferences?.maxDailyDrivingTime ?? 240).toDouble();
-    _preferredSpeed = (widget.preferences?.preferredDrivingSpeed ?? 80).toDouble();
+    // Clamp values to slider ranges to prevent assertion errors
+    _maxDailyDistance = (widget.preferences?.maxDailyDrivingDistance ?? 300).toDouble().clamp(100.0, 800.0);
+    _maxDailyTime = (widget.preferences?.maxDailyDrivingTime ?? 240).toDouble().clamp(60.0, 600.0);
+    _preferredSpeed = (widget.preferences?.preferredDrivingSpeed ?? 80).toDouble().clamp(50.0, 120.0);
     _includeRestStops = widget.preferences?.includeRestStops ?? true;
-    _restStopInterval = (widget.preferences?.restStopInterval ?? 120).toDouble();
+    _restStopInterval = (widget.preferences?.restStopInterval ?? 120).toDouble().clamp(60.0, 300.0);
     _avoidTolls = widget.preferences?.avoidTolls ?? false;
     _avoidHighways = widget.preferences?.avoidHighways ?? false;
     _preferScenicRoutes = widget.preferences?.preferScenicRoutes ?? false;
     
-    // Perform initial validation without setState since we're in initState
-    _violations = _validatePreferencesSync();
+    // Perform initial validation on original preference values, not clamped slider values
+    // This ensures we validate what the user actually set, even if outside slider range
+    if (widget.preferences != null) {
+      _violations = _validator.validate(widget.preferences!);
+    } else {
+      _violations = _validatePreferencesSync();
+    }
   }
   
   List<ConstraintViolation> _validatePreferencesSync() {
