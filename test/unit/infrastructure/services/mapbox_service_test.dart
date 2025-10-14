@@ -339,6 +339,38 @@ void main() {
         expect(results, isEmpty);
       });
     });
+
+    group('routing profiles', () {
+      test('uses specified routing profile', () async {
+        final responseBody = '''
+        {
+          "routes": [
+            {
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [[-122.4194, 37.7749], [-118.2437, 34.0522]]
+              },
+              "distance": 559000.0,
+              "duration": 19800.0
+            }
+          ]
+        }
+        ''';
+
+        testHttpClient.setResponse(
+          'directions/v5/mapbox/driving-traffic',
+          http.Response(responseBody, 200),
+        );
+
+        final result = await mapboxService.calculateRoute(
+          37.7749, -122.4194,
+          34.0522, -118.2437,
+          profile: RoutingProfile.drivingTraffic,
+        );
+
+        expect(result, isNotNull);
+      });
+    });
   });
 
   group('MapboxRoute', () {

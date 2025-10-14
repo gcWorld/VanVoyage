@@ -14,6 +14,7 @@ This document describes the implementation of route calculation, visualization, 
 - ✅ Calculate and display driving times and distances
 - ✅ Handle alternative routes
 - ✅ Share individual trip legs to navigation apps
+- ✅ Support different routing profiles (fastest, traffic-aware, walking, cycling)
 
 ## Files Added/Modified
 
@@ -80,14 +81,27 @@ Future<TripRouteSummary?> getTripRouteSummary(tripId)
 **New Features**:
 - Alternative routes support
 - Step-by-step navigation data
+- Multiple routing profiles (driving, traffic, walking, cycling)
+
+**Routing Profiles**:
+- `RoutingProfile.driving` - Fastest route by car (default)
+- `RoutingProfile.drivingTraffic` - Route considering current traffic conditions
+- `RoutingProfile.walking` - Walking route
+- `RoutingProfile.cycling` - Cycling route
 
 **Key Methods**:
 ```dart
-Future<MapboxRoute?> calculateRoute(startLat, startLng, endLat, endLng, {alternatives})
-Future<List<MapboxRoute>> calculateRouteWithAlternatives(startLat, startLng, endLat, endLng)
+Future<MapboxRoute?> calculateRoute(
+  startLat, startLng, endLat, endLng, 
+  {alternatives, profile}
+)
+Future<List<MapboxRoute>> calculateRouteWithAlternatives(
+  startLat, startLng, endLat, endLng,
+  {profile}
+)
 ```
 
-**Enhancement**: The `calculateRoute` method now accepts an `alternatives` parameter to request alternative routes from the API.
+**Enhancement**: The route calculation methods now accept a `profile` parameter to specify the type of route desired. This allows users to choose between fastest driving routes, traffic-aware routes, walking paths, or cycling routes.
 
 ### 3. NavigationShareService
 
@@ -165,6 +179,7 @@ RouteInfoCard(
 - Alternative routes display
 - Share individual segments
 - Refresh routes
+- Route type selector (fastest, traffic, walking, cycling)
 
 **Navigation**:
 ```dart
@@ -186,25 +201,35 @@ Navigator.push(
 ```dart
 final routeService = ref.read(routeServiceProvider);
 
-// Calculate single route
+// Calculate single route with default (fastest driving) profile
 final route = await routeService.calculateRoute(
   tripId,
   fromWaypoint,
   toWaypoint,
 );
 
-// Get alternatives
+// Calculate route with traffic-aware profile
+final trafficRoute = await routeService.calculateRoute(
+  tripId,
+  fromWaypoint,
+  toWaypoint,
+  profile: RoutingProfile.drivingTraffic,
+);
+
+// Get alternatives for a specific profile
 final alternatives = await routeService.calculateRouteWithAlternatives(
   tripId,
   fromWaypoint,
   toWaypoint,
+  profile: RoutingProfile.driving,
 );
 
-// Calculate entire trip route
+// Calculate entire trip route with cycling profile
 final routes = await routeService.calculateTripRoute(
   tripId,
   waypoints,
   forceRefresh: false,
+  profile: RoutingProfile.cycling,
 );
 ```
 
@@ -301,17 +326,57 @@ Routes are cached in the database to reduce API calls and improve performance:
 3. **Force Refresh**: Users can force route recalculation
 4. **Automatic Expiry**: Old routes are ignored based on `calculated_at` timestamp
 
+## Routing Profiles
+
+Different routing profiles optimize routes for different travel modes:
+
+### Profile Types
+
+1. **Fastest (Driving)** - `RoutingProfile.driving`
+   - Default profile for car travel
+   - Optimizes for fastest time
+   - Uses highways and main roads
+   - Best for: Road trips, general travel
+
+2. **Traffic-Aware (Driving)** - `RoutingProfile.drivingTraffic`
+   - Considers real-time traffic conditions
+   - Avoids congested areas
+   - Updates based on current traffic data
+   - Best for: Urban travel, time-sensitive trips
+
+3. **Walking** - `RoutingProfile.walking`
+   - Pedestrian-friendly routes
+   - Uses sidewalks and walking paths
+   - Shorter distances preferred
+   - Best for: City exploration, hiking trails
+
+4. **Cycling** - `RoutingProfile.cycling`
+   - Bike-friendly routes
+   - Uses bike lanes and paths
+   - Considers elevation and road types
+   - Best for: Bike tours, cycling adventures
+
+### Selecting Profiles
+
+Users can select routing profiles in the TripRouteScreen:
+1. Tap the route type icon in the app bar
+2. Choose from Fastest, Traffic, Walking, or Cycling
+3. Routes automatically recalculate with the new profile
+
+**Note**: For scenic routes, use the `driving` profile as it tends to favor well-maintained roads. Mapbox does not have a dedicated "scenic" profile, but you can combine route alternatives with manual selection to find more scenic options.
+
 ## Alternative Routes
 
 Alternative routes provide users with options:
 
-1. **API Request**: Mapbox returns up to 3 alternative routes
+1. **API Request**: Mapbox returns up to 3 alternative routes for the selected profile
 2. **Visualization**: Routes are displayed with different colors:
    - Primary (fastest): Blue
    - Alternative 1: Dark grey
    - Alternative 2: Light grey
 3. **Selection**: Users can tap to select preferred route
 4. **Metadata**: Each route shows distance and duration
+5. **Profile-Specific**: Alternatives are calculated based on the selected routing profile
 
 ## Testing
 

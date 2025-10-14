@@ -16,6 +16,7 @@ class RouteService {
     Waypoint fromWaypoint,
     Waypoint toWaypoint, {
     bool forceRefresh = false,
+    RoutingProfile profile = RoutingProfile.driving,
   }) async {
     // Check cache first if not forcing refresh
     if (!forceRefresh) {
@@ -39,6 +40,7 @@ class RouteService {
       fromWaypoint.longitude,
       toWaypoint.latitude,
       toWaypoint.longitude,
+      profile: profile,
     );
 
     if (mapboxRoute == null) {
@@ -63,13 +65,15 @@ class RouteService {
   Future<List<domain.Route>> calculateRouteWithAlternatives(
     String tripId,
     Waypoint fromWaypoint,
-    Waypoint toWaypoint,
-  ) async {
+    Waypoint toWaypoint, {
+    RoutingProfile profile = RoutingProfile.driving,
+  }) async {
     final mapboxRoutes = await _mapboxService.calculateRouteWithAlternatives(
       fromWaypoint.latitude,
       fromWaypoint.longitude,
       toWaypoint.latitude,
       toWaypoint.longitude,
+      profile: profile,
     );
 
     final routes = <domain.Route>[];
@@ -98,6 +102,7 @@ class RouteService {
     String tripId,
     List<Waypoint> waypoints, {
     bool forceRefresh = false,
+    RoutingProfile profile = RoutingProfile.driving,
   }) async {
     if (waypoints.length < 2) {
       return [];
@@ -110,6 +115,7 @@ class RouteService {
         waypoints[i],
         waypoints[i + 1],
         forceRefresh: forceRefresh,
+        profile: profile,
       );
 
       if (route != null) {

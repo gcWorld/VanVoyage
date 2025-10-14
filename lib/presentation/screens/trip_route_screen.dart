@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../domain/entities/route.dart' as domain;
 import '../../domain/entities/waypoint.dart';
+import '../../infrastructure/services/mapbox_service.dart';
 import '../../providers.dart';
 import '../widgets/map_route_layer.dart';
 import '../widgets/route_info_card.dart';
@@ -29,6 +30,7 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
   bool _showingAlternatives = false;
   int _selectedRouteIndex = 0;
   String? _errorMessage;
+  RoutingProfile _selectedProfile = RoutingProfile.driving;
 
   @override
   void initState() {
@@ -55,6 +57,7 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
         widget.tripId,
         widget.waypoints,
         forceRefresh: false,
+        profile: _selectedProfile,
       );
 
       if (mounted) {
@@ -91,6 +94,7 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
         widget.tripId,
         from,
         to,
+        profile: _selectedProfile,
       );
 
       if (mounted) {
@@ -220,6 +224,7 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
         widget.tripId,
         widget.waypoints,
         forceRefresh: true,
+        profile: _selectedProfile,
       );
 
       if (mounted) {
@@ -259,12 +264,97 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
     return '${minutes}min';
   }
 
+  String _getProfileLabel(RoutingProfile profile) {
+    switch (profile) {
+      case RoutingProfile.driving:
+        return 'Fastest';
+      case RoutingProfile.drivingTraffic:
+        return 'Traffic';
+      case RoutingProfile.walking:
+        return 'Walking';
+      case RoutingProfile.cycling:
+        return 'Cycling';
+    }
+  }
+
+  IconData _getProfileIcon(RoutingProfile profile) {
+    switch (profile) {
+      case RoutingProfile.driving:
+        return Icons.directions_car;
+      case RoutingProfile.drivingTraffic:
+        return Icons.traffic;
+      case RoutingProfile.walking:
+        return Icons.directions_walk;
+      case RoutingProfile.cycling:
+        return Icons.directions_bike;
+    }
+  }
+
+  void _showProfileSelector() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Select Route Type',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Divider(height: 1),
+            ...RoutingProfile.values.map((profile) => ListTile(
+                  leading: Icon(_getProfileIcon(profile)),
+                  title: Text(_getProfileLabel(profile)),
+                  subtitle: Text(_getProfileDescription(profile)),
+                  trailing: _selectedProfile == profile
+                      ? const Icon(Icons.check, color: Colors.blue)
+                      : null,
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      _selectedProfile = profile;
+                      _showingAlternatives = false;
+                    });
+                    _refreshRoutes();
+                  },
+                )),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getProfileDescription(RoutingProfile profile) {
+    switch (profile) {
+      case RoutingProfile.driving:
+        return 'Fastest route by car';
+      case RoutingProfile.drivingTraffic:
+        return 'Route considering current traffic';
+      case RoutingProfile.walking:
+        return 'Walking route';
+      case RoutingProfile.cycling:
+        return 'Cycling route';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Trip Route'),
         actions: [
+          IconButton(
+            icon: Icon(_getProfileIcon(_selectedProfile)),
+            tooltip: 'Route type: ${_getProfileLabel(_selectedProfile)}',
+            onPressed: _isLoadingRoutes ? null : _showProfileSelector,
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh routes',
