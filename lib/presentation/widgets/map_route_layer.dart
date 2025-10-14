@@ -167,12 +167,8 @@ class MapRouteLayer {
         if (lat > maxLat) maxLat = lat;
       }
 
-      // Create camera options with bounds
-      final southwest = Point(coordinates: Position(minLng, minLat));
-      final northeast = Point(coordinates: Position(maxLng, maxLat));
-
       // Note: Mapbox Flutter SDK doesn't support direct bounds fitting yet
-      // Using center point instead
+      // Using center point instead of bounds
 
       await mapController.setCamera(
         CameraOptions(
@@ -184,9 +180,6 @@ class MapRouteLayer {
           ),
         ),
       );
-
-      // Note: Mapbox Flutter SDK might not support direct bounds fitting
-      // This is a simplified approach
     } catch (e) {
       debugPrint('Error fitting map to route: $e');
     }
