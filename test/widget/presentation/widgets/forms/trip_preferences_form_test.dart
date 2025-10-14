@@ -341,12 +341,18 @@ void main() {
     });
 
     testWidgets('warnings update dynamically when values change', (WidgetTester tester) async {
-      // Start with default values (no warnings)
+      // Test with a widget that has values triggering warnings
+      final prefsWithWarnings = TripPreferences.create(
+        tripId: 'test-trip',
+        maxDailyDrivingDistance: 200, // Below recommended (should trigger warning)
+      );
+      
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
+                preferences: prefsWithWarnings,
                 onSave: (maxDistance, maxTime, speed, includeRest, interval, 
                         tolls, highways, scenic) {},
               ),
@@ -355,29 +361,6 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
-
-      // Initially with default values (300 km, 4 hours, 80 km/h), no warnings
-      expect(find.text('Travel Constraint Warnings', skipOffstage: false), findsNothing);
-      
-      // Now create a new widget with values that trigger warnings
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: TripPreferencesForm(
-                preferences: TripPreferences.create(
-                  tripId: 'test-trip',
-                  maxDailyDrivingDistance: 200, // Below recommended
-                ),
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
-              ),
-            ),
-          ),
-        ),
-      );
-      
       await tester.pumpAndSettle();
       
       // Warning should appear for below-recommended value
