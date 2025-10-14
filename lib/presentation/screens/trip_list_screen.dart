@@ -5,6 +5,7 @@ import '../../domain/enums/trip_status.dart';
 import '../../providers.dart';
 import 'trip_planning_screen.dart';
 import 'trip_detail_screen.dart';
+import 'route_demo_screen.dart';
 import 'package:intl/intl.dart';
 
 /// Screen that displays a list of all trips
@@ -158,6 +159,18 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
         title: const Text('My Trips'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.map),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RouteDemoScreen(),
+                ),
+              );
+            },
+            tooltip: 'Route Demo',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadTrips,
