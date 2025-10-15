@@ -1,6 +1,37 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+/// Routing profile for route calculations
+enum RoutingProfile {
+  /// Standard driving route (fastest route considering traffic)
+  driving,
+  
+  /// Driving route with real-time traffic data
+  drivingTraffic,
+  
+  /// Walking route
+  walking,
+  
+  /// Cycling route
+  cycling,
+}
+
+/// Extension to convert routing profile to API string
+extension RoutingProfileExtension on RoutingProfile {
+  String toApiString() {
+    switch (this) {
+      case RoutingProfile.driving:
+        return 'driving';
+      case RoutingProfile.drivingTraffic:
+        return 'driving-traffic';
+      case RoutingProfile.walking:
+        return 'walking';
+      case RoutingProfile.cycling:
+        return 'cycling';
+    }
+  }
+}
+
 /// Service for interacting with Mapbox APIs
 class MapboxService {
   final String _apiKey;
@@ -107,11 +138,15 @@ class MapboxService {
     double startLat,
     double startLng,
     double endLat,
-    double endLng,
-  ) async {
+    double endLng, {
+    bool alternatives = false,
+    RoutingProfile profile = RoutingProfile.driving,
+  }) async {
+    final alternativesParam = alternatives ? '&alternatives=true' : '';
+    final profileString = profile.toApiString();
     final url = Uri.parse(
-      'https://api.mapbox.com/directions/v5/mapbox/driving/$startLng,$startLat;$endLng,$endLat?'
-      'geometries=geojson&overview=full&access_token=$_apiKey',
+      'https://api.mapbox.com/directions/v5/mapbox/$profileString/$startLng,$startLat;$endLng,$endLat?'
+      'geometries=geojson&overview=full&steps=true$alternativesParam&access_token=$_apiKey',
     );
 
     try {
@@ -139,6 +174,46 @@ class MapboxService {
     }
 
     return null;
+  }
+
+  /// Calculate route with alternative routes
+  Future<List<MapboxRoute>> calculateRouteWithAlternatives(
+    double startLat,
+    double startLng,
+    double endLat,
+    double endLng, {
+    RoutingProfile profile = RoutingProfile.driving,
+  }) async {
+    final profileString = profile.toApiString();
+    final url = Uri.parse(
+      'https://api.mapbox.com/directions/v5/mapbox/$profileString/$startLng,$startLat;$endLng,$endLat?'
+      'geometries=geojson&overview=full&steps=true&alternatives=true&access_token=$_apiKey',
+    );
+
+    try {
+      final response = await _httpClient.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final routes = data['routes'] as List;
+
+        return routes.map((route) {
+          final geometry = route['geometry'];
+          final distance = route['distance'] as num;
+          final duration = route['duration'] as num;
+
+          return MapboxRoute(
+            geometry: json.encode(geometry),
+            distanceMeters: distance.toDouble(),
+            durationSeconds: duration.toDouble(),
+          );
+        }).toList();
+      }
+    } catch (e) {
+      throw Exception('Failed to calculate routes: $e');
+    }
+
+    return [];
   }
 
   void dispose() {
