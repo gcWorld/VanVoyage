@@ -237,12 +237,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1200, // Force a large height to render all content
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval,
-                          tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -262,12 +259,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1200, // Force a large height to render all content
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval,
-                          tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -285,12 +279,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1400,
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval,
-                          tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
