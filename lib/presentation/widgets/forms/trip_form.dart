@@ -342,7 +342,7 @@ class _TripFormState extends State<TripForm> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Return transit: ${_locationEndDate != null && _endDate != null ? "${dateFormat.format(_locationEndDate!)} - ${dateFormat.format(_endDate)}" : "Not set"}',
+                        'Return transit: ${_locationEndDate != null ? "${dateFormat.format(_locationEndDate!)} - ${dateFormat.format(_endDate)}" : "Not set"}',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),

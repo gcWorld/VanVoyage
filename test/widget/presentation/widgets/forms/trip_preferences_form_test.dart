@@ -11,8 +11,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -37,8 +37,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -60,8 +60,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -83,8 +83,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -106,8 +106,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -128,8 +128,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -152,8 +152,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -191,8 +191,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {
                   savedMaxDistance = maxDistance;
                   savedMaxTime = maxTime;
                   savedSpeed = speed;
@@ -236,8 +236,8 @@ void main() {
               child: SizedBox(
                 height: 1200, // Force a large height to render all content
                 child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                          tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
                 ),
               ),
             ),
@@ -260,8 +260,8 @@ void main() {
               child: SizedBox(
                 height: 1200, // Force a large height to render all content
                 child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                          tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
                 ),
               ),
             ),
@@ -283,8 +283,8 @@ void main() {
               child: SizedBox(
                 height: 1400,
                 child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
+                  onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                          tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
                 ),
               ),
             ),
@@ -324,8 +324,8 @@ void main() {
             body: SingleChildScrollView(
               child: TripPreferencesForm(
                 preferences: extremePrefs,
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -353,8 +353,8 @@ void main() {
             body: SingleChildScrollView(
               child: TripPreferencesForm(
                 preferences: prefsWithWarnings,
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -386,8 +386,8 @@ void main() {
             body: SingleChildScrollView(
               child: TripPreferencesForm(
                 preferences: inconsistentPrefs,
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),

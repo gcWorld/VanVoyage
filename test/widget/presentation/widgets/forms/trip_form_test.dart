@@ -10,7 +10,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
             ),
           ),
         ),
@@ -29,7 +29,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
             ),
           ),
         ),
@@ -48,7 +48,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
             ),
           ),
         ),
@@ -75,7 +75,7 @@ void main() {
           home: Scaffold(
             body: TripForm(
               trip: trip,
-              onSubmit: (name, description, startDate, endDate) {},
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
             ),
           ),
         ),
@@ -94,7 +94,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
             ),
           ),
         ),
@@ -111,7 +111,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
             ),
           ),
         ),
@@ -140,7 +140,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {
+              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {
                 submittedName = name;
                 submittedDescription = description;
                 submittedStartDate = startDate;
