@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseProvider {
   static Database? _database;
   static const String dbName = 'vanvoyage.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
 
   /// Gets the database instance, initializing if necessary
   static Future<Database> get database async {
@@ -45,9 +45,12 @@ class DatabaseProvider {
     int oldVersion,
     int newVersion,
   ) async {
-    // Future migrations will go here
     if (oldVersion < 2) {
-      // Upgrade to version 2 when needed
+      // Add transit and location date fields to trips table
+      await db.execute('ALTER TABLE trips ADD COLUMN transit_start_date INTEGER');
+      await db.execute('ALTER TABLE trips ADD COLUMN transit_end_date INTEGER');
+      await db.execute('ALTER TABLE trips ADD COLUMN location_start_date INTEGER');
+      await db.execute('ALTER TABLE trips ADD COLUMN location_end_date INTEGER');
     }
   }
 
@@ -61,6 +64,10 @@ class DatabaseProvider {
         description TEXT,
         start_date INTEGER NOT NULL,
         end_date INTEGER NOT NULL,
+        transit_start_date INTEGER,
+        transit_end_date INTEGER,
+        location_start_date INTEGER,
+        location_end_date INTEGER,
         status TEXT NOT NULL CHECK(status IN ('PLANNING', 'ACTIVE', 'COMPLETED', 'ARCHIVED')),
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL

@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import '../../../domain/entities/waypoint.dart';
 import '../../../domain/enums/waypoint_type.dart';
 import '../../../infrastructure/services/mapbox_service.dart';
 import '../../../providers.dart';
+import '../waypoint_list.dart';
 
 /// A widget for picking destinations with map integration
 class DestinationPicker extends ConsumerStatefulWidget {
@@ -14,10 +16,26 @@ class DestinationPicker extends ConsumerStatefulWidget {
   /// Initial location to display (optional)
   final ({double latitude, double longitude})? initialLocation;
   
+  /// List of existing waypoints
+  final List<Waypoint> waypoints;
+  
+  /// Callback when waypoints are reordered
+  final Function(int oldIndex, int newIndex)? onReorder;
+  
+  /// Callback when a waypoint is deleted
+  final Function(Waypoint)? onDelete;
+  
+  /// Callback when waypoints should be optimized
+  final Function()? onOptimize;
+  
   const DestinationPicker({
     super.key,
     required this.onLocationSelected,
     this.initialLocation,
+    this.waypoints = const [],
+    this.onReorder,
+    this.onDelete,
+    this.onOptimize,
   });
 
   @override
@@ -233,14 +251,34 @@ class _DestinationPickerState extends ConsumerState<DestinationPicker> {
   
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        // Location search and name input
-        Padding(
-          padding: const EdgeInsets.all(16.0),
+        // Left side: Waypoint list
+        if (widget.waypoints.isNotEmpty)
+          SizedBox(
+            width: 300,
+            child: WaypointList(
+              waypoints: widget.waypoints,
+              onReorder: widget.onReorder,
+              onDelete: widget.onDelete,
+              onOptimize: widget.onOptimize,
+            ),
+          ),
+        
+        // Divider
+        if (widget.waypoints.isNotEmpty)
+          const VerticalDivider(width: 1),
+        
+        // Right side: Destination picker (existing functionality)
+        Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Location search and name input
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
               // Search field with autocomplete
               TextField(
                 controller: _searchController,
@@ -375,72 +413,75 @@ class _DestinationPickerState extends ConsumerState<DestinationPicker> {
           ),
         ),
         
-        // Map view
-        Expanded(
-          child: Stack(
-            children: [
-              GestureDetector(
-                onTapDown: (TapDownDetails details) {
-                  _onMapTap(details.localPosition);
-                },
-                child: MapWidget(
-                  key: const ValueKey('destinationPickerMap'),
-                  cameraOptions: CameraOptions(
-                    center: widget.initialLocation != null
-                        ? Point(
-                            coordinates: Position(
-                              widget.initialLocation!.longitude,
-                              widget.initialLocation!.latitude,
-                            ),
-                          )
-                        : Point(
-                            coordinates: Position(-122.4194, 37.7749),
-                          ), // SF default
-                    zoom: 12.0,
-                  ),
-                  styleUri: MapboxStyles.OUTDOORS,
-                  onMapCreated: _onMapCreated,
+              // Map view
+              Expanded(
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        _onMapTap(details.localPosition);
+                      },
+                      child: MapWidget(
+                        key: const ValueKey('destinationPickerMap'),
+                        cameraOptions: CameraOptions(
+                          center: widget.initialLocation != null
+                              ? Point(
+                                  coordinates: Position(
+                                    widget.initialLocation!.longitude,
+                                    widget.initialLocation!.latitude,
+                                  ),
+                                )
+                              : Point(
+                                  coordinates: Position(-122.4194, 37.7749),
+                                ), // SF default
+                          zoom: 12.0,
+                        ),
+                        styleUri: MapboxStyles.OUTDOORS,
+                        onMapCreated: _onMapCreated,
+                      ),
+                    ),
+                    
+                    // Instruction overlay
+                    Positioned(
+                      top: 16,
+                      left: 16,
+                      right: 16,
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.touch_app, size: 20),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Search for a location above or tap on the map to select',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
-              // Instruction overlay
-              Positioned(
-                top: 16,
-                left: 16,
-                right: 16,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.touch_app, size: 20),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Search for a location above or tap on the map to select',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
+              // Confirm button
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton.icon(
+                  onPressed: _confirmSelection,
+                  icon: const Icon(Icons.check),
+                  label: const Text('Confirm Location'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(16.0),
                   ),
                 ),
               ),
             ],
-          ),
-        ),
-        
-        // Confirm button
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
-          child: ElevatedButton.icon(
-            onPressed: _confirmSelection,
-            icon: const Icon(Icons.check),
-            label: const Text('Confirm Location'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.all(16.0),
-            ),
           ),
         ),
       ],

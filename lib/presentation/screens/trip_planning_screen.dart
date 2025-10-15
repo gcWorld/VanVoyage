@@ -78,6 +78,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     String? description,
     DateTime startDate,
     DateTime endDate,
+    DateTime? transitStartDate,
+    DateTime? transitEndDate,
+    DateTime? locationStartDate,
+    DateTime? locationEndDate,
   ) async {
     setState(() {
       _isLoading = true;
@@ -93,6 +97,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           description: description,
           startDate: startDate,
           endDate: endDate,
+          transitStartDate: transitStartDate,
+          transitEndDate: transitEndDate,
+          locationStartDate: locationStartDate,
+          locationEndDate: locationEndDate,
           status: TripStatus.planning,
         );
         await tripRepo.insert(_trip!);
@@ -103,6 +111,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           description: description,
           startDate: startDate,
           endDate: endDate,
+          transitStartDate: transitStartDate,
+          transitEndDate: transitEndDate,
+          locationStartDate: locationStartDate,
+          locationEndDate: locationEndDate,
         );
         await tripRepo.update(_trip!);
       }
@@ -181,6 +193,111 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
         );
       }
     }
+  }
+
+  Future<void> _onWaypointReorder(int oldIndex, int newIndex) async {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final waypointRepo = await ref.read(waypointRepositoryProvider.future);
+      
+      // Reorder in memory
+      final waypoint = _waypoints.removeAt(oldIndex);
+      _waypoints.insert(newIndex, waypoint);
+      
+      // Update sequence orders and save to database
+      for (int i = 0; i < _waypoints.length; i++) {
+        final updated = _waypoints[i].copyWith(sequenceOrder: i);
+        _waypoints[i] = updated;
+        await waypointRepo.update(updated);
+      }
+      
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Waypoint order updated')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error reordering waypoints: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _onWaypointDelete(Waypoint waypoint) async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Waypoint'),
+        content: Text('Are you sure you want to delete "${waypoint.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirmed != true) return;
+    
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final waypointRepo = await ref.read(waypointRepositoryProvider.future);
+      await waypointRepo.delete(waypoint.id);
+      
+      if (mounted) {
+        setState(() {
+          _waypoints.removeWhere((w) => w.id == waypoint.id);
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Deleted waypoint: ${waypoint.name}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error deleting waypoint: $e')),
+        );
+      }
+    }
+  }
+
+  void _onWaypointOptimize() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Route optimization coming soon!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
   
   void _onPreferencesSave(
@@ -265,6 +382,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           height: 500,
           child: DestinationPicker(
             onLocationSelected: _onLocationSelected,
+            waypoints: _waypoints,
+            onReorder: _onWaypointReorder,
+            onDelete: _onWaypointDelete,
+            onOptimize: _onWaypointOptimize,
           ),
         ),
         isActive: _currentStep >= 1,
