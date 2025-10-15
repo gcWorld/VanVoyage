@@ -166,10 +166,14 @@ void main() {
       // Rest stop interval should be present
       expect(find.text('Rest Stop Interval'), findsWidgets);
 
-      // Toggle off include rest stops (scroll to make it visible first)
-      await tester.ensureVisible(find.byType(SwitchListTile).last);
+      // Toggle off include rest stops (find by text instead of position)
+      final restStopsSwitch = find.ancestor(
+        of: find.text('Include Rest Stops'),
+        matching: find.byType(SwitchListTile),
+      );
+      await tester.ensureVisible(restStopsSwitch);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(SwitchListTile).last);
+      await tester.tap(restStopsSwitch);
       await tester.pumpAndSettle();
 
       // Rest stop interval should now be hidden
@@ -248,6 +252,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should have 4 sliders total: distance, time, speed, rest interval (when rest stops enabled)
+      // Phase-specific constraints are disabled by default, so no additional sliders
       final allSliders = find.byType(Slider);
       expect(allSliders, findsNWidgets(4));
     });
@@ -271,8 +276,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Should have 4 switches: avoid tolls, avoid highways, prefer scenic, include rest stops
-      expect(find.byType(SwitchListTile), findsNWidgets(4));
+      // Should have 5 switches: avoid tolls, avoid highways, prefer scenic, include rest stops, use phase constraints
+      expect(find.byType(SwitchListTile), findsNWidgets(5));
     });
 
     testWidgets('displays warnings for values outside recommended range', (WidgetTester tester) async {
