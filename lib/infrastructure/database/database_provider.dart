@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseProvider {
   static Database? _database;
   static const String dbName = 'vanvoyage.db';
-  static const int dbVersion = 2;
+  static const int dbVersion = 3;
 
   /// Gets the database instance, initializing if necessary
   static Future<Database> get database async {
@@ -51,6 +51,14 @@ class DatabaseProvider {
       await db.execute('ALTER TABLE trips ADD COLUMN transit_end_date INTEGER');
       await db.execute('ALTER TABLE trips ADD COLUMN location_start_date INTEGER');
       await db.execute('ALTER TABLE trips ADD COLUMN location_end_date INTEGER');
+    }
+    
+    if (oldVersion < 3) {
+      // Add phase-specific constraint fields to trip_preferences table
+      await db.execute('ALTER TABLE trip_preferences ADD COLUMN transit_max_daily_driving_distance INTEGER');
+      await db.execute('ALTER TABLE trip_preferences ADD COLUMN transit_max_daily_driving_time INTEGER');
+      await db.execute('ALTER TABLE trip_preferences ADD COLUMN vacation_max_daily_driving_distance INTEGER');
+      await db.execute('ALTER TABLE trip_preferences ADD COLUMN vacation_max_daily_driving_time INTEGER');
     }
   }
 
@@ -141,6 +149,10 @@ class DatabaseProvider {
         avoid_tolls INTEGER NOT NULL DEFAULT 0 CHECK(avoid_tolls IN (0, 1)),
         avoid_highways INTEGER NOT NULL DEFAULT 0 CHECK(avoid_highways IN (0, 1)),
         prefer_scenic_routes INTEGER NOT NULL DEFAULT 0 CHECK(prefer_scenic_routes IN (0, 1)),
+        transit_max_daily_driving_distance INTEGER,
+        transit_max_daily_driving_time INTEGER,
+        vacation_max_daily_driving_distance INTEGER,
+        vacation_max_daily_driving_time INTEGER,
         FOREIGN KEY (trip_id) REFERENCES trips(id) ON DELETE CASCADE
       )
     ''');

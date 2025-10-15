@@ -19,6 +19,10 @@ class TripPreferencesForm extends StatefulWidget {
     bool avoidTolls,
     bool avoidHighways,
     bool preferScenicRoutes,
+    int? transitMaxDailyDrivingDistance,
+    int? transitMaxDailyDrivingTime,
+    int? vacationMaxDailyDrivingDistance,
+    int? vacationMaxDailyDrivingTime,
   ) onSave;
   
   const TripPreferencesForm({
@@ -41,6 +45,13 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
   late bool _avoidHighways;
   late bool _preferScenicRoutes;
   
+  // Phase-specific constraints
+  bool _usePhaseConstraints = false;
+  double? _transitMaxDailyDistance;
+  double? _transitMaxDailyTime;
+  double? _vacationMaxDailyDistance;
+  double? _vacationMaxDailyTime;
+  
   final _validator = const TravelConstraintValidator();
   List<ConstraintViolation> _violations = [];
   
@@ -56,6 +67,18 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
     _avoidTolls = widget.preferences?.avoidTolls ?? false;
     _avoidHighways = widget.preferences?.avoidHighways ?? false;
     _preferScenicRoutes = widget.preferences?.preferScenicRoutes ?? false;
+    
+    // Initialize phase-specific constraints
+    if (widget.preferences?.transitMaxDailyDrivingDistance != null ||
+        widget.preferences?.transitMaxDailyDrivingTime != null ||
+        widget.preferences?.vacationMaxDailyDrivingDistance != null ||
+        widget.preferences?.vacationMaxDailyDrivingTime != null) {
+      _usePhaseConstraints = true;
+      _transitMaxDailyDistance = widget.preferences?.transitMaxDailyDrivingDistance?.toDouble().clamp(100.0, 800.0);
+      _transitMaxDailyTime = widget.preferences?.transitMaxDailyDrivingTime?.toDouble().clamp(60.0, 600.0);
+      _vacationMaxDailyDistance = widget.preferences?.vacationMaxDailyDrivingDistance?.toDouble().clamp(100.0, 800.0);
+      _vacationMaxDailyTime = widget.preferences?.vacationMaxDailyDrivingTime?.toDouble().clamp(60.0, 600.0);
+    }
     
     // Perform initial validation on original preference values, not clamped slider values
     // This ensures we validate what the user actually set, even if outside slider range
@@ -99,6 +122,10 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
       _avoidTolls,
       _avoidHighways,
       _preferScenicRoutes,
+      _usePhaseConstraints ? _transitMaxDailyDistance?.toInt() : null,
+      _usePhaseConstraints ? _transitMaxDailyTime?.toInt() : null,
+      _usePhaseConstraints ? _vacationMaxDailyDistance?.toInt() : null,
+      _usePhaseConstraints ? _vacationMaxDailyTime?.toInt() : null,
     );
   }
   
@@ -368,6 +395,153 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
           ),
           const SizedBox(height: 16),
           ..._violations.map((violation) => _buildViolationCard(context, violation)),
+          const SizedBox(height: 24),
+        ],
+        
+        // Phase-specific constraints section
+        Card(
+          child: SwitchListTile(
+            title: const Text('Use Phase-Specific Constraints'),
+            subtitle: const Text('Different limits for transit vs vacation phases'),
+            value: _usePhaseConstraints,
+            onChanged: (value) {
+              setState(() {
+                _usePhaseConstraints = value;
+                if (value) {
+                  // Initialize with reasonable defaults
+                  _transitMaxDailyDistance ??= 500.0; // Longer for transit
+                  _transitMaxDailyTime ??= 360.0; // More time for transit
+                  _vacationMaxDailyDistance ??= 200.0; // Shorter for vacation
+                  _vacationMaxDailyTime ??= 180.0; // Less time for vacation
+                }
+              });
+            },
+          ),
+        ),
+        
+        if (_usePhaseConstraints) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Transit Phase Constraints',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Max Daily Distance (Transit)'),
+                      Text(
+                        '${_transitMaxDailyDistance?.toInt() ?? 500} km',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _transitMaxDailyDistance ?? 500.0,
+                    min: 100,
+                    max: 800,
+                    divisions: 70,
+                    label: '${_transitMaxDailyDistance?.toInt() ?? 500} km',
+                    onChanged: (value) {
+                      setState(() {
+                        _transitMaxDailyDistance = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Max Daily Time (Transit)'),
+                      Text(
+                        '${_transitMaxDailyTime?.toInt() ?? 360} min',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _transitMaxDailyTime ?? 360.0,
+                    min: 60,
+                    max: 600,
+                    divisions: 54,
+                    label: '${_transitMaxDailyTime?.toInt() ?? 360} min',
+                    onChanged: (value) {
+                      setState(() {
+                        _transitMaxDailyTime = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Vacation Phase Constraints',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Max Daily Distance (Vacation)'),
+                      Text(
+                        '${_vacationMaxDailyDistance?.toInt() ?? 200} km',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _vacationMaxDailyDistance ?? 200.0,
+                    min: 100,
+                    max: 800,
+                    divisions: 70,
+                    label: '${_vacationMaxDailyDistance?.toInt() ?? 200} km',
+                    onChanged: (value) {
+                      setState(() {
+                        _vacationMaxDailyDistance = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Max Daily Time (Vacation)'),
+                      Text(
+                        '${_vacationMaxDailyTime?.toInt() ?? 180} min',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _vacationMaxDailyTime ?? 180.0,
+                    min: 60,
+                    max: 600,
+                    divisions: 54,
+                    label: '${_vacationMaxDailyTime?.toInt() ?? 180} min',
+                    onChanged: (value) {
+                      setState(() {
+                        _vacationMaxDailyTime = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 24),
         ],
         

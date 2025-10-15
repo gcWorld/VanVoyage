@@ -5,6 +5,7 @@ import '../../domain/entities/trip_preferences.dart';
 import '../../domain/entities/waypoint.dart';
 import '../../domain/enums/trip_status.dart';
 import '../../domain/enums/waypoint_type.dart';
+import '../../domain/services/route_optimizer.dart';
 import '../widgets/forms/trip_form.dart';
 import '../widgets/forms/destination_picker.dart';
 import '../widgets/forms/trip_preferences_form.dart';
@@ -291,13 +292,58 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     }
   }
 
-  void _onWaypointOptimize() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Route optimization coming soon!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  Future<void> _onWaypointOptimize() async {
+    if (_waypoints.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Need at least 3 waypoints to optimize'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final optimizer = RouteOptimizer();
+      final optimized = optimizer.optimizeRoute(_waypoints);
+
+      // Update sequence orders and save to database
+      final waypointRepo = await ref.read(waypointRepositoryProvider.future);
+      
+      for (int i = 0; i < optimized.length; i++) {
+        final updated = optimized[i].copyWith(sequenceOrder: i);
+        optimized[i] = updated;
+        await waypointRepo.update(updated);
+      }
+
+      if (mounted) {
+        setState(() {
+          _waypoints.clear();
+          _waypoints.addAll(optimized);
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Route optimized! Waypoints reordered for minimal distance.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error optimizing route: $e')),
+        );
+      }
+    }
   }
   
   void _onPreferencesSave(
@@ -309,6 +355,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     bool avoidTolls,
     bool avoidHighways,
     bool preferScenicRoutes,
+    int? transitMaxDailyDrivingDistance,
+    int? transitMaxDailyDrivingTime,
+    int? vacationMaxDailyDrivingDistance,
+    int? vacationMaxDailyDrivingTime,
   ) {
     if (_trip == null) return;
     
@@ -323,6 +373,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       avoidTolls: avoidTolls,
       avoidHighways: avoidHighways,
       preferScenicRoutes: preferScenicRoutes,
+      transitMaxDailyDrivingDistance: transitMaxDailyDrivingDistance,
+      transitMaxDailyDrivingTime: transitMaxDailyDrivingTime,
+      vacationMaxDailyDrivingDistance: vacationMaxDailyDrivingDistance,
+      vacationMaxDailyDrivingTime: vacationMaxDailyDrivingTime,
     );
     
     ScaffoldMessenger.of(context).showSnackBar(
