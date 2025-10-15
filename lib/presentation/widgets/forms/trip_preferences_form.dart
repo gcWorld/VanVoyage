@@ -69,16 +69,7 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
     _preferScenicRoutes = widget.preferences?.preferScenicRoutes ?? false;
     
     // Initialize phase-specific constraints
-    if (widget.preferences?.transitMaxDailyDrivingDistance != null ||
-        widget.preferences?.transitMaxDailyDrivingTime != null ||
-        widget.preferences?.vacationMaxDailyDrivingDistance != null ||
-        widget.preferences?.vacationMaxDailyDrivingTime != null) {
-      _usePhaseConstraints = true;
-      _transitMaxDailyDistance = widget.preferences?.transitMaxDailyDrivingDistance?.toDouble().clamp(100.0, 800.0);
-      _transitMaxDailyTime = widget.preferences?.transitMaxDailyDrivingTime?.toDouble().clamp(60.0, 600.0);
-      _vacationMaxDailyDistance = widget.preferences?.vacationMaxDailyDrivingDistance?.toDouble().clamp(100.0, 800.0);
-      _vacationMaxDailyTime = widget.preferences?.vacationMaxDailyDrivingTime?.toDouble().clamp(60.0, 600.0);
-    }
+    _initializePhaseConstraints();
     
     // Perform initial validation on original preference values, not clamped slider values
     // This ensures we validate what the user actually set, even if outside slider range
@@ -86,6 +77,24 @@ class _TripPreferencesFormState extends State<TripPreferencesForm> {
       _violations = _validator.validate(widget.preferences!);
     } else {
       _violations = _validatePreferencesSync();
+    }
+  }
+
+  void _initializePhaseConstraints() {
+    final prefs = widget.preferences;
+    if (prefs == null) return;
+    
+    final hasPhaseConstraints = prefs.transitMaxDailyDrivingDistance != null ||
+        prefs.transitMaxDailyDrivingTime != null ||
+        prefs.vacationMaxDailyDrivingDistance != null ||
+        prefs.vacationMaxDailyDrivingTime != null;
+    
+    if (hasPhaseConstraints) {
+      _usePhaseConstraints = true;
+      _transitMaxDailyDistance = prefs.transitMaxDailyDrivingDistance?.toDouble().clamp(100.0, 800.0);
+      _transitMaxDailyTime = prefs.transitMaxDailyDrivingTime?.toDouble().clamp(60.0, 600.0);
+      _vacationMaxDailyDistance = prefs.vacationMaxDailyDrivingDistance?.toDouble().clamp(100.0, 800.0);
+      _vacationMaxDailyTime = prefs.vacationMaxDailyDrivingTime?.toDouble().clamp(60.0, 600.0);
     }
   }
   

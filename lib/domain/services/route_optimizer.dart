@@ -3,6 +3,8 @@ import 'dart:math' as math;
 
 /// Service for optimizing waypoint order to minimize travel distance
 class RouteOptimizer {
+  /// Earth radius in kilometers for Haversine distance calculation
+  static const double earthRadiusKm = 6371.0;
   /// Optimizes the order of waypoints using a greedy nearest neighbor algorithm
   /// Respects waypoints with fixed dates (arrivalDate or departureDate set)
   List<Waypoint> optimizeRoute(List<Waypoint> waypoints) {
@@ -107,11 +109,11 @@ class RouteOptimizer {
     for (int i = 0; i < sortedFixed.length; i++) {
       final fixedEntry = sortedFixed[i];
       
-      // Add flexible waypoints before this fixed waypoint
-      final nextFixedPos = i < sortedFixed.length - 1 
-          ? sortedFixed[i + 1].key 
-          : totalCount;
-      final flexibleToAdd = math.max(0, nextFixedPos - fixedEntry.key - 1);
+      // Calculate how many flexible waypoints should be inserted before this fixed waypoint
+      // Based on the gap between consecutive fixed waypoint positions in the original list
+      final flexibleToAdd = _calculateFlexibleWaypointsToInsert(
+        i, sortedFixed, totalCount, fixedEntry.key);
+      
       
       // Insert optimized flexible waypoints
       if (flexIndex < flexible.length && flexibleToAdd > 0) {
@@ -142,6 +144,26 @@ class RouteOptimizer {
     }
     
     return result;
+  }
+
+  /// Calculates the number of flexible waypoints to insert between fixed waypoints
+  /// 
+  /// This determines how many flexible waypoints should be placed before a fixed
+  /// waypoint based on the gap in the original sequence.
+  int _calculateFlexibleWaypointsToInsert(
+    int currentIndex,
+    List<MapEntry<int, Waypoint>> sortedFixed,
+    int totalCount,
+    int currentFixedPos,
+  ) {
+    // Get position of next fixed waypoint (or total count if this is the last)
+    final nextFixedPos = currentIndex < sortedFixed.length - 1 
+        ? sortedFixed[currentIndex + 1].key 
+        : totalCount;
+    
+    // Calculate gap: number of positions between current and next fixed waypoint
+    // Subtract 1 to account for the current fixed waypoint itself
+    return math.max(0, nextFixedPos - currentFixedPos - 1);
   }
 
   /// Optimizes waypoints starting from a specific point
@@ -184,7 +206,6 @@ class RouteOptimizer {
 
   /// Calculates the Haversine distance between two points in kilometers
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const earthRadiusKm = 6371.0;
     
     final dLat = _degreesToRadians(lat2 - lat1);
     final dLon = _degreesToRadians(lon2 - lon1);

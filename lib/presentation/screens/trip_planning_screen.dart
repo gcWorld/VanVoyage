@@ -311,9 +311,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       final optimizer = RouteOptimizer();
       final optimized = optimizer.optimizeRoute(_waypoints);
 
-      // Update sequence orders and save to database
+      // Fetch repository once before the loop
       final waypointRepo = await ref.read(waypointRepositoryProvider.future);
       
+      // Update sequence orders and save to database
       for (int i = 0; i < optimized.length; i++) {
         final updated = optimized[i].copyWith(sequenceOrder: i);
         optimized[i] = updated;
