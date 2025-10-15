@@ -6,6 +6,7 @@ import '../../providers.dart';
 import 'trip_planning_screen.dart';
 import 'waypoint_detail_screen.dart';
 import 'trip_itinerary_screen.dart';
+import 'trip_route_screen.dart';
 import 'package:intl/intl.dart';
 
 /// Screen that displays detailed information about a specific trip
@@ -86,6 +87,27 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
     );
   }
 
+  void _navigateToRouteMap() {
+    if (_waypoints.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Need at least 2 waypoints to view route on map'),
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TripRouteScreen(
+          tripId: widget.tripId,
+          waypoints: _waypoints,
+        ),
+      ),
+    );
+  }
+
   void _navigateToWaypointDetail(Waypoint waypoint) async {
     final result = await Navigator.push<Waypoint>(
       context,
@@ -107,6 +129,12 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
         title: const Text('Trip Details'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
+          if (_waypoints.length >= 2)
+            IconButton(
+              icon: const Icon(Icons.map),
+              onPressed: _navigateToRouteMap,
+              tooltip: 'View Route on Map',
+            ),
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: _navigateToEdit,
@@ -276,6 +304,19 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                   ),
                 ],
               ),
+              if (_waypoints.length >= 2) ...[
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _navigateToRouteMap,
+                    icon: const Icon(Icons.map),
+                    label: const Text('View Route on Map'),
+                  ),
+                ),
+              ],
             ],
           ),
         ),

@@ -54,25 +54,26 @@ This document illustrates the navigation flow after implementing the trip manage
 │  3. Lake Tahoe       │
 │                      │
 │  [View Timeline] ──► │
+│  [View Route Map] ─► │
 │                      │
 └──────────────────────┘
-        │
-        │ [View Timeline]
-        ▼
-┌──────────────────────┐
-│ TripItineraryScreen  │
-│                      │
-│  Day 1 Timeline      │
-│  │                   │
-│  ├─ Start: SF        │
-│  │                   │
-│  ├─ Drive 3hrs       │
-│  │                   │
-│  └─ Arrive: Yosemite │
-│                      │
-│  Day 2 Timeline      │
-│  ...                 │
-│                      │
+        │                        │
+        │ [View Timeline]        │ [View Route Map]
+        ▼                        ▼
+┌──────────────────────┐  ┌──────────────────────┐
+│ TripItineraryScreen  │  │  TripRouteScreen     │
+│                      │  │                      │
+│  Day 1 Timeline      │  │  🗺️ Map View         │
+│  │                   │  │  with route lines    │
+│  ├─ Start: SF        │  │                      │
+│  │                   │  │  Route Summary:      │
+│  ├─ Drive 3hrs       │  │  • 450 km            │
+│  │                   │  │  • 6h 30min          │
+│  └─ Arrive: Yosemite │  │                      │
+│                      │  │  [Driving Mode ▼]    │
+│  Day 2 Timeline      │  │  [Refresh Routes]    │
+│  ...                 │  │                      │
+│                      │  └──────────────────────┘
 └──────────────────────┘
 ```
 
@@ -116,7 +117,9 @@ TripDetailScreen
     │                                    ▼
     │                                TripDetailScreen (refreshed)
     │
-    └─ [Tap "View Timeline"] ─────► TripItineraryScreen
+    ├─ [Tap "View Timeline"] ─────► TripItineraryScreen
+    │
+    └─ [Tap "View Route Map"] ────► TripRouteScreen (2+ waypoints required)
 ```
 
 ### 3. Edit Trip Flow
@@ -191,6 +194,8 @@ TripDetailScreen
 | TripDetailScreen | Tap Edit | TripPlanningScreen (edit) | None |
 | TripDetailScreen | Tap Waypoint | WaypointDetailScreen | None |
 | TripDetailScreen | Tap "View Timeline" | TripItineraryScreen | None |
+| TripDetailScreen | Tap "View Route Map" | TripRouteScreen | None |
+| TripDetailScreen | Tap Map Icon (app bar) | TripRouteScreen | None |
 | TripPlanningScreen | Tap "Finish Planning" | Previous screen (pop) | Trip created/updated |
 | TripPlanningScreen | Tap "Cancel/Back" | Previous screen (pop) | None |
 
