@@ -158,7 +158,8 @@ void main() {
                   submittedDescription = description;
                   submittedStartDate = startDate;
                   submittedEndDate = endDate;
-              },
+                },
+              ),
             ),
           ),
         ),
