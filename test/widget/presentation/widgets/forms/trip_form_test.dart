@@ -39,7 +39,9 @@ void main() {
         ),
       );
 
-      // Tap submit button without entering data
+      // Ensure submit button is visible and tap it without entering data
+      await tester.ensureVisible(find.text('Create Trip'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Create Trip'));
       await tester.pumpAndSettle();
 
@@ -62,6 +64,10 @@ void main() {
 
       // Enter a name that's too short
       await tester.enterText(find.byType(TextFormField).first, 'ab');
+      
+      // Ensure submit button is visible before tapping
+      await tester.ensureVisible(find.text('Create Trip'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Create Trip'));
       await tester.pumpAndSettle();
 
@@ -170,6 +176,10 @@ void main() {
       
       // Enter description
       await tester.enterText(find.byType(TextFormField).at(1), 'A great adventure');
+      
+      // Ensure submit button is visible before tapping
+      await tester.ensureVisible(find.text('Create Trip'));
+      await tester.pumpAndSettle();
       
       // Submit form
       await tester.tap(find.text('Create Trip'));
