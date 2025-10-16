@@ -9,8 +9,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -28,8 +30,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -47,8 +51,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -73,9 +79,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              trip: trip,
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                trip: trip,
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -93,8 +101,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -110,8 +120,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -139,12 +151,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {
-                submittedName = name;
-                submittedDescription = description;
-                submittedStartDate = startDate;
-                submittedEndDate = endDate;
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart, transitEnd, locationStart, locationEnd) {
+                  submittedName = name;
+                  submittedDescription = description;
+                  submittedStartDate = startDate;
+                  submittedEndDate = endDate;
               },
             ),
           ),
