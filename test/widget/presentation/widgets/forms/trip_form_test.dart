@@ -64,6 +64,7 @@ void main() {
 
       // Enter a name that's too short
       await tester.enterText(find.byType(TextFormField).first, 'ab');
+      await tester.pumpAndSettle();
       
       // Ensure submit button is visible before tapping
       await tester.ensureVisible(find.text('Create Trip'));
