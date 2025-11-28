@@ -5,6 +5,9 @@ import '../../domain/entities/home_location.dart';
 /// Repository for managing application settings.
 class SettingsRepository {
   final Database _db;
+  
+  /// Default settings ID (only one settings row exists)
+  static const String defaultSettingsId = 'default';
 
   SettingsRepository(this._db);
 
@@ -13,7 +16,7 @@ class SettingsRepository {
     final results = await _db.query(
       'app_settings',
       where: 'id = ?',
-      whereArgs: ['default'],
+      whereArgs: [defaultSettingsId],
     );
 
     if (results.isEmpty) {
@@ -49,7 +52,7 @@ class SettingsRepository {
       'app_settings',
       data,
       where: 'id = ?',
-      whereArgs: ['default'],
+      whereArgs: [defaultSettingsId],
     );
   }
 
@@ -66,7 +69,7 @@ class SettingsRepository {
         'updated_at': now.millisecondsSinceEpoch,
       },
       where: 'id = ?',
-      whereArgs: ['default'],
+      whereArgs: [defaultSettingsId],
     );
   }
 
@@ -80,7 +83,7 @@ class SettingsRepository {
         'updated_at': now.millisecondsSinceEpoch,
       },
       where: 'id = ?',
-      whereArgs: ['default'],
+      whereArgs: [defaultSettingsId],
     );
   }
 
@@ -98,7 +101,7 @@ class SettingsRepository {
         'updated_at': now.millisecondsSinceEpoch,
       },
       where: 'id = ?',
-      whereArgs: ['default'],
+      whereArgs: [defaultSettingsId],
     );
   }
 }

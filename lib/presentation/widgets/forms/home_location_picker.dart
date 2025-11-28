@@ -180,16 +180,26 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
   }
   
   void _save() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final name = _nameController.text.trim();
-      final latitude = double.parse(_latitudeController.text);
-      final longitude = double.parse(_longitudeController.text);
-      final address = _searchController.text.trim().isNotEmpty 
-          ? _searchController.text.trim() 
-          : null;
-      
-      widget.onLocationSelected(name, latitude, longitude, address);
+    if (!_formKey.currentState!.validate()) {
+      return;
     }
+    
+    // Additional validation for non-manual mode
+    if (!_useManualCoordinates && _selectedResult == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a location')),
+      );
+      return;
+    }
+    
+    final name = _nameController.text.trim();
+    final latitude = double.parse(_latitudeController.text);
+    final longitude = double.parse(_longitudeController.text);
+    final address = _searchController.text.trim().isNotEmpty 
+        ? _searchController.text.trim() 
+        : null;
+    
+    widget.onLocationSelected(name, latitude, longitude, address);
   }
   
   @override
@@ -443,24 +453,6 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                 ],
               ),
               const SizedBox(height: 16),
-            ],
-            
-            // Hidden coordinate fields for validation when not in manual mode
-            if (!_useManualCoordinates && _selectedResult == null) ...[
-              // Invisible validators
-              Visibility(
-                visible: false,
-                maintainState: true,
-                child: TextFormField(
-                  controller: _latitudeController,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please select a location';
-                    }
-                    return null;
-                  },
-                ),
-              ),
             ],
             
             const SizedBox(height: 24),
