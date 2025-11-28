@@ -159,9 +159,10 @@ class RouteOptimizer {
     int currentFixedPos,
   ) {
     // Get position of previous fixed waypoint (or -1 if this is the first)
+    // For the first fixed waypoint, this gives us the count of flexible waypoints before it
     final previousFixedPos = currentIndex > 0
         ? sortedFixed[currentIndex - 1].key
-        : -1; // Use -1 so that currentFixedPos - (-1) - 1 = currentFixedPos for first element
+        : -1;
     
     // Calculate gap: number of positions between previous and current fixed waypoint
     // This gives us how many flexible waypoints should be inserted before this fixed one
