@@ -1,12 +1,14 @@
 import '../entities/waypoint.dart';
 import 'dart:math' as math;
 
-/// Service for optimizing waypoint order to minimize travel distance
+/// Service for optimizing waypoint order to minimize travel distance.
 class RouteOptimizer {
-  /// Earth radius in kilometers for Haversine distance calculation
+  /// Earth radius in kilometers for Haversine distance calculation.
   static const double earthRadiusKm = 6371.0;
-  /// Optimizes the order of waypoints using a greedy nearest neighbor algorithm
-  /// Respects waypoints with fixed dates (arrivalDate or departureDate set)
+
+  /// Optimizes the order of waypoints using a greedy nearest neighbor algorithm.
+  ///
+  /// Respects waypoints with fixed dates (arrivalDate or departureDate set).
   List<Waypoint> optimizeRoute(List<Waypoint> waypoints) {
     if (waypoints.length <= 2) {
       return waypoints; // No optimization needed for 2 or fewer waypoints
@@ -146,24 +148,24 @@ class RouteOptimizer {
     return result;
   }
 
-  /// Calculates the number of flexible waypoints to insert between fixed waypoints
-  /// 
+  /// Calculates the number of flexible waypoints to insert before a fixed waypoint.
+  ///
   /// This determines how many flexible waypoints should be placed before a fixed
-  /// waypoint based on the gap in the original sequence.
+  /// waypoint based on the gap from the previous fixed waypoint (or start).
   int _calculateFlexibleWaypointsToInsert(
     int currentIndex,
     List<MapEntry<int, Waypoint>> sortedFixed,
     int totalCount,
     int currentFixedPos,
   ) {
-    // Get position of next fixed waypoint (or total count if this is the last)
-    final nextFixedPos = currentIndex < sortedFixed.length - 1 
-        ? sortedFixed[currentIndex + 1].key 
-        : totalCount;
+    // Get position of previous fixed waypoint (or -1 if this is the first)
+    final previousFixedPos = currentIndex > 0
+        ? sortedFixed[currentIndex - 1].key
+        : -1; // Use -1 so that currentFixedPos - (-1) - 1 = currentFixedPos for first element
     
-    // Calculate gap: number of positions between current and next fixed waypoint
-    // Subtract 1 to account for the current fixed waypoint itself
-    return math.max(0, nextFixedPos - currentFixedPos - 1);
+    // Calculate gap: number of positions between previous and current fixed waypoint
+    // This gives us how many flexible waypoints should be inserted before this fixed one
+    return math.max(0, currentFixedPos - previousFixedPos - 1);
   }
 
   /// Optimizes waypoints starting from a specific point

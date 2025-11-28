@@ -279,140 +279,140 @@ class _DestinationPickerState extends ConsumerState<DestinationPicker> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-              // Search field with autocomplete
-              TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  labelText: 'Search Location',
-                  hintText: 'Search for a place...',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _isSearching
-                      ? const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        )
-                      : _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {
-                                  _searchResults = [];
-                                });
-                              },
-                            )
-                          : null,
-                ),
-              ),
-              
-              // Search results dropdown
-              if (_searchResults.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(4),
-                    color: Theme.of(context).cardColor,
-                  ),
-                  constraints: const BoxConstraints(maxHeight: 200),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _searchResults.length,
-                    itemBuilder: (context, index) {
-                      final location = _searchResults[index];
-                      return ListTile(
-                        leading: const Icon(Icons.location_on),
-                        title: Text(
-                          location.placeName,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        onTap: () => _selectSearchResult(location),
-                      );
-                    },
-                  ),
-                ),
-              
-              const SizedBox(height: 16),
-              
-              // Location name input (after search)
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Location Name',
-                  hintText: 'Enter or confirm destination name',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.place),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Manual coordinate entry button
-              OutlinedButton.icon(
-                onPressed: _selectLocationManually,
-                icon: const Icon(Icons.edit_location),
-                label: const Text('Enter Coordinates Manually'),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Waypoint type selector
-              SegmentedButton<WaypointType>(
-                segments: const [
-                  ButtonSegment(
-                    value: WaypointType.poi,
-                    label: Text('POI'),
-                    icon: Icon(Icons.place),
-                  ),
-                  ButtonSegment(
-                    value: WaypointType.overnightStay,
-                    label: Text('Stay'),
-                    icon: Icon(Icons.hotel),
-                  ),
-                  ButtonSegment(
-                    value: WaypointType.transit,
-                    label: Text('Transit'),
-                    icon: Icon(Icons.navigation),
-                  ),
-                ],
-                selected: {_selectedType},
-                onSelectionChanged: (Set<WaypointType> newSelection) {
-                  setState(() {
-                    _selectedType = newSelection.first;
-                  });
-                },
-              ),
-              
-              if (_selectedLatitude != null && _selectedLongitude != null) ...[
-                const SizedBox(height: 16),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Selected Coordinates',
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        const SizedBox(height: 4),
-                        Text('Lat: ${_selectedLatitude!.toStringAsFixed(6)}'),
-                        Text('Lng: ${_selectedLongitude!.toStringAsFixed(6)}'),
-                      ],
+                    // Search field with autocomplete
+                    TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search Location',
+                        hintText: 'Search for a place...',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: _isSearching
+                            ? const Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      setState(() {
+                                        _searchResults = [];
+                                      });
+                                    },
+                                  )
+                                : null,
+                      ),
                     ),
-                  ),
+                    
+                    // Search results dropdown
+                    if (_searchResults.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(4),
+                          color: Theme.of(context).cardColor,
+                        ),
+                        constraints: const BoxConstraints(maxHeight: 200),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _searchResults.length,
+                          itemBuilder: (context, index) {
+                            final location = _searchResults[index];
+                            return ListTile(
+                              leading: const Icon(Icons.location_on),
+                              title: Text(
+                                location.placeName,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              onTap: () => _selectSearchResult(location),
+                            );
+                          },
+                        ),
+                      ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Location name input (after search)
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Location Name',
+                        hintText: 'Enter or confirm destination name',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.place),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Manual coordinate entry button
+                    OutlinedButton.icon(
+                      onPressed: _selectLocationManually,
+                      icon: const Icon(Icons.edit_location),
+                      label: const Text('Enter Coordinates Manually'),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Waypoint type selector
+                    SegmentedButton<WaypointType>(
+                      segments: const [
+                        ButtonSegment(
+                          value: WaypointType.poi,
+                          label: Text('POI'),
+                          icon: Icon(Icons.place),
+                        ),
+                        ButtonSegment(
+                          value: WaypointType.overnightStay,
+                          label: Text('Stay'),
+                          icon: Icon(Icons.hotel),
+                        ),
+                        ButtonSegment(
+                          value: WaypointType.transit,
+                          label: Text('Transit'),
+                          icon: Icon(Icons.navigation),
+                        ),
+                      ],
+                      selected: {_selectedType},
+                      onSelectionChanged: (Set<WaypointType> newSelection) {
+                        setState(() {
+                          _selectedType = newSelection.first;
+                        });
+                      },
+                    ),
+                    
+                    if (_selectedLatitude != null && _selectedLongitude != null) ...[
+                      const SizedBox(height: 16),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Selected Coordinates',
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                              const SizedBox(height: 4),
+                              Text('Lat: ${_selectedLatitude!.toStringAsFixed(6)}'),
+                              Text('Lng: ${_selectedLongitude!.toStringAsFixed(6)}'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-              ],
-            ],
-          ),
-        ),
-        
+              ),
+              
               // Map view
               Expanded(
                 child: Stack(

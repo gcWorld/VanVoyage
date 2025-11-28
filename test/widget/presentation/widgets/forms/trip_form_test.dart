@@ -68,7 +68,7 @@ void main() {
       // Ensure submit button is visible before tapping
       await tester.ensureVisible(find.text('Create Trip'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Create Trip'));
+      await tester.tap(find.text('Create Trip'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify validation error appears
