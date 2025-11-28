@@ -64,6 +64,10 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
         setState(() {
           _routes = routes;
           _isLoadingRoutes = false;
+          // Show message if no routes could be calculated
+          if (_routes.isEmpty && widget.waypoints.length >= 2) {
+            _errorMessage = 'Unable to calculate routes. Please check your internet connection or try again later.';
+          }
         });
 
         // Visualize routes on map
@@ -101,6 +105,10 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
         setState(() {
           _routes = alternatives;
           _isLoadingRoutes = false;
+          // Show message if no alternatives could be calculated
+          if (_routes.isEmpty) {
+            _errorMessage = 'Unable to load alternative routes. Please check your internet connection.';
+          }
         });
 
         // Visualize alternatives on map
@@ -231,6 +239,10 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
         setState(() {
           _routes = routes;
           _isLoadingRoutes = false;
+          // Show message if no routes could be calculated
+          if (_routes.isEmpty && widget.waypoints.length >= 2) {
+            _errorMessage = 'Unable to refresh routes. Please check your internet connection or try again later.';
+          }
         });
 
         if (_routes.isNotEmpty && _mapController != null) {
