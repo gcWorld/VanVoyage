@@ -173,7 +173,7 @@ void main() {
       );
       await tester.ensureVisible(restStopsSwitch);
       await tester.pumpAndSettle();
-      await tester.tap(restStopsSwitch);
+      await tester.tap(restStopsSwitch, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Rest stop interval should now be hidden
@@ -218,7 +218,7 @@ void main() {
       // Tap save button (may need to use tester.ensureVisible if off-screen)
       await tester.ensureVisible(find.text('Save Preferences'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Save Preferences'));
+      await tester.tap(find.text('Save Preferences'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify default values were saved

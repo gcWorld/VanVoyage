@@ -42,7 +42,7 @@ void main() {
       // Ensure submit button is visible and tap it without entering data
       await tester.ensureVisible(find.text('Create Trip'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Create Trip'));
+      await tester.tap(find.text('Create Trip'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify validation error appears
@@ -182,7 +182,7 @@ void main() {
       await tester.pumpAndSettle();
       
       // Submit form
-      await tester.tap(find.text('Create Trip'));
+      await tester.tap(find.text('Create Trip'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify form was submitted
