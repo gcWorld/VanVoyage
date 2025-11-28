@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/trip.dart';
+import '../../domain/entities/waypoint.dart';
 import '../../domain/enums/trip_status.dart';
 import '../../providers.dart';
 import 'trip_planning_screen.dart';
 import 'trip_detail_screen.dart';
 import 'route_demo_screen.dart';
+import 'trip_route_screen.dart';
 import 'package:intl/intl.dart';
 
 /// Screen that displays a list of all trips
@@ -99,6 +101,40 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
     // Reload trips after returning from trip editing
     if (result != null && mounted) {
       _loadTrips();
+    }
+  }
+
+  Future<void> _navigateToRouteMap(Trip trip) async {
+    try {
+      final waypointRepo = await ref.read(waypointRepositoryProvider.future);
+      final waypoints = await waypointRepo.findByTripId(trip.id);
+
+      if (!mounted) return;
+
+      if (waypoints.length < 2) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Need at least 2 waypoints to view route on map'),
+          ),
+        );
+        return;
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TripRouteScreen(
+            tripId: trip.id,
+            waypoints: waypoints,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading waypoints: $e')),
+        );
+      }
     }
   }
 
@@ -395,6 +431,12 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton.icon(
+                    onPressed: () => _navigateToRouteMap(trip),
+                    icon: const Icon(Icons.map, size: 18),
+                    label: const Text('Route'),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
                     onPressed: () => _navigateToEditTrip(trip),
                     icon: const Icon(Icons.edit, size: 18),
                     label: const Text('Edit'),
@@ -480,6 +522,14 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
               onTap: () {
                 Navigator.pop(context);
                 _navigateToTripDetail(trip);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.map),
+              title: const Text('View Route Map'),
+              onTap: () {
+                Navigator.pop(context);
+                _navigateToRouteMap(trip);
               },
             ),
             ListTile(
