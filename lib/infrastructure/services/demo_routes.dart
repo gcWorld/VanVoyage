@@ -2,10 +2,37 @@
 /// These routes represent the California adventure demo trip:
 /// San Francisco -> Yosemite -> Lake Tahoe -> Sacramento
 
+/// Represents a demo route segment with all its data
+class _DemoRouteSegment {
+  final String geometry;
+  final double distanceKm;
+  final int durationMinutes;
+
+  const _DemoRouteSegment({
+    required this.geometry,
+    required this.distanceKm,
+    required this.durationMinutes,
+  });
+}
+
+/// Identifies a route by checking if both locations match
+class _RouteKey {
+  final String fromPattern;
+  final String toPattern;
+
+  const _RouteKey(this.fromPattern, this.toPattern);
+
+  bool matches(String fromName, String toName) {
+    final from = fromName.toLowerCase();
+    final to = toName.toLowerCase();
+    return from.contains(fromPattern) && to.contains(toPattern);
+  }
+}
+
 class DemoRouteData {
   /// Route from San Francisco to Yosemite National Park
   /// Approximate distance: 280 km, duration: 3.5 hours
-  static const String sanFranciscoToYosemite = '''
+  static const String _sanFranciscoToYosemiteGeometry = '''
 {
   "type": "LineString",
   "coordinates": [
@@ -30,7 +57,7 @@ class DemoRouteData {
 
   /// Route from Yosemite National Park to Lake Tahoe
   /// Approximate distance: 160 km, duration: 2.5 hours
-  static const String yosemiteToLakeTahoe = '''
+  static const String _yosemiteToLakeTahoeGeometry = '''
 {
   "type": "LineString",
   "coordinates": [
@@ -52,7 +79,7 @@ class DemoRouteData {
 
   /// Route from Lake Tahoe to Sacramento
   /// Approximate distance: 165 km, duration: 2 hours
-  static const String lakeTahoeToSacramento = '''
+  static const String _lakeTahoeToSacramentoGeometry = '''
 {
   "type": "LineString",
   "coordinates": [
@@ -80,53 +107,62 @@ class DemoRouteData {
   static const int yosemiteToTahoeDurationMinutes = 150; // 2.5 hours
   static const int tahoeToSacramentoDurationMinutes = 120; // 2 hours
 
+  /// Map of route patterns to their data
+  static final List<MapEntry<_RouteKey, _DemoRouteSegment>> _demoRoutes = [
+    MapEntry(
+      const _RouteKey('francisco', 'yosemite'),
+      _DemoRouteSegment(
+        geometry: _sanFranciscoToYosemiteGeometry.trim(),
+        distanceKm: sfToYosemiteDistanceKm,
+        durationMinutes: sfToYosemiteDurationMinutes,
+      ),
+    ),
+    MapEntry(
+      const _RouteKey('yosemite', 'tahoe'),
+      _DemoRouteSegment(
+        geometry: _yosemiteToLakeTahoeGeometry.trim(),
+        distanceKm: yosemiteToTahoeDistanceKm,
+        durationMinutes: yosemiteToTahoeDurationMinutes,
+      ),
+    ),
+    MapEntry(
+      const _RouteKey('tahoe', 'sacramento'),
+      _DemoRouteSegment(
+        geometry: _lakeTahoeToSacramentoGeometry.trim(),
+        distanceKm: tahoeToSacramentoDistanceKm,
+        durationMinutes: tahoeToSacramentoDurationMinutes,
+      ),
+    ),
+  ];
+
+  /// Find demo route data for the given waypoint names
+  static _DemoRouteSegment? _findRoute(String fromName, String toName) {
+    for (final entry in _demoRoutes) {
+      if (entry.key.matches(fromName, toName)) {
+        return entry.value;
+      }
+    }
+    return null;
+  }
+
   /// Get demo route geometry by waypoint names
   static String? getRouteGeometry(String fromName, String toName) {
-    final key = '${fromName.toLowerCase()}_${toName.toLowerCase()}';
-    
-    if (key.contains('francisco') && key.contains('yosemite')) {
-      return sanFranciscoToYosemite.trim();
-    } else if (key.contains('yosemite') && key.contains('tahoe')) {
-      return yosemiteToLakeTahoe.trim();
-    } else if (key.contains('tahoe') && key.contains('sacramento')) {
-      return lakeTahoeToSacramento.trim();
-    }
-    
-    return null;
+    return _findRoute(fromName, toName)?.geometry;
   }
 
   /// Get demo route distance by waypoint names
   static double? getRouteDistance(String fromName, String toName) {
-    final key = '${fromName.toLowerCase()}_${toName.toLowerCase()}';
-    
-    if (key.contains('francisco') && key.contains('yosemite')) {
-      return sfToYosemiteDistanceKm;
-    } else if (key.contains('yosemite') && key.contains('tahoe')) {
-      return yosemiteToTahoeDistanceKm;
-    } else if (key.contains('tahoe') && key.contains('sacramento')) {
-      return tahoeToSacramentoDistanceKm;
-    }
-    
-    return null;
+    return _findRoute(fromName, toName)?.distanceKm;
   }
 
   /// Get demo route duration by waypoint names
   static int? getRouteDuration(String fromName, String toName) {
-    final key = '${fromName.toLowerCase()}_${toName.toLowerCase()}';
-    
-    if (key.contains('francisco') && key.contains('yosemite')) {
-      return sfToYosemiteDurationMinutes;
-    } else if (key.contains('yosemite') && key.contains('tahoe')) {
-      return yosemiteToTahoeDurationMinutes;
-    } else if (key.contains('tahoe') && key.contains('sacramento')) {
-      return tahoeToSacramentoDurationMinutes;
-    }
-    
-    return null;
+    return _findRoute(fromName, toName)?.durationMinutes;
   }
 
   /// Check if this is a known demo route
   static bool isDemoRoute(String fromName, String toName) {
-    return getRouteGeometry(fromName, toName) != null;
+    return _findRoute(fromName, toName) != null;
   }
 }
+
