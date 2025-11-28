@@ -1,5 +1,6 @@
 import '../../infrastructure/repositories/route_repository.dart';
 import '../../infrastructure/services/mapbox_service.dart';
+import '../../infrastructure/services/demo_routes.dart';
 import '../entities/route.dart' as domain;
 import '../entities/waypoint.dart';
 
@@ -34,31 +35,76 @@ class RouteService {
       }
     }
 
-    // Calculate new route
-    final mapboxRoute = await _mapboxService.calculateRoute(
-      fromWaypoint.latitude,
-      fromWaypoint.longitude,
-      toWaypoint.latitude,
-      toWaypoint.longitude,
-      profile: profile,
-    );
+    // Try to calculate route via API
+    try {
+      final mapboxRoute = await _mapboxService.calculateRoute(
+        fromWaypoint.latitude,
+        fromWaypoint.longitude,
+        toWaypoint.latitude,
+        toWaypoint.longitude,
+        profile: profile,
+      );
 
-    if (mapboxRoute == null) {
-      return null;
+      if (mapboxRoute != null) {
+        // Create and save route entity
+        final route = domain.Route.create(
+          tripId: tripId,
+          fromWaypointId: fromWaypoint.id,
+          toWaypointId: toWaypoint.id,
+          geometry: mapboxRoute.geometry,
+          distance: mapboxRoute.distanceKm,
+          duration: mapboxRoute.durationMinutes,
+        );
+
+        await _routeRepository.insert(route);
+        return route;
+      }
+    } catch (e) {
+      // API call failed, try demo route fallback
     }
 
-    // Create and save route entity
-    final route = domain.Route.create(
-      tripId: tripId,
-      fromWaypointId: fromWaypoint.id,
-      toWaypointId: toWaypoint.id,
-      geometry: mapboxRoute.geometry,
-      distance: mapboxRoute.distanceKm,
-      duration: mapboxRoute.durationMinutes,
-    );
+    // Fallback to demo routes if available (for demo-trip or when API fails)
+    final demoRoute = _getDemoRoute(tripId, fromWaypoint, toWaypoint);
+    if (demoRoute != null) {
+      return demoRoute;
+    }
 
-    await _routeRepository.insert(route);
-    return route;
+    return null;
+  }
+
+  /// Get a demo route if available for the given waypoints
+  domain.Route? _getDemoRoute(
+    String tripId,
+    Waypoint fromWaypoint,
+    Waypoint toWaypoint,
+  ) {
+    if (DemoRouteData.isDemoRoute(fromWaypoint.name, toWaypoint.name)) {
+      final geometry = DemoRouteData.getRouteGeometry(
+        fromWaypoint.name,
+        toWaypoint.name,
+      );
+      final distance = DemoRouteData.getRouteDistance(
+        fromWaypoint.name,
+        toWaypoint.name,
+      );
+      final duration = DemoRouteData.getRouteDuration(
+        fromWaypoint.name,
+        toWaypoint.name,
+      );
+
+      if (geometry != null && distance != null && duration != null) {
+        return domain.Route.create(
+          tripId: tripId,
+          fromWaypointId: fromWaypoint.id,
+          toWaypointId: toWaypoint.id,
+          geometry: geometry,
+          distance: distance,
+          duration: duration,
+          routeProvider: 'Demo',
+        );
+      }
+    }
+    return null;
   }
 
   /// Calculate route with alternatives
@@ -68,33 +114,47 @@ class RouteService {
     Waypoint toWaypoint, {
     RoutingProfile profile = RoutingProfile.driving,
   }) async {
-    final mapboxRoutes = await _mapboxService.calculateRouteWithAlternatives(
-      fromWaypoint.latitude,
-      fromWaypoint.longitude,
-      toWaypoint.latitude,
-      toWaypoint.longitude,
-      profile: profile,
-    );
-
-    final routes = <domain.Route>[];
-    for (final mapboxRoute in mapboxRoutes) {
-      final route = domain.Route.create(
-        tripId: tripId,
-        fromWaypointId: fromWaypoint.id,
-        toWaypointId: toWaypoint.id,
-        geometry: mapboxRoute.geometry,
-        distance: mapboxRoute.distanceKm,
-        duration: mapboxRoute.durationMinutes,
+    try {
+      final mapboxRoutes = await _mapboxService.calculateRouteWithAlternatives(
+        fromWaypoint.latitude,
+        fromWaypoint.longitude,
+        toWaypoint.latitude,
+        toWaypoint.longitude,
+        profile: profile,
       );
-      routes.add(route);
+
+      if (mapboxRoutes.isNotEmpty) {
+        final routes = <domain.Route>[];
+        for (final mapboxRoute in mapboxRoutes) {
+          final route = domain.Route.create(
+            tripId: tripId,
+            fromWaypointId: fromWaypoint.id,
+            toWaypointId: toWaypoint.id,
+            geometry: mapboxRoute.geometry,
+            distance: mapboxRoute.distanceKm,
+            duration: mapboxRoute.durationMinutes,
+          );
+          routes.add(route);
+        }
+
+        // Save the primary (first) route
+        if (routes.isNotEmpty) {
+          await _routeRepository.insert(routes.first);
+        }
+
+        return routes;
+      }
+    } catch (e) {
+      // API call failed, try demo route fallback
     }
 
-    // Save the primary (first) route
-    if (routes.isNotEmpty) {
-      await _routeRepository.insert(routes.first);
+    // Fallback to demo route if available
+    final demoRoute = _getDemoRoute(tripId, fromWaypoint, toWaypoint);
+    if (demoRoute != null) {
+      return [demoRoute];
     }
 
-    return routes;
+    return [];
   }
 
   /// Calculate routes for entire trip
