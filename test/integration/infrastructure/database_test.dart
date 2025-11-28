@@ -5,14 +5,17 @@ import 'package:vanvoyage/infrastructure/database/database_provider.dart';
 void main() {
   // Initialize FFI for testing
   TestWidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize sqflite once at the start
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  });
 
   group('DatabaseProvider', () {
     setUp(() async {
-      // Initialize sqflite for testing
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-      
       // Clean up any existing test database
+      await DatabaseProvider.close();
       await DatabaseProvider.deleteDb();
     });
 
