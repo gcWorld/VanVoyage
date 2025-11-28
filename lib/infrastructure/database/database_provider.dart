@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseProvider {
   static Database? _database;
   static const String dbName = 'vanvoyage.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
 
   /// Gets the database instance, initializing if necessary
   static Future<Database> get database async {
@@ -37,6 +37,7 @@ class DatabaseProvider {
   /// Creates database tables on first initialization
   static Future<void> _onCreate(Database db, int version) async {
     await _createTablesV1(db);
+    await _createTablesV2(db);
   }
 
   /// Handles database upgrades
@@ -47,7 +48,8 @@ class DatabaseProvider {
   ) async {
     // Future migrations will go here
     if (oldVersion < 2) {
-      // Upgrade to version 2 when needed
+      // Upgrade to version 2: Add settings and vehicles tables
+      await _createTablesV2(db);
     }
   }
 
@@ -185,6 +187,52 @@ class DatabaseProvider {
     await db.execute('CREATE INDEX idx_routes_trip_id ON routes(trip_id)');
     await db.execute('CREATE INDEX idx_routes_waypoints ON routes(from_waypoint_id, to_waypoint_id)');
     await db.execute('CREATE INDEX idx_routes_calculated_at ON routes(calculated_at)');
+  }
+
+  /// Creates version 2 schema (settings and vehicles)
+  static Future<void> _createTablesV2(Database db) async {
+    // Create vehicles table
+    await db.execute('''
+      CREATE TABLE vehicles (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        fuel_type TEXT NOT NULL CHECK(fuel_type IN ('GASOLINE', 'DIESEL', 'ELECTRIC', 'HYBRID', 'LPG')),
+        fuel_consumption REAL NOT NULL CHECK(fuel_consumption > 0),
+        height REAL CHECK(height IS NULL OR (height > 0 AND height <= 10)),
+        width REAL CHECK(width IS NULL OR (width > 0 AND width <= 10)),
+        length REAL CHECK(length IS NULL OR (length > 0 AND length <= 30)),
+        weight REAL CHECK(weight IS NULL OR (weight > 0 AND weight <= 100)),
+        max_speed INTEGER CHECK(max_speed IS NULL OR (max_speed > 0 AND max_speed <= 200)),
+        is_default INTEGER NOT NULL DEFAULT 0 CHECK(is_default IN (0, 1)),
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      )
+    ''');
+
+    // Create app_settings table (single row)
+    await db.execute('''
+      CREATE TABLE app_settings (
+        id TEXT PRIMARY KEY DEFAULT 'default',
+        home_location_name TEXT,
+        home_location_latitude REAL CHECK(home_location_latitude IS NULL OR (home_location_latitude >= -90 AND home_location_latitude <= 90)),
+        home_location_longitude REAL CHECK(home_location_longitude IS NULL OR (home_location_longitude >= -180 AND home_location_longitude <= 180)),
+        home_location_address TEXT,
+        default_vehicle_id TEXT,
+        distance_unit TEXT NOT NULL DEFAULT 'km' CHECK(distance_unit IN ('km', 'mi')),
+        updated_at INTEGER NOT NULL,
+        FOREIGN KEY (default_vehicle_id) REFERENCES vehicles(id) ON DELETE SET NULL
+      )
+    ''');
+
+    // Create indexes for vehicles
+    await db.execute('CREATE INDEX idx_vehicles_is_default ON vehicles(is_default)');
+    await db.execute('CREATE INDEX idx_vehicles_name ON vehicles(name)');
+
+    // Insert default settings row
+    await db.execute('''
+      INSERT INTO app_settings (id, distance_unit, updated_at) 
+      VALUES ('default', 'km', ${DateTime.now().millisecondsSinceEpoch})
+    ''');
   }
 
   /// Closes the database
