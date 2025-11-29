@@ -18,7 +18,7 @@ class MapRouteLayer {
     try {
       // Parse geometry
       final geometryJson = json.decode(route.geometry);
-      
+
       // Remove existing route layer and source if present
       await removeRouteFromMap(mapController);
 
@@ -64,7 +64,7 @@ class MapRouteLayer {
         final geometryJson = json.decode(route.geometry);
         final sourceId = '$routeSourceId-$i';
         final layerId = '$routeLayerId-$i';
-        
+
         // Determine color
         Color color;
         if (colors != null && i < colors.length) {

@@ -5,28 +5,28 @@ import 'package:uuid/uuid.dart';
 class Route extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// Foreign key to Trip
   final String tripId;
-  
+
   /// Starting waypoint
   final String fromWaypointId;
-  
+
   /// Ending waypoint
   final String toWaypointId;
-  
+
   /// Encoded polyline (GeoJSON LineString)
   final String geometry;
-  
+
   /// Total distance in kilometers
   final double distance;
-  
+
   /// Estimated duration in minutes
   final int duration;
-  
+
   /// When route was calculated
   final DateTime calculatedAt;
-  
+
   /// Service used (e.g., "Mapbox")
   final String routeProvider;
 
@@ -75,7 +75,8 @@ class Route extends Equatable {
       geometry: map['geometry'] as String,
       distance: map['distance'] as double,
       duration: map['duration'] as int,
-      calculatedAt: DateTime.fromMillisecondsSinceEpoch(map['calculated_at'] as int),
+      calculatedAt:
+          DateTime.fromMillisecondsSinceEpoch(map['calculated_at'] as int),
       routeProvider: map['route_provider'] as String,
     );
   }

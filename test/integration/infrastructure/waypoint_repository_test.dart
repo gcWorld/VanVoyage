@@ -14,10 +14,10 @@ void main() {
   late WaypointRepository waypointRepository;
   late Trip testTrip;
 
-  // Initialize sqflite once at the start
+  // Initialize sqflite once at the start using NoIsolate to avoid concurrency issues
   setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfiNoIsolate;
   });
 
   setUp(() async {
@@ -165,7 +165,8 @@ void main() {
       expect(pois.length, 1);
       expect(pois.first.name, 'POI');
 
-      final overnights = await waypointRepository.findOvernightStays(testTrip.id);
+      final overnights =
+          await waypointRepository.findOvernightStays(testTrip.id);
       expect(overnights.length, 1);
       expect(overnights.first.name, 'Campsite');
     });
@@ -208,7 +209,8 @@ void main() {
 
       await waypointRepository.insert(waypoint1);
 
-      final nextOrder = await waypointRepository.getNextSequenceOrder(testTrip.id);
+      final nextOrder =
+          await waypointRepository.getNextSequenceOrder(testTrip.id);
       expect(nextOrder, 1);
     });
 

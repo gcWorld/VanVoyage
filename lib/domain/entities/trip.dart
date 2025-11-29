@@ -6,37 +6,37 @@ import '../enums/trip_status.dart';
 class Trip extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// User-defined trip name
   final String name;
-  
+
   /// Optional trip description
   final String? description;
-  
+
   /// Trip start date (overall trip including transit)
   final DateTime startDate;
-  
+
   /// Trip end date (overall trip including transit)
   final DateTime endDate;
-  
+
   /// Optional transit start date (outbound transit begins)
   final DateTime? transitStartDate;
-  
+
   /// Optional transit end date (return transit ends)
   final DateTime? transitEndDate;
-  
+
   /// Optional location start date (vacation on location begins)
   final DateTime? locationStartDate;
-  
+
   /// Optional location end date (vacation on location ends)
   final DateTime? locationEndDate;
-  
+
   /// Current trip status
   final TripStatus status;
-  
+
   /// Creation timestamp
   final DateTime createdAt;
-  
+
   /// Last modification timestamp
   final DateTime updatedAt;
 
@@ -93,13 +93,15 @@ class Trip extends Equatable {
       startDate: DateTime.fromMillisecondsSinceEpoch(map['start_date'] as int),
       endDate: DateTime.fromMillisecondsSinceEpoch(map['end_date'] as int),
       transitStartDate: map['transit_start_date'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['transit_start_date'] as int)
+          ? DateTime.fromMillisecondsSinceEpoch(
+              map['transit_start_date'] as int)
           : null,
       transitEndDate: map['transit_end_date'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['transit_end_date'] as int)
           : null,
       locationStartDate: map['location_start_date'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['location_start_date'] as int)
+          ? DateTime.fromMillisecondsSinceEpoch(
+              map['location_start_date'] as int)
           : null,
       locationEndDate: map['location_end_date'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['location_end_date'] as int)

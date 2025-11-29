@@ -7,31 +7,31 @@ import '../enums/priority.dart';
 class Activity extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// Foreign key to Waypoint
   final String waypointId;
-  
+
   /// Activity name
   final String name;
-  
+
   /// Activity details
   final String? description;
-  
+
   /// Category
   final ActivityCategory category;
-  
+
   /// Duration in minutes
   final int? estimatedDuration;
-  
+
   /// Estimated cost
   final double? cost;
-  
+
   /// Importance
   final Priority priority;
-  
+
   /// User notes
   final String? notes;
-  
+
   /// Completion status
   final bool isCompleted;
 

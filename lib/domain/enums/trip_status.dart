@@ -2,13 +2,13 @@
 enum TripStatus {
   /// Trip is being planned
   planning,
-  
+
   /// Trip is currently in progress
   active,
-  
+
   /// Trip has been completed
   completed,
-  
+
   /// Trip is archived for reference
   archived;
 

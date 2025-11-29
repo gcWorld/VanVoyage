@@ -5,13 +5,13 @@ import 'package:http/http.dart' as http;
 enum RoutingProfile {
   /// Standard driving route (fastest route considering traffic)
   driving,
-  
+
   /// Driving route with real-time traffic data
   drivingTraffic,
-  
+
   /// Walking route
   walking,
-  
+
   /// Cycling route
   cycling,
 }

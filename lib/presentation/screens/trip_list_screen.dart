@@ -6,6 +6,7 @@ import '../../providers.dart';
 import 'trip_planning_screen.dart';
 import 'trip_detail_screen.dart';
 import 'route_demo_screen.dart';
+import 'settings_screen.dart';
 import 'package:intl/intl.dart';
 
 /// Screen that displays a list of all trips
@@ -36,7 +37,7 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
 
     try {
       final tripRepo = await ref.read(tripRepositoryProvider.future);
-      
+
       List<Trip> trips;
       if (_filterStatus != null) {
         trips = await tripRepo.findByStatus(_filterStatus!);
@@ -128,7 +129,7 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
       try {
         final tripRepo = await ref.read(tripRepositoryProvider.future);
         await tripRepo.delete(trip.id);
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Deleted trip: ${trip.name}')),
@@ -170,6 +171,18 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
               );
             },
             tooltip: 'Route Demo',
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+            tooltip: 'Settings',
           ),
           IconButton(
             icon: const Icon(Icons.refresh),

@@ -9,14 +9,15 @@ import 'waypoint_detail_screen.dart';
 /// Screen that displays the trip itinerary in a timeline format
 class TripItineraryScreen extends ConsumerStatefulWidget {
   final String tripId;
-  
+
   const TripItineraryScreen({
     super.key,
     required this.tripId,
   });
 
   @override
-  ConsumerState<TripItineraryScreen> createState() => _TripItineraryScreenState();
+  ConsumerState<TripItineraryScreen> createState() =>
+      _TripItineraryScreenState();
 }
 
 class _TripItineraryScreenState extends ConsumerState<TripItineraryScreen> {

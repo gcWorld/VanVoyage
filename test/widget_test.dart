@@ -18,12 +18,13 @@ void main() {
 
     // Verify that the app shows the trip list screen with title
     expect(find.text('My Trips'), findsOneWidget);
-    
+
     // Wait for async operations to complete
     await tester.pumpAndSettle();
 
     // After loading, should show either empty state or trip list
     // Check for the Create Trip FAB which is always present
-    expect(find.widgetWithText(FloatingActionButton, 'Create Trip'), findsOneWidget);
+    expect(find.widgetWithText(FloatingActionButton, 'Create Trip'),
+        findsOneWidget);
   });
 }

@@ -2,10 +2,10 @@
 enum PhaseType {
   /// Journey to destination region
   outbound,
-  
+
   /// Exploring within region
   exploration,
-  
+
   /// Journey back home
   return_;
 

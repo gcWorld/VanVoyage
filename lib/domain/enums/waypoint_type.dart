@@ -2,17 +2,17 @@
 enum WaypointType {
   /// Location where traveler will sleep
   overnightStay,
-  
+
   /// Point of interest to visit
   poi,
-  
+
   /// Waypoint for routing purposes only
   transit;
 
   /// Converts string to WaypointType enum
   static WaypointType fromString(String value) {
     final normalized = value.toUpperCase().replaceAll('_', '');
-    
+
     switch (normalized) {
       case 'OVERNIGHTSTAY':
         return WaypointType.overnightStay;

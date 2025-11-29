@@ -5,11 +5,11 @@ import 'package:vanvoyage/infrastructure/database/database_provider.dart';
 void main() {
   // Initialize FFI for testing
   TestWidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize sqflite once at the start
+
+  // Initialize sqflite once at the start using NoIsolate to avoid concurrency issues
   setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfiNoIsolate;
   });
 
   group('DatabaseProvider', () {
@@ -47,6 +47,8 @@ void main() {
       expect(tableNames, contains('activities'));
       expect(tableNames, contains('trip_preferences'));
       expect(tableNames, contains('routes'));
+      expect(tableNames, contains('vehicles'));
+      expect(tableNames, contains('app_settings'));
     });
 
     test('should create indexes for trips table', () async {

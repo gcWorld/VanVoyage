@@ -440,7 +440,8 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
                 child: Card(
                   margin: EdgeInsets.zero,
                   shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -482,7 +483,8 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
                               toWaypoint: toWaypoint,
                               onTap: () {
                                 // Show alternatives for this segment
-                                _loadAlternativeRoutes(fromWaypoint, toWaypoint);
+                                _loadAlternativeRoutes(
+                                    fromWaypoint, toWaypoint);
                               },
                             );
                           },
@@ -518,19 +520,19 @@ class _TripRouteScreenState extends ConsumerState<TripRouteScreen> {
                       ...List.generate(_routes.length, (index) {
                         final route = _routes[index];
                         final isSelected = index == _selectedRouteIndex;
-                        
+
                         return Card(
                           color: isSelected
                               ? Theme.of(context).colorScheme.primaryContainer
                               : null,
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: index == 0
-                                  ? Colors.blue
-                                  : Colors.grey,
+                              backgroundColor:
+                                  index == 0 ? Colors.blue : Colors.grey,
                               child: Text('${index + 1}'),
                             ),
-                            title: Text('${route.distance.toStringAsFixed(1)} km'),
+                            title:
+                                Text('${route.distance.toStringAsFixed(1)} km'),
                             subtitle: Text(
                               '${route.duration ~/ 60}h ${route.duration % 60}min',
                             ),

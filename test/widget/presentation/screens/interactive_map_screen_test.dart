@@ -35,8 +35,7 @@ void main() {
       expect(
         find.byWidgetPredicate(
           (widget) =>
-              widget is FloatingActionButton &&
-              widget.heroTag == 'zoom_in',
+              widget is FloatingActionButton && widget.heroTag == 'zoom_in',
         ),
         findsOneWidget,
       );
@@ -44,8 +43,7 @@ void main() {
       expect(
         find.byWidgetPredicate(
           (widget) =>
-              widget is FloatingActionButton &&
-              widget.heroTag == 'zoom_out',
+              widget is FloatingActionButton && widget.heroTag == 'zoom_out',
         ),
         findsOneWidget,
       );

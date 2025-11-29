@@ -113,7 +113,8 @@ class WaypointList extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: _getWaypointColor(context, waypoint.waypointType),
+                    backgroundColor:
+                        _getWaypointColor(context, waypoint.waypointType),
                     child: Icon(
                       _getWaypointIcon(waypoint.waypointType),
                       color: Colors.white,

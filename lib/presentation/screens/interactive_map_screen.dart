@@ -193,9 +193,7 @@ class _InteractiveMapScreenState extends ConsumerState<InteractiveMapScreen> {
                   heroTag: 'toggle_tracking',
                   mini: true,
                   onPressed: _toggleLocationTracking,
-                  backgroundColor: _isTrackingLocation
-                      ? Colors.green
-                      : null,
+                  backgroundColor: _isTrackingLocation ? Colors.green : null,
                   child: Icon(
                     _isTrackingLocation
                         ? Icons.location_searching

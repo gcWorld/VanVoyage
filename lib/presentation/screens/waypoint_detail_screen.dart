@@ -8,14 +8,15 @@ import '../../providers.dart';
 /// Screen for viewing and editing waypoint details including stay information
 class WaypointDetailScreen extends ConsumerStatefulWidget {
   final Waypoint waypoint;
-  
+
   const WaypointDetailScreen({
     super.key,
     required this.waypoint,
   });
 
   @override
-  ConsumerState<WaypointDetailScreen> createState() => _WaypointDetailScreenState();
+  ConsumerState<WaypointDetailScreen> createState() =>
+      _WaypointDetailScreenState();
 }
 
 class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
@@ -33,8 +34,10 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.waypoint.name);
-    _descriptionController = TextEditingController(text: widget.waypoint.description ?? '');
-    _notesController = TextEditingController(text: ''); // Notes could be in Activity
+    _descriptionController =
+        TextEditingController(text: widget.waypoint.description ?? '');
+    _notesController =
+        TextEditingController(text: ''); // Notes could be in Activity
     _waypointType = widget.waypoint.waypointType;
     _arrivalDate = widget.waypoint.arrivalDate;
     _departureDate = widget.waypoint.departureDate;
@@ -50,10 +53,10 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
   }
 
   Future<void> _selectDate(BuildContext context, bool isArrival) async {
-    final initialDate = isArrival 
+    final initialDate = isArrival
         ? _arrivalDate ?? DateTime.now()
         : _departureDate ?? _arrivalDate ?? DateTime.now();
-    
+
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -92,7 +95,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
     if (_waypointType == WaypointType.overnightStay) {
       if (_stayDuration == null || _stayDuration! < 1) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Overnight stays must have a duration of at least 1 day')),
+          const SnackBar(
+              content: Text(
+                  'Overnight stays must have a duration of at least 1 day')),
         );
         return;
       }
@@ -101,7 +106,8 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
     if (_arrivalDate != null && _departureDate != null) {
       if (_departureDate!.isBefore(_arrivalDate!)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Departure date must be after arrival date')),
+          const SnackBar(
+              content: Text('Departure date must be after arrival date')),
         );
         return;
       }
@@ -113,11 +119,11 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
 
     try {
       final repo = await ref.read(waypointRepositoryProvider.future);
-      
+
       final updatedWaypoint = widget.waypoint.copyWith(
         name: _nameController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty 
-            ? null 
+        description: _descriptionController.text.trim().isEmpty
+            ? null
             : _descriptionController.text.trim(),
         waypointType: _waypointType,
         arrivalDate: _arrivalDate,
@@ -132,11 +138,11 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
           _isSaving = false;
           _isEditing = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Waypoint updated successfully')),
         );
-        
+
         Navigator.of(context).pop(updatedWaypoint);
       }
     } catch (e) {
@@ -144,7 +150,7 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
         setState(() {
           _isSaving = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error saving waypoint: $e')),
         );
@@ -154,7 +160,7 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
 
   Widget _buildViewMode() {
     final dateFormat = DateFormat('MMM dd, yyyy');
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -169,7 +175,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(_getWaypointIcon(), size: 32, color: Theme.of(context).colorScheme.primary),
+                      Icon(_getWaypointIcon(),
+                          size: 32,
+                          color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -182,16 +190,21 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                             const SizedBox(height: 4),
                             Text(
                               _getWaypointTypeLabel(),
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  if (widget.waypoint.description != null && widget.waypoint.description!.isNotEmpty) ...[
+                  if (widget.waypoint.description != null &&
+                      widget.waypoint.description!.isNotEmpty) ...[
                     const SizedBox(height: 12),
                     Text(widget.waypoint.description!),
                   ],
@@ -199,9 +212,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Location Card
           Card(
             child: Padding(
@@ -211,7 +224,8 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary),
+                      Icon(Icons.location_on,
+                          color: Theme.of(context).colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         'Location',
@@ -231,9 +245,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Stay Details Card (for overnight stays)
           if (_waypointType == WaypointType.overnightStay) ...[
             Card(
@@ -244,7 +258,8 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.hotel, color: Theme.of(context).colorScheme.primary),
+                        Icon(Icons.hotel,
+                            color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 8),
                         Text(
                           'Stay Details',
@@ -253,25 +268,28 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
                     _buildInfoRow(
                       Icons.calendar_today,
                       'Arrival',
-                      _arrivalDate != null ? dateFormat.format(_arrivalDate!) : 'Not set',
+                      _arrivalDate != null
+                          ? dateFormat.format(_arrivalDate!)
+                          : 'Not set',
                     ),
                     const SizedBox(height: 8),
-                    
                     _buildInfoRow(
                       Icons.event,
                       'Departure',
-                      _departureDate != null ? dateFormat.format(_departureDate!) : 'Not set',
+                      _departureDate != null
+                          ? dateFormat.format(_departureDate!)
+                          : 'Not set',
                     ),
                     const SizedBox(height: 8),
-                    
                     _buildInfoRow(
                       Icons.nights_stay,
                       'Duration',
-                      _stayDuration != null ? '$_stayDuration ${_stayDuration == 1 ? 'night' : 'nights'}' : 'Not set',
+                      _stayDuration != null
+                          ? '$_stayDuration ${_stayDuration == 1 ? 'night' : 'nights'}'
+                          : 'Not set',
                     ),
                   ],
                 ),
@@ -279,9 +297,10 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // Schedule Card (for non-overnight waypoints)
-          if (_waypointType != WaypointType.overnightStay && (_arrivalDate != null || _departureDate != null)) ...[
+          if (_waypointType != WaypointType.overnightStay &&
+              (_arrivalDate != null || _departureDate != null)) ...[
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -290,7 +309,8 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.schedule, color: Theme.of(context).colorScheme.primary),
+                        Icon(Icons.schedule,
+                            color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 8),
                         Text(
                           'Schedule',
@@ -299,7 +319,6 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
                     if (_arrivalDate != null)
                       _buildInfoRow(
                         Icons.calendar_today,
@@ -319,7 +338,7 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
 
   Widget _buildEditMode() {
     final dateFormat = DateFormat('MMM dd, yyyy');
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -335,9 +354,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
             ),
             textCapitalization: TextCapitalization.words,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Description Field
           TextField(
             controller: _descriptionController,
@@ -349,9 +368,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
             maxLines: 3,
             textCapitalization: TextCapitalization.sentences,
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Waypoint Type
           Card(
             child: Padding(
@@ -393,9 +412,9 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Stay Details (for overnight stays)
           if (_waypointType == WaypointType.overnightStay) ...[
             Card(
@@ -409,7 +428,7 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Arrival Date
                     InkWell(
                       onTap: () => _selectDate(context, true),
@@ -420,15 +439,15 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                           prefixIcon: Icon(Icons.calendar_today),
                         ),
                         child: Text(
-                          _arrivalDate != null 
+                          _arrivalDate != null
                               ? dateFormat.format(_arrivalDate!)
                               : 'Select arrival date',
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Departure Date
                     InkWell(
                       onTap: () => _selectDate(context, false),
@@ -439,22 +458,23 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                           prefixIcon: Icon(Icons.event),
                         ),
                         child: Text(
-                          _departureDate != null 
+                          _departureDate != null
                               ? dateFormat.format(_departureDate!)
                               : 'Select departure date',
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Stay Duration (auto-calculated or manual)
                     TextField(
                       decoration: const InputDecoration(
                         labelText: 'Stay Duration (nights)',
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.nights_stay),
-                        helperText: 'Auto-calculated from dates, or enter manually',
+                        helperText:
+                            'Auto-calculated from dates, or enter manually',
                       ),
                       keyboardType: TextInputType.number,
                       controller: TextEditingController(
@@ -483,7 +503,6 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 16),
-                    
                     InkWell(
                       onTap: () => _selectDate(context, true),
                       child: InputDecorator(
@@ -493,7 +512,7 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                           prefixIcon: Icon(Icons.calendar_today),
                         ),
                         child: Text(
-                          _arrivalDate != null 
+                          _arrivalDate != null
                               ? dateFormat.format(_arrivalDate!)
                               : 'Select visit date',
                         ),
@@ -504,15 +523,15 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
               ),
             ),
           ],
-          
+
           const SizedBox(height: 24),
-          
+
           // Save Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _isSaving ? null : _saveWaypoint,
-              icon: _isSaving 
+              icon: _isSaving
                   ? const SizedBox(
                       width: 16,
                       height: 16,
@@ -542,8 +561,8 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
               ),
               Text(
                 value,
@@ -603,7 +622,8 @@ class _WaypointDetailScreenState extends ConsumerState<WaypointDetailScreen> {
                   _isEditing = false;
                   // Reset to original values
                   _nameController.text = widget.waypoint.name;
-                  _descriptionController.text = widget.waypoint.description ?? '';
+                  _descriptionController.text =
+                      widget.waypoint.description ?? '';
                   _waypointType = widget.waypoint.waypointType;
                   _arrivalDate = widget.waypoint.arrivalDate;
                   _departureDate = widget.waypoint.departureDate;
