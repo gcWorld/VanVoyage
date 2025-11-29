@@ -11,8 +11,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -37,8 +37,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -60,8 +60,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -83,8 +83,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -106,8 +106,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -128,8 +128,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -152,8 +152,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -166,10 +166,14 @@ void main() {
       // Rest stop interval should be present
       expect(find.text('Rest Stop Interval'), findsWidgets);
 
-      // Toggle off include rest stops (scroll to make it visible first)
-      await tester.ensureVisible(find.byType(SwitchListTile).last);
+      // Toggle off include rest stops (find by text instead of position)
+      final restStopsSwitch = find.ancestor(
+        of: find.text('Include Rest Stops'),
+        matching: find.byType(SwitchListTile),
+      );
+      await tester.ensureVisible(restStopsSwitch);
       await tester.pumpAndSettle();
-      await tester.tap(find.byType(SwitchListTile).last);
+      await tester.tap(restStopsSwitch, warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Rest stop interval should now be hidden
@@ -191,8 +195,8 @@ void main() {
           home: Scaffold(
             body: SingleChildScrollView(
               child: TripPreferencesForm(
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {
                   savedMaxDistance = maxDistance;
                   savedMaxTime = maxTime;
                   savedSpeed = speed;
@@ -214,7 +218,7 @@ void main() {
       // Tap save button (may need to use tester.ensureVisible if off-screen)
       await tester.ensureVisible(find.text('Save Preferences'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Save Preferences'));
+      await tester.tap(find.text('Save Preferences'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify default values were saved
@@ -233,12 +237,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1200, // Force a large height to render all content
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -248,6 +249,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should have 4 sliders total: distance, time, speed, rest interval (when rest stops enabled)
+      // Phase-specific constraints are disabled by default, so no additional sliders
       final allSliders = find.byType(Slider);
       expect(allSliders, findsNWidgets(4));
     });
@@ -257,12 +259,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1200, // Force a large height to render all content
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -271,8 +270,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Should have 4 switches: avoid tolls, avoid highways, prefer scenic, include rest stops
-      expect(find.byType(SwitchListTile), findsNWidgets(4));
+      // Should have 5 switches: avoid tolls, avoid highways, prefer scenic, include rest stops, use phase constraints
+      expect(find.byType(SwitchListTile), findsNWidgets(5));
     });
 
     testWidgets('displays warnings for values outside recommended range', (WidgetTester tester) async {
@@ -280,12 +279,9 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SingleChildScrollView(
-              child: SizedBox(
-                height: 1400,
-                child: TripPreferencesForm(
-                  onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                          tolls, highways, scenic) {},
-                ),
+              child: TripPreferencesForm(
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -324,8 +320,8 @@ void main() {
             body: SingleChildScrollView(
               child: TripPreferencesForm(
                 preferences: extremePrefs,
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -353,8 +349,8 @@ void main() {
             body: SingleChildScrollView(
               child: TripPreferencesForm(
                 preferences: prefsWithWarnings,
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),
@@ -386,8 +382,8 @@ void main() {
             body: SingleChildScrollView(
               child: TripPreferencesForm(
                 preferences: inconsistentPrefs,
-                onSave: (maxDistance, maxTime, speed, includeRest, interval, 
-                        tolls, highways, scenic) {},
+                onSave: (maxDistance, maxTime, speed, includeRest, interval,
+                        tolls, highways, scenic, transitDist, transitTime, vacationDist, vacationTime) {},
               ),
             ),
           ),

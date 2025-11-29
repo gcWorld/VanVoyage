@@ -14,12 +14,15 @@ void main() {
   late WaypointRepository waypointRepository;
   late Trip testTrip;
 
-  setUp(() async {
-    // Initialize sqflite for testing
+  // Initialize sqflite once at the start
+  setUpAll(() {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
+  });
 
+  setUp(() async {
     // Clean up and initialize database
+    await DatabaseProvider.close();
     await DatabaseProvider.deleteDb();
     final db = await DatabaseProvider.database;
     tripRepository = TripRepository(db);
