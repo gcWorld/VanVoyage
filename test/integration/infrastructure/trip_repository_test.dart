@@ -10,10 +10,10 @@ void main() {
 
   late TripRepository repository;
 
-  // Initialize sqflite once at the start
+  // Initialize sqflite once at the start using NoIsolate to avoid concurrency issues
   setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfiNoIsolate;
   });
 
   setUp(() async {

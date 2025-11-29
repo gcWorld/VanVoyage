@@ -48,20 +48,27 @@ class DatabaseProvider {
   ) async {
     if (oldVersion < 2) {
       // Add transit and location date fields to trips table
-      await db.execute('ALTER TABLE trips ADD COLUMN transit_start_date INTEGER');
+      await db
+          .execute('ALTER TABLE trips ADD COLUMN transit_start_date INTEGER');
       await db.execute('ALTER TABLE trips ADD COLUMN transit_end_date INTEGER');
-      await db.execute('ALTER TABLE trips ADD COLUMN location_start_date INTEGER');
-      await db.execute('ALTER TABLE trips ADD COLUMN location_end_date INTEGER');
+      await db
+          .execute('ALTER TABLE trips ADD COLUMN location_start_date INTEGER');
+      await db
+          .execute('ALTER TABLE trips ADD COLUMN location_end_date INTEGER');
     }
-    
+
     if (oldVersion < 3) {
       // Add phase-specific constraint fields to trip_preferences table
-      await db.execute('ALTER TABLE trip_preferences ADD COLUMN transit_max_daily_driving_distance INTEGER');
-      await db.execute('ALTER TABLE trip_preferences ADD COLUMN transit_max_daily_driving_time INTEGER');
-      await db.execute('ALTER TABLE trip_preferences ADD COLUMN vacation_max_daily_driving_distance INTEGER');
-      await db.execute('ALTER TABLE trip_preferences ADD COLUMN vacation_max_daily_driving_time INTEGER');
+      await db.execute(
+          'ALTER TABLE trip_preferences ADD COLUMN transit_max_daily_driving_distance INTEGER');
+      await db.execute(
+          'ALTER TABLE trip_preferences ADD COLUMN transit_max_daily_driving_time INTEGER');
+      await db.execute(
+          'ALTER TABLE trip_preferences ADD COLUMN vacation_max_daily_driving_distance INTEGER');
+      await db.execute(
+          'ALTER TABLE trip_preferences ADD COLUMN vacation_max_daily_driving_time INTEGER');
     }
-    
+
     if (oldVersion < 4) {
       // Add settings and vehicles tables
       await _createTablesV4(db);
@@ -187,29 +194,43 @@ class DatabaseProvider {
     await db.execute('CREATE INDEX idx_trips_updated_at ON trips(updated_at)');
 
     // Create indexes for trip_phases
-    await db.execute('CREATE INDEX idx_trip_phases_trip_id ON trip_phases(trip_id)');
-    await db.execute('CREATE INDEX idx_trip_phases_sequence ON trip_phases(trip_id, sequence_order)');
-    await db.execute('CREATE UNIQUE INDEX idx_trip_phases_unique_order ON trip_phases(trip_id, sequence_order)');
+    await db.execute(
+        'CREATE INDEX idx_trip_phases_trip_id ON trip_phases(trip_id)');
+    await db.execute(
+        'CREATE INDEX idx_trip_phases_sequence ON trip_phases(trip_id, sequence_order)');
+    await db.execute(
+        'CREATE UNIQUE INDEX idx_trip_phases_unique_order ON trip_phases(trip_id, sequence_order)');
 
     // Create indexes for waypoints
-    await db.execute('CREATE INDEX idx_waypoints_trip_id ON waypoints(trip_id)');
-    await db.execute('CREATE INDEX idx_waypoints_phase_id ON waypoints(phase_id)');
-    await db.execute('CREATE INDEX idx_waypoints_sequence ON waypoints(trip_id, sequence_order)');
-    await db.execute('CREATE INDEX idx_waypoints_location ON waypoints(latitude, longitude)');
-    await db.execute('CREATE UNIQUE INDEX idx_waypoints_unique_order ON waypoints(trip_id, sequence_order)');
+    await db
+        .execute('CREATE INDEX idx_waypoints_trip_id ON waypoints(trip_id)');
+    await db
+        .execute('CREATE INDEX idx_waypoints_phase_id ON waypoints(phase_id)');
+    await db.execute(
+        'CREATE INDEX idx_waypoints_sequence ON waypoints(trip_id, sequence_order)');
+    await db.execute(
+        'CREATE INDEX idx_waypoints_location ON waypoints(latitude, longitude)');
+    await db.execute(
+        'CREATE UNIQUE INDEX idx_waypoints_unique_order ON waypoints(trip_id, sequence_order)');
 
     // Create indexes for activities
-    await db.execute('CREATE INDEX idx_activities_waypoint_id ON activities(waypoint_id)');
-    await db.execute('CREATE INDEX idx_activities_priority ON activities(priority)');
-    await db.execute('CREATE INDEX idx_activities_completed ON activities(is_completed)');
+    await db.execute(
+        'CREATE INDEX idx_activities_waypoint_id ON activities(waypoint_id)');
+    await db.execute(
+        'CREATE INDEX idx_activities_priority ON activities(priority)');
+    await db.execute(
+        'CREATE INDEX idx_activities_completed ON activities(is_completed)');
 
     // Create indexes for trip_preferences
-    await db.execute('CREATE UNIQUE INDEX idx_trip_preferences_trip_id ON trip_preferences(trip_id)');
+    await db.execute(
+        'CREATE UNIQUE INDEX idx_trip_preferences_trip_id ON trip_preferences(trip_id)');
 
     // Create indexes for routes
     await db.execute('CREATE INDEX idx_routes_trip_id ON routes(trip_id)');
-    await db.execute('CREATE INDEX idx_routes_waypoints ON routes(from_waypoint_id, to_waypoint_id)');
-    await db.execute('CREATE INDEX idx_routes_calculated_at ON routes(calculated_at)');
+    await db.execute(
+        'CREATE INDEX idx_routes_waypoints ON routes(from_waypoint_id, to_waypoint_id)');
+    await db.execute(
+        'CREATE INDEX idx_routes_calculated_at ON routes(calculated_at)');
   }
 
   /// Creates version 4 schema (settings and vehicles)
@@ -248,7 +269,8 @@ class DatabaseProvider {
     ''');
 
     // Create indexes for vehicles
-    await db.execute('CREATE INDEX idx_vehicles_is_default ON vehicles(is_default)');
+    await db.execute(
+        'CREATE INDEX idx_vehicles_is_default ON vehicles(is_default)');
     await db.execute('CREATE INDEX idx_vehicles_name ON vehicles(name)');
 
     // Insert default settings row

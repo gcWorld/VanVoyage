@@ -116,7 +116,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Clear Home Location'),
-        content: const Text('Are you sure you want to remove your home location?'),
+        content:
+            const Text('Are you sure you want to remove your home location?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -163,7 +164,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         expand: false,
         builder: (context, scrollController) => VehicleForm(
           vehicle: vehicle,
-          onSave: (savedVehicle) => _onVehicleSaved(savedVehicle, vehicle == null),
+          onSave: (savedVehicle) =>
+              _onVehicleSaved(savedVehicle, vehicle == null),
           scrollController: scrollController,
         ),
       ),
@@ -175,7 +177,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     try {
       final vehicleRepo = await ref.read(vehicleRepositoryProvider.future);
-      
+
       if (isNew) {
         await vehicleRepo.insert(vehicle);
       } else {
@@ -246,7 +248,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final vehicleRepo = await ref.read(vehicleRepositoryProvider.future);
       final settingsRepo = await ref.read(settingsRepositoryProvider.future);
-      
+
       await vehicleRepo.setAsDefault(vehicle.id);
       await settingsRepo.setDefaultVehicle(vehicle.id);
 
@@ -355,7 +357,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               title: Text(homeLocation.name),
               subtitle: Text(
-                homeLocation.address ?? 
+                homeLocation.address ??
                     '${homeLocation.latitude.toStringAsFixed(4)}, ${homeLocation.longitude.toStringAsFixed(4)}',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -378,14 +380,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             )
           : ListTile(
               leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.home_outlined,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               title: const Text('No home location set'),
-              subtitle: const Text('Set a default start/end location for trips'),
+              subtitle:
+                  const Text('Set a default start/end location for trips'),
               trailing: IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: _showHomeLocationPicker,
@@ -402,7 +406,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           Card(
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.directions_car_outlined,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -471,14 +476,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primaryContainer,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
                                   'Default',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
                                   ),
                                 ),
                               ),
@@ -557,7 +566,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     if (vehicle.weight != null)
                       _buildDimensionChip('Weight', '${vehicle.weight}t'),
                     if (vehicle.maxSpeed != null)
-                      _buildDimensionChip('Max Speed', '${vehicle.maxSpeed} km/h'),
+                      _buildDimensionChip(
+                          'Max Speed', '${vehicle.maxSpeed} km/h'),
                   ],
                 ),
               ],

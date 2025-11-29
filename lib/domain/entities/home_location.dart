@@ -4,13 +4,13 @@ import 'package:equatable/equatable.dart';
 class HomeLocation extends Equatable {
   /// Location name (e.g., "Home", "My Apartment")
   final String name;
-  
+
   /// Geographic latitude
   final double latitude;
-  
+
   /// Geographic longitude
   final double longitude;
-  
+
   /// Human-readable address
   final String? address;
 
@@ -43,8 +43,10 @@ class HomeLocation extends Equatable {
 
   /// Validates the location coordinates
   bool isValid() {
-    return latitude >= -90 && latitude <= 90 && 
-           longitude >= -180 && longitude <= 180;
+    return latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180;
   }
 
   @override

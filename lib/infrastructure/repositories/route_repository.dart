@@ -47,7 +47,8 @@ class RouteRepository {
   }
 
   /// Find route between two waypoints
-  Future<Route?> findByWaypoints(String fromWaypointId, String toWaypointId) async {
+  Future<Route?> findByWaypoints(
+      String fromWaypointId, String toWaypointId) async {
     final db = await _dbHelper.database;
     final maps = await db.query(
       'routes',

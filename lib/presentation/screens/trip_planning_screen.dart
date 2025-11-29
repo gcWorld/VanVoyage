@@ -17,7 +17,7 @@ import 'package:vanvoyage/providers.dart';
 class TripPlanningScreen extends ConsumerStatefulWidget {
   /// Optional trip ID to edit existing trip
   final String? tripId;
-  
+
   const TripPlanningScreen({
     super.key,
     this.tripId,
@@ -33,7 +33,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
   final List<Waypoint> _waypoints = [];
   TripPreferences? _preferences;
   bool _isLoading = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -41,19 +41,19 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       _loadTrip();
     }
   }
-  
+
   Future<void> _loadTrip() async {
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final tripRepo = await ref.read(tripRepositoryProvider.future);
       final waypointRepo = await ref.read(waypointRepositoryProvider.future);
-      
+
       final trip = await tripRepo.findById(widget.tripId!);
       final waypoints = await waypointRepo.findByTripId(widget.tripId!);
-      
+
       if (mounted) {
         setState(() {
           _trip = trip;
@@ -73,7 +73,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       }
     }
   }
-  
+
   Future<void> _onTripFormSubmit(
     String name,
     String? description,
@@ -87,10 +87,10 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final tripRepo = await ref.read(tripRepositoryProvider.future);
-      
+
       if (_trip == null) {
         // Create new trip
         _trip = Trip.create(
@@ -119,7 +119,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
         );
         await tripRepo.update(_trip!);
       }
-      
+
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -137,7 +137,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       }
     }
   }
-  
+
   Future<void> _onLocationSelected(
     String name,
     double latitude,
@@ -145,14 +145,14 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     WaypointType type,
   ) async {
     if (_trip == null) return;
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final waypointRepo = await ref.read(waypointRepositoryProvider.future);
-      
+
       final waypoint = Waypoint.create(
         tripId: _trip!.id,
         name: name,
@@ -161,15 +161,15 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
         waypointType: type,
         sequenceOrder: _waypoints.length,
       );
-      
+
       await waypointRepo.insert(waypoint);
-      
+
       if (mounted) {
         setState(() {
           _waypoints.add(waypoint);
           _isLoading = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Added waypoint: $name'),
@@ -200,30 +200,30 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final waypointRepo = await ref.read(waypointRepositoryProvider.future);
-      
+
       // Reorder in memory
       final waypoint = _waypoints.removeAt(oldIndex);
       _waypoints.insert(newIndex, waypoint);
-      
+
       // Update sequence orders and save to database
       for (int i = 0; i < _waypoints.length; i++) {
         final updated = _waypoints[i].copyWith(sequenceOrder: i);
         _waypoints[i] = updated;
         await waypointRepo.update(updated);
       }
-      
+
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Waypoint order updated')),
         );
@@ -259,23 +259,23 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
         ],
       ),
     );
-    
+
     if (confirmed != true) return;
-    
+
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final waypointRepo = await ref.read(waypointRepositoryProvider.future);
       await waypointRepo.delete(waypoint.id);
-      
+
       if (mounted) {
         setState(() {
           _waypoints.removeWhere((w) => w.id == waypoint.id);
           _isLoading = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Deleted waypoint: ${waypoint.name}')),
         );
@@ -313,7 +313,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
 
       // Fetch repository once before the loop
       final waypointRepo = await ref.read(waypointRepositoryProvider.future);
-      
+
       // Update sequence orders and save to database
       for (int i = 0; i < optimized.length; i++) {
         final updated = optimized[i].copyWith(sequenceOrder: i);
@@ -330,7 +330,8 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Route optimized! Waypoints reordered for minimal distance.'),
+            content: Text(
+                'Route optimized! Waypoints reordered for minimal distance.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -346,7 +347,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       }
     }
   }
-  
+
   void _onPreferencesSave(
     int maxDailyDrivingDistance,
     int maxDailyDrivingTime,
@@ -362,7 +363,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     int? vacationMaxDailyDrivingTime,
   ) {
     if (_trip == null) return;
-    
+
     // Create preferences (would be saved to database in real implementation)
     _preferences = TripPreferences.create(
       tripId: _trip!.id,
@@ -379,7 +380,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       vacationMaxDailyDrivingDistance: vacationMaxDailyDrivingDistance,
       vacationMaxDailyDrivingTime: vacationMaxDailyDrivingTime,
     );
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Trip preferences saved!'),
@@ -418,7 +419,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
     // Return true to signal that the trip list should refresh
     Navigator.of(context).pop(true);
   }
-  
+
   List<Step> _buildSteps() {
     return [
       Step(
@@ -444,8 +445,11 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           ),
         ),
         isActive: _currentStep >= 1,
-        state: _currentStep > 1 ? StepState.complete : 
-               _currentStep == 1 ? StepState.indexed : StepState.disabled,
+        state: _currentStep > 1
+            ? StepState.complete
+            : _currentStep == 1
+                ? StepState.indexed
+                : StepState.disabled,
       ),
       Step(
         title: const Text('Travel Constraints'),
@@ -454,8 +458,11 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
           onSave: _onPreferencesSave,
         ),
         isActive: _currentStep >= 2,
-        state: _currentStep > 2 ? StepState.complete : 
-               _currentStep == 2 ? StepState.indexed : StepState.disabled,
+        state: _currentStep > 2
+            ? StepState.complete
+            : _currentStep == 2
+                ? StepState.indexed
+                : StepState.disabled,
       ),
       Step(
         title: const Text('Review Itinerary'),
@@ -495,7 +502,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
       ),
     ];
   }
-  
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -508,7 +515,7 @@ class _TripPlanningScreenState extends ConsumerState<TripPlanningScreen> {
         ),
       );
     }
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.tripId != null ? 'Edit Trip' : 'Create Trip'),

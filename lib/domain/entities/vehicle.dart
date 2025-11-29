@@ -3,44 +3,44 @@ import 'package:uuid/uuid.dart';
 import '../enums/fuel_type.dart';
 
 /// Represents a vehicle with its specifications for route planning.
-/// 
+///
 /// Vehicle dimensions are used by Mapbox Directions API to avoid roads
 /// with restrictions (height, width, weight limits). Fuel consumption
 /// is used for trip cost estimation.
 class Vehicle extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// User-defined vehicle name (e.g., "My Camper Van")
   final String name;
-  
+
   /// Vehicle fuel type
   final FuelType fuelType;
-  
+
   /// Fuel consumption in liters per 100km (or kWh/100km for electric)
   final double fuelConsumption;
-  
+
   /// Vehicle height in meters (used for route restrictions)
   final double? height;
-  
+
   /// Vehicle width in meters (used for route restrictions)
   final double? width;
-  
+
   /// Vehicle length in meters (informational)
   final double? length;
-  
+
   /// Vehicle weight in metric tons (used for route restrictions)
   final double? weight;
-  
+
   /// Maximum recommended speed in km/h
   final int? maxSpeed;
-  
+
   /// Whether this is the default/active vehicle
   final bool isDefault;
-  
+
   /// Creation timestamp
   final DateTime createdAt;
-  
+
   /// Last modification timestamp
   final DateTime updatedAt;
 
@@ -168,7 +168,7 @@ class Vehicle extends Equatable {
   }
 
   /// Checks if vehicle has dimension constraints for routing
-  bool get hasDimensionConstraints => 
+  bool get hasDimensionConstraints =>
       height != null || width != null || weight != null;
 
   @override

@@ -6,13 +6,13 @@ import '../../../domain/enums/fuel_type.dart';
 class VehicleForm extends StatefulWidget {
   /// Optional existing vehicle to edit
   final Vehicle? vehicle;
-  
+
   /// Callback when vehicle is saved
   final Function(Vehicle vehicle) onSave;
-  
+
   /// Scroll controller for the parent DraggableScrollableSheet
   final ScrollController? scrollController;
-  
+
   const VehicleForm({
     super.key,
     this.vehicle,
@@ -26,7 +26,7 @@ class VehicleForm extends StatefulWidget {
 
 class _VehicleFormState extends State<VehicleForm> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late TextEditingController _nameController;
   late TextEditingController _fuelConsumptionController;
   late TextEditingController _heightController;
@@ -34,14 +34,14 @@ class _VehicleFormState extends State<VehicleForm> {
   late TextEditingController _lengthController;
   late TextEditingController _weightController;
   late TextEditingController _maxSpeedController;
-  
+
   late FuelType _selectedFuelType;
   late bool _isDefault;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     _nameController = TextEditingController(text: widget.vehicle?.name ?? '');
     _fuelConsumptionController = TextEditingController(
       text: widget.vehicle?.fuelConsumption.toString() ?? '10.0',
@@ -61,11 +61,11 @@ class _VehicleFormState extends State<VehicleForm> {
     _maxSpeedController = TextEditingController(
       text: widget.vehicle?.maxSpeed?.toString() ?? '',
     );
-    
+
     _selectedFuelType = widget.vehicle?.fuelType ?? FuelType.diesel;
     _isDefault = widget.vehicle?.isDefault ?? false;
   }
-  
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -77,7 +77,7 @@ class _VehicleFormState extends State<VehicleForm> {
     _maxSpeedController.dispose();
     super.dispose();
   }
-  
+
   void _save() {
     if (_formKey.currentState?.validate() ?? false) {
       final vehicle = widget.vehicle != null
@@ -104,21 +104,21 @@ class _VehicleFormState extends State<VehicleForm> {
               maxSpeed: _parseOptionalInt(_maxSpeedController.text),
               isDefault: _isDefault,
             );
-      
+
       widget.onSave(vehicle);
     }
   }
-  
+
   double? _parseOptionalDouble(String value) {
     if (value.trim().isEmpty) return null;
     return double.tryParse(value);
   }
-  
+
   int? _parseOptionalInt(String value) {
     if (value.trim().isEmpty) return null;
     return int.tryParse(value);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,27 +138,30 @@ class _VehicleFormState extends State<VehicleForm> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withOpacity(0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Header
             Text(
               widget.vehicle != null ? 'Edit Vehicle' : 'Add Vehicle',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 24),
-            
+
             // Basic Information Section
             Text(
               'Basic Information',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-            
+
             // Name field
             TextFormField(
               controller: _nameController,
@@ -177,7 +180,7 @@ class _VehicleFormState extends State<VehicleForm> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Fuel Type dropdown
             DropdownButtonFormField<FuelType>(
               value: _selectedFuelType,
@@ -201,19 +204,22 @@ class _VehicleFormState extends State<VehicleForm> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Fuel consumption field
             TextFormField(
               controller: _fuelConsumptionController,
               decoration: InputDecoration(
-                labelText: _selectedFuelType == FuelType.electric 
+                labelText: _selectedFuelType == FuelType.electric
                     ? 'Energy Consumption (kWh/100km)'
                     : 'Fuel Consumption (L/100km)',
-                hintText: _selectedFuelType == FuelType.electric ? 'e.g., 20.0' : 'e.g., 10.0',
+                hintText: _selectedFuelType == FuelType.electric
+                    ? 'e.g., 20.0'
+                    : 'e.g., 10.0',
                 prefixIcon: const Icon(Icons.speed),
                 border: const OutlineInputBorder(),
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Please enter fuel consumption';
@@ -226,7 +232,7 @@ class _VehicleFormState extends State<VehicleForm> {
               },
             ),
             const SizedBox(height: 24),
-            
+
             // Dimensions Section
             Text(
               'Vehicle Dimensions',
@@ -236,11 +242,11 @@ class _VehicleFormState extends State<VehicleForm> {
             Text(
               'Optional: Used by Mapbox to avoid roads with vehicle restrictions.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 16),
-            
+
             // Height and Width row
             Row(
               children: [
@@ -253,7 +259,8 @@ class _VehicleFormState extends State<VehicleForm> {
                       prefixIcon: Icon(Icons.height),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     validator: (value) {
                       if (value != null && value.trim().isNotEmpty) {
                         final parsed = double.tryParse(value);
@@ -275,7 +282,8 @@ class _VehicleFormState extends State<VehicleForm> {
                       prefixIcon: Icon(Icons.swap_horiz),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     validator: (value) {
                       if (value != null && value.trim().isNotEmpty) {
                         final parsed = double.tryParse(value);
@@ -290,7 +298,7 @@ class _VehicleFormState extends State<VehicleForm> {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Length and Weight row
             Row(
               children: [
@@ -303,7 +311,8 @@ class _VehicleFormState extends State<VehicleForm> {
                       prefixIcon: Icon(Icons.straighten),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     validator: (value) {
                       if (value != null && value.trim().isNotEmpty) {
                         final parsed = double.tryParse(value);
@@ -325,7 +334,8 @@ class _VehicleFormState extends State<VehicleForm> {
                       prefixIcon: Icon(Icons.scale),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                     validator: (value) {
                       if (value != null && value.trim().isNotEmpty) {
                         final parsed = double.tryParse(value);
@@ -340,7 +350,7 @@ class _VehicleFormState extends State<VehicleForm> {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Max Speed
             TextFormField(
               controller: _maxSpeedController,
@@ -363,7 +373,7 @@ class _VehicleFormState extends State<VehicleForm> {
               },
             ),
             const SizedBox(height: 24),
-            
+
             // Default switch
             SwitchListTile(
               title: const Text('Set as default vehicle'),
@@ -376,18 +386,19 @@ class _VehicleFormState extends State<VehicleForm> {
               },
             ),
             const SizedBox(height: 24),
-            
+
             // Save button
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: _save,
                 icon: const Icon(Icons.save),
-                label: Text(widget.vehicle != null ? 'Update Vehicle' : 'Add Vehicle'),
+                label: Text(
+                    widget.vehicle != null ? 'Update Vehicle' : 'Add Vehicle'),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Cancel button
             SizedBox(
               width: double.infinity,

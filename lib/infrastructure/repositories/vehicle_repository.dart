@@ -49,7 +49,7 @@ class VehicleRepository implements Repository<Vehicle> {
     if (vehicle.isDefault) {
       await _clearDefaults();
     }
-    
+
     await _db.insert(
       'vehicles',
       vehicle.toMap(),
@@ -64,11 +64,11 @@ class VehicleRepository implements Repository<Vehicle> {
     if (vehicle.isDefault) {
       await _clearDefaults();
     }
-    
+
     final updatedVehicle = vehicle.copyWith(
       updatedAt: DateTime.now(),
     );
-    
+
     return await _db.update(
       'vehicles',
       updatedVehicle.toMap(),
@@ -89,7 +89,7 @@ class VehicleRepository implements Repository<Vehicle> {
   /// Sets a vehicle as the default
   Future<void> setAsDefault(String vehicleId) async {
     await _clearDefaults();
-    
+
     final now = DateTime.now();
     await _db.update(
       'vehicles',

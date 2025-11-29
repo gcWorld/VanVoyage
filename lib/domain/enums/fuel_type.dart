@@ -2,16 +2,16 @@
 enum FuelType {
   /// Gasoline/petrol fuel
   gasoline,
-  
+
   /// Diesel fuel
   diesel,
-  
+
   /// Electric vehicle
   electric,
-  
+
   /// Hybrid (gasoline + electric)
   hybrid,
-  
+
   /// Liquefied Petroleum Gas
   lpg,
 }

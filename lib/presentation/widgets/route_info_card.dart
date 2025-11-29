@@ -69,7 +69,7 @@ class RouteInfoCard extends StatelessWidget {
                       fromWaypoint,
                       toWaypoint,
                     );
-                    
+
                     if (context.mounted && !success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

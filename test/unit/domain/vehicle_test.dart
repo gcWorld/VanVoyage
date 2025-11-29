@@ -99,7 +99,8 @@ void main() {
       expect(deserializedVehicle.id, originalVehicle.id);
       expect(deserializedVehicle.name, originalVehicle.name);
       expect(deserializedVehicle.fuelType, originalVehicle.fuelType);
-      expect(deserializedVehicle.fuelConsumption, originalVehicle.fuelConsumption);
+      expect(
+          deserializedVehicle.fuelConsumption, originalVehicle.fuelConsumption);
       expect(deserializedVehicle.height, originalVehicle.height);
       expect(deserializedVehicle.width, originalVehicle.width);
       expect(deserializedVehicle.length, originalVehicle.length);

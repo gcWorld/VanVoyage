@@ -5,16 +5,16 @@ import 'home_location.dart';
 class AppSettings extends Equatable {
   /// Unique identifier (typically 'default' as there's only one settings row)
   final String id;
-  
+
   /// User's home location (default start/end for trips)
   final HomeLocation? homeLocation;
-  
+
   /// Default vehicle ID for trips
   final String? defaultVehicleId;
-  
+
   /// Distance unit preference ('km' or 'mi')
   final String distanceUnit;
-  
+
   /// Last modification timestamp
   final DateTime updatedAt;
 
@@ -38,13 +38,13 @@ class AppSettings extends Equatable {
   /// Creates AppSettings from database map
   factory AppSettings.fromMap(Map<String, dynamic> map) {
     HomeLocation? homeLocation;
-    
+
     // Only create HomeLocation if coordinates are present
-    if (map['home_location_latitude'] != null && 
+    if (map['home_location_latitude'] != null &&
         map['home_location_longitude'] != null) {
       homeLocation = HomeLocation.fromMap(map);
     }
-    
+
     return AppSettings(
       id: map['id'] as String,
       homeLocation: homeLocation,
@@ -62,7 +62,7 @@ class AppSettings extends Equatable {
       'distance_unit': distanceUnit,
       'updated_at': updatedAt.millisecondsSinceEpoch,
     };
-    
+
     if (homeLocation != null) {
       map.addAll(homeLocation!.toMap());
     } else {
@@ -71,7 +71,7 @@ class AppSettings extends Equatable {
       map['home_location_longitude'] = null;
       map['home_location_address'] = null;
     }
-    
+
     return map;
   }
 

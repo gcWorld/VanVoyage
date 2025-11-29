@@ -4,43 +4,43 @@ import 'package:equatable/equatable.dart';
 class TravelConstraint extends Equatable {
   /// Minimum safe daily driving distance (km)
   final int minDailyDistance;
-  
+
   /// Maximum safe daily driving distance (km)
   final int maxDailyDistance;
-  
+
   /// Minimum daily driving time (minutes)
   final int minDailyTime;
-  
+
   /// Maximum safe daily driving time (minutes)
   final int maxDailyTime;
-  
+
   /// Minimum driving speed (km/h)
   final int minSpeed;
-  
+
   /// Maximum driving speed (km/h)
   final int maxSpeed;
-  
+
   /// Minimum rest stop interval (minutes)
   final int minRestInterval;
-  
+
   /// Maximum rest stop interval (minutes)
   final int maxRestInterval;
-  
+
   /// Recommended minimum daily distance (km)
   final int recommendedMinDistance;
-  
+
   /// Recommended maximum daily distance (km)
   final int recommendedMaxDistance;
-  
+
   /// Recommended minimum daily time (minutes)
   final int recommendedMinTime;
-  
+
   /// Recommended maximum daily time (minutes)
   final int recommendedMaxTime;
-  
+
   /// Recommended minimum rest interval (minutes)
   final int recommendedMinRestInterval;
-  
+
   /// Recommended maximum rest interval (minutes)
   final int recommendedMaxRestInterval;
 

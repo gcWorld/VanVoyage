@@ -32,7 +32,8 @@ final tripRepositoryProvider = FutureProvider<TripRepository>((ref) async {
   return TripRepository(db);
 });
 
-final waypointRepositoryProvider = FutureProvider<WaypointRepository>((ref) async {
+final waypointRepositoryProvider =
+    FutureProvider<WaypointRepository>((ref) async {
   final db = await ref.read(databaseProvider.future);
   return WaypointRepository(db);
 });
@@ -65,13 +66,15 @@ final routeServiceProvider = Provider<RouteService>((ref) {
 });
 
 // Settings repository provider
-final settingsRepositoryProvider = FutureProvider<SettingsRepository>((ref) async {
+final settingsRepositoryProvider =
+    FutureProvider<SettingsRepository>((ref) async {
   final db = await ref.read(databaseProvider.future);
   return SettingsRepository(db);
 });
 
 // Vehicle repository provider
-final vehicleRepositoryProvider = FutureProvider<VehicleRepository>((ref) async {
+final vehicleRepositoryProvider =
+    FutureProvider<VehicleRepository>((ref) async {
   final db = await ref.read(databaseProvider.future);
   return VehicleRepository(db);
 });

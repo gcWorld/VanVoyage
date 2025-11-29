@@ -7,13 +7,15 @@ import '../../../providers.dart';
 class HomeLocationPicker extends ConsumerStatefulWidget {
   /// Current home location (for editing)
   final HomeLocation? currentLocation;
-  
+
   /// Callback when a location is selected
-  final Function(String name, double latitude, double longitude, String? address) onLocationSelected;
-  
+  final Function(
+          String name, double latitude, double longitude, String? address)
+      onLocationSelected;
+
   /// Scroll controller for the parent DraggableScrollableSheet
   final ScrollController? scrollController;
-  
+
   const HomeLocationPicker({
     super.key,
     this.currentLocation,
@@ -27,21 +29,21 @@ class HomeLocationPicker extends ConsumerStatefulWidget {
 
 class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late TextEditingController _nameController;
   late TextEditingController _searchController;
   late TextEditingController _latitudeController;
   late TextEditingController _longitudeController;
-  
+
   bool _isSearching = false;
   bool _useManualCoordinates = false;
   List<_SearchResult> _searchResults = [];
   _SearchResult? _selectedResult;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     _nameController = TextEditingController(
       text: widget.currentLocation?.name ?? 'Home',
     );
@@ -54,7 +56,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
     _longitudeController = TextEditingController(
       text: widget.currentLocation?.longitude.toString() ?? '',
     );
-    
+
     // If we have an existing location, pre-populate the selected result
     if (widget.currentLocation != null) {
       _selectedResult = _SearchResult(
@@ -65,7 +67,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
       );
     }
   }
-  
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -74,28 +76,30 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
     _longitudeController.dispose();
     super.dispose();
   }
-  
+
   Future<void> _searchAddress() async {
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
-    
+
     setState(() {
       _isSearching = true;
       _searchResults = [];
     });
-    
+
     try {
       final mapboxService = ref.read(mapboxServiceProvider);
       final results = await mapboxService.searchPlaces(query);
-      
+
       if (mounted) {
         setState(() {
-          _searchResults = results.map((r) => _SearchResult(
-            name: r.placeName.split(',').first,
-            address: r.placeName,
-            latitude: r.latitude,
-            longitude: r.longitude,
-          )).toList();
+          _searchResults = results
+              .map((r) => _SearchResult(
+                    name: r.placeName.split(',').first,
+                    address: r.placeName,
+                    latitude: r.latitude,
+                    longitude: r.longitude,
+                  ))
+              .toList();
           _isSearching = false;
         });
       }
@@ -110,7 +114,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
       }
     }
   }
-  
+
   void _selectResult(_SearchResult result) {
     setState(() {
       _selectedResult = result;
@@ -120,15 +124,15 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
       _longitudeController.text = result.longitude.toString();
     });
   }
-  
+
   Future<void> _getCurrentLocation() async {
     setState(() {
       _isSearching = true;
     });
-    
+
     try {
       final locationService = ref.read(locationServiceProvider);
-      
+
       // Check permissions
       if (!await locationService.hasPermission()) {
         final granted = await locationService.requestPermission();
@@ -142,17 +146,17 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
           return;
         }
       }
-      
+
       // Get current position
       final position = await locationService.getCurrentLocation();
-      
+
       // Reverse geocode to get address
       final mapboxService = ref.read(mapboxServiceProvider);
       final address = await mapboxService.reverseGeocode(
         position.latitude,
         position.longitude,
       );
-      
+
       if (mounted) {
         setState(() {
           _latitudeController.text = position.latitude.toString();
@@ -178,12 +182,12 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
       }
     }
   }
-  
+
   void _save() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     // Additional validation for non-manual mode
     if (!_useManualCoordinates && _selectedResult == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -191,17 +195,17 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
       );
       return;
     }
-    
+
     final name = _nameController.text.trim();
     final latitude = double.parse(_latitudeController.text);
     final longitude = double.parse(_longitudeController.text);
-    final address = _searchController.text.trim().isNotEmpty 
-        ? _searchController.text.trim() 
+    final address = _searchController.text.trim().isNotEmpty
+        ? _searchController.text.trim()
         : null;
-    
+
     widget.onLocationSelected(name, latitude, longitude, address);
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -221,27 +225,32 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.4),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurfaceVariant
+                      .withOpacity(0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Header
             Text(
-              widget.currentLocation != null ? 'Edit Home Location' : 'Set Home Location',
+              widget.currentLocation != null
+                  ? 'Edit Home Location'
+                  : 'Set Home Location',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Text(
               'This location will be used as the default start and end point for your trips.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 24),
-            
+
             // Name field
             TextFormField(
               controller: _nameController,
@@ -260,7 +269,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Toggle for manual coordinates
             SwitchListTile(
               title: const Text('Enter coordinates manually'),
@@ -273,7 +282,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             if (!_useManualCoordinates) ...[
               // Search field
               TextFormField(
@@ -300,7 +309,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                 onFieldSubmitted: (_) => _searchAddress(),
               ),
               const SizedBox(height: 8),
-              
+
               // Current location button
               OutlinedButton.icon(
                 onPressed: _isSearching ? null : _getCurrentLocation,
@@ -308,7 +317,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                 label: const Text('Use Current Location'),
               ),
               const SizedBox(height: 16),
-              
+
               // Search results
               if (_searchResults.isNotEmpty) ...[
                 Text(
@@ -349,7 +358,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                 ),
                 const SizedBox(height: 16),
               ],
-              
+
               // Selected location display
               if (_selectedResult != null) ...[
                 Card(
@@ -368,26 +377,38 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                             const SizedBox(width: 8),
                             Text(
                               'Selected Location',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
+                                  ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
                           _selectedResult!.address,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
+                                  ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Lat: ${_selectedResult!.latitude.toStringAsFixed(6)}, '
                           'Lng: ${_selectedResult!.longitude.toStringAsFixed(6)}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer
+                                        .withOpacity(0.8),
+                                  ),
                         ),
                       ],
                     ),
@@ -396,7 +417,7 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
                 const SizedBox(height: 16),
               ],
             ],
-            
+
             if (_useManualCoordinates) ...[
               // Manual coordinate entry
               Row(
@@ -454,20 +475,22 @@ class _HomeLocationPickerState extends ConsumerState<HomeLocationPicker> {
               ),
               const SizedBox(height: 16),
             ],
-            
+
             const SizedBox(height: 24),
-            
+
             // Save button
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: (_selectedResult != null || _useManualCoordinates) ? _save : null,
+                onPressed: (_selectedResult != null || _useManualCoordinates)
+                    ? _save
+                    : null,
                 icon: const Icon(Icons.save),
                 label: const Text('Save Home Location'),
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Cancel button
             SizedBox(
               width: double.infinity,
@@ -489,7 +512,7 @@ class _SearchResult {
   final String address;
   final double latitude;
   final double longitude;
-  
+
   _SearchResult({
     required this.name,
     required this.address,

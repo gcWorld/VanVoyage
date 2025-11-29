@@ -5,7 +5,7 @@ import '../../domain/entities/home_location.dart';
 /// Repository for managing application settings.
 class SettingsRepository {
   final Database _db;
-  
+
   /// Default settings ID (only one settings row exists)
   static const String defaultSettingsId = 'default';
 
@@ -31,7 +31,7 @@ class SettingsRepository {
     final settingsWithTimestamp = settings.copyWith(
       updatedAt: DateTime.now(),
     );
-    
+
     await _db.update(
       'app_settings',
       settingsWithTimestamp.toMap(),
@@ -47,7 +47,7 @@ class SettingsRepository {
       ...location.toMap(),
       'updated_at': now.millisecondsSinceEpoch,
     };
-    
+
     await _db.update(
       'app_settings',
       data,
@@ -92,7 +92,7 @@ class SettingsRepository {
     if (unit != 'km' && unit != 'mi') {
       throw ArgumentError('Distance unit must be "km" or "mi"');
     }
-    
+
     final now = DateTime.now();
     await _db.update(
       'app_settings',
