@@ -7,11 +7,11 @@ import 'package:vanvoyage/infrastructure/services/mapbox_service.dart';
 // Simple test implementation without complex mocking
 class TestHttpClient implements http.Client {
   final Map<String, http.Response> _responses = {};
-  
+
   void setResponse(String urlPattern, http.Response response) {
     _responses[urlPattern] = response;
   }
-  
+
   @override
   Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
     for (final pattern in _responses.keys) {
@@ -21,38 +21,42 @@ class TestHttpClient implements http.Client {
     }
     return http.Response('Not found', 404);
   }
-  
+
   @override
   void close() {}
-  
+
   @override
-  Future<http.Response> delete(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<http.Response> delete(Uri url,
+          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       throw UnimplementedError();
-      
+
   @override
   Future<http.Response> head(Uri url, {Map<String, String>? headers}) =>
       throw UnimplementedError();
-      
+
   @override
-  Future<http.Response> patch(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<http.Response> patch(Uri url,
+          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       throw UnimplementedError();
-      
+
   @override
-  Future<http.Response> post(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<http.Response> post(Uri url,
+          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       throw UnimplementedError();
-      
+
   @override
-  Future<http.Response> put(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<http.Response> put(Uri url,
+          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       throw UnimplementedError();
-      
+
   @override
   Future<String> read(Uri url, {Map<String, String>? headers}) =>
       throw UnimplementedError();
-      
+
   @override
   Future<Uint8List> readBytes(Uri url, {Map<String, String>? headers}) =>
       throw UnimplementedError();
-      
+
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) =>
       throw UnimplementedError();
@@ -247,8 +251,10 @@ void main() {
         );
 
         final result = await mapboxService.calculateRoute(
-          37.7749, -122.4194,
-          34.0522, -118.2437,
+          37.7749,
+          -122.4194,
+          34.0522,
+          -118.2437,
         );
 
         expect(result, isNotNull);
@@ -271,8 +277,10 @@ void main() {
         );
 
         final result = await mapboxService.calculateRoute(
-          37.7749, -122.4194,
-          34.0522, -118.2437,
+          37.7749,
+          -122.4194,
+          34.0522,
+          -118.2437,
         );
 
         expect(result, isNull);
@@ -310,8 +318,10 @@ void main() {
         );
 
         final results = await mapboxService.calculateRouteWithAlternatives(
-          37.7749, -122.4194,
-          34.0522, -118.2437,
+          37.7749,
+          -122.4194,
+          34.0522,
+          -118.2437,
         );
 
         expect(results, hasLength(2));
@@ -332,8 +342,10 @@ void main() {
         );
 
         final results = await mapboxService.calculateRouteWithAlternatives(
-          37.7749, -122.4194,
-          34.0522, -118.2437,
+          37.7749,
+          -122.4194,
+          34.0522,
+          -118.2437,
         );
 
         expect(results, isEmpty);
@@ -363,8 +375,10 @@ void main() {
         );
 
         final result = await mapboxService.calculateRoute(
-          37.7749, -122.4194,
-          34.0522, -118.2437,
+          37.7749,
+          -122.4194,
+          34.0522,
+          -118.2437,
           profile: RoutingProfile.drivingTraffic,
         );
 

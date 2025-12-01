@@ -6,22 +6,22 @@ import '../enums/phase_type.dart';
 class TripPhase extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// Foreign key to Trip
   final String tripId;
-  
+
   /// Phase name
   final String name;
-  
+
   /// Type of phase
   final PhaseType phaseType;
-  
+
   /// Phase start date
   final DateTime startDate;
-  
+
   /// Phase end date
   final DateTime endDate;
-  
+
   /// Order within trip (0-based)
   final int sequenceOrder;
 

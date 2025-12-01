@@ -6,46 +6,46 @@ import '../enums/waypoint_type.dart';
 class Waypoint extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// Foreign key to Trip
   final String tripId;
-  
+
   /// Optional foreign key to TripPhase
   final String? phaseId;
-  
+
   /// Location name
   final String name;
-  
+
   /// Optional description
   final String? description;
-  
+
   /// Geographic latitude
   final double latitude;
-  
+
   /// Geographic longitude
   final double longitude;
-  
+
   /// Human-readable address
   final String? address;
-  
+
   /// Type of waypoint
   final WaypointType waypointType;
-  
+
   /// Planned arrival
   final DateTime? arrivalDate;
-  
+
   /// Planned departure
   final DateTime? departureDate;
-  
+
   /// Duration in days (for overnight stays)
   final int? stayDuration;
-  
+
   /// Order in route
   final int sequenceOrder;
-  
+
   /// Minutes from previous waypoint
   final int? estimatedDrivingTime;
-  
+
   /// Kilometers from previous waypoint
   final double? estimatedDistance;
 
@@ -193,15 +193,17 @@ class Waypoint extends Equatable {
         return false;
       }
     }
-    
+
     if (waypointType == WaypointType.overnightStay) {
       if (stayDuration == null || stayDuration! < 1) {
         return false;
       }
     }
-    
-    return latitude >= -90 && latitude <= 90 && 
-           longitude >= -180 && longitude <= 180;
+
+    return latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180;
   }
 
   @override
