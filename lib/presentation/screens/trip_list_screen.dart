@@ -7,6 +7,7 @@ import '../../providers.dart';
 import 'trip_planning_screen.dart';
 import 'trip_detail_screen.dart';
 import 'route_demo_screen.dart';
+import 'settings_screen.dart';
 import 'trip_route_screen.dart';
 import 'package:intl/intl.dart';
 
@@ -206,6 +207,18 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
               );
             },
             tooltip: 'Route Demo',
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+            tooltip: 'Settings',
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
