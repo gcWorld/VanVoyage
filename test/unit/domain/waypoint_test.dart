@@ -137,7 +137,7 @@ void main() {
     test('should create waypoint with arrival and departure dates', () {
       final arrivalDate = DateTime(2024, 6, 15, 14, 0);
       final departureDate = DateTime(2024, 6, 18, 10, 0);
-      
+
       final waypoint = Waypoint.create(
         tripId: 'trip-123',
         name: 'Camping Spot',
@@ -159,7 +159,7 @@ void main() {
     test('should invalidate waypoint with departure before arrival', () {
       final arrivalDate = DateTime(2024, 6, 18, 14, 0);
       final departureDate = DateTime(2024, 6, 15, 10, 0); // Before arrival
-      
+
       final waypoint = Waypoint.create(
         tripId: 'trip-123',
         name: 'Camping Spot',
@@ -178,7 +178,7 @@ void main() {
     test('should serialize waypoint with dates correctly', () {
       final arrivalDate = DateTime(2024, 6, 15, 14, 0);
       final departureDate = DateTime(2024, 6, 18, 10, 0);
-      
+
       final originalWaypoint = Waypoint.create(
         tripId: 'trip-123',
         name: 'Camping Spot',

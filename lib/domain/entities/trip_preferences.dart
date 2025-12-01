@@ -5,33 +5,45 @@ import 'package:uuid/uuid.dart';
 class TripPreferences extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// Foreign key to Trip (one-to-one)
   final String tripId;
-  
+
   /// Maximum km per day
   final int maxDailyDrivingDistance;
-  
+
   /// Maximum minutes per day
   final int maxDailyDrivingTime;
-  
+
   /// Average km/h for calculations
   final int preferredDrivingSpeed;
-  
+
   /// Factor in rest stops
   final bool includeRestStops;
-  
+
   /// Minutes between rest stops
   final int? restStopInterval;
-  
+
   /// Avoid toll roads
   final bool avoidTolls;
-  
+
   /// Avoid highways
   final bool avoidHighways;
-  
+
   /// Prefer scenic routes
   final bool preferScenicRoutes;
+
+  /// Transit phase: Maximum km per day (optional, overrides default)
+  final int? transitMaxDailyDrivingDistance;
+
+  /// Transit phase: Maximum minutes per day (optional, overrides default)
+  final int? transitMaxDailyDrivingTime;
+
+  /// Vacation phase: Maximum km per day (optional, overrides default)
+  final int? vacationMaxDailyDrivingDistance;
+
+  /// Vacation phase: Maximum minutes per day (optional, overrides default)
+  final int? vacationMaxDailyDrivingTime;
 
   const TripPreferences({
     required this.id,
@@ -44,6 +56,10 @@ class TripPreferences extends Equatable {
     this.avoidTolls = false,
     this.avoidHighways = false,
     this.preferScenicRoutes = false,
+    this.transitMaxDailyDrivingDistance,
+    this.transitMaxDailyDrivingTime,
+    this.vacationMaxDailyDrivingDistance,
+    this.vacationMaxDailyDrivingTime,
   });
 
   /// Creates a new TripPreferences with generated ID
@@ -57,6 +73,10 @@ class TripPreferences extends Equatable {
     bool avoidTolls = false,
     bool avoidHighways = false,
     bool preferScenicRoutes = false,
+    int? transitMaxDailyDrivingDistance,
+    int? transitMaxDailyDrivingTime,
+    int? vacationMaxDailyDrivingDistance,
+    int? vacationMaxDailyDrivingTime,
   }) {
     return TripPreferences(
       id: const Uuid().v4(),
@@ -69,6 +89,10 @@ class TripPreferences extends Equatable {
       avoidTolls: avoidTolls,
       avoidHighways: avoidHighways,
       preferScenicRoutes: preferScenicRoutes,
+      transitMaxDailyDrivingDistance: transitMaxDailyDrivingDistance,
+      transitMaxDailyDrivingTime: transitMaxDailyDrivingTime,
+      vacationMaxDailyDrivingDistance: vacationMaxDailyDrivingDistance,
+      vacationMaxDailyDrivingTime: vacationMaxDailyDrivingTime,
     );
   }
 
@@ -85,6 +109,13 @@ class TripPreferences extends Equatable {
       avoidTolls: (map['avoid_tolls'] as int) == 1,
       avoidHighways: (map['avoid_highways'] as int) == 1,
       preferScenicRoutes: (map['prefer_scenic_routes'] as int) == 1,
+      transitMaxDailyDrivingDistance:
+          map['transit_max_daily_driving_distance'] as int?,
+      transitMaxDailyDrivingTime: map['transit_max_daily_driving_time'] as int?,
+      vacationMaxDailyDrivingDistance:
+          map['vacation_max_daily_driving_distance'] as int?,
+      vacationMaxDailyDrivingTime:
+          map['vacation_max_daily_driving_time'] as int?,
     );
   }
 
@@ -101,6 +132,10 @@ class TripPreferences extends Equatable {
       'avoid_tolls': avoidTolls ? 1 : 0,
       'avoid_highways': avoidHighways ? 1 : 0,
       'prefer_scenic_routes': preferScenicRoutes ? 1 : 0,
+      'transit_max_daily_driving_distance': transitMaxDailyDrivingDistance,
+      'transit_max_daily_driving_time': transitMaxDailyDrivingTime,
+      'vacation_max_daily_driving_distance': vacationMaxDailyDrivingDistance,
+      'vacation_max_daily_driving_time': vacationMaxDailyDrivingTime,
     };
   }
 
@@ -116,18 +151,32 @@ class TripPreferences extends Equatable {
     bool? avoidTolls,
     bool? avoidHighways,
     bool? preferScenicRoutes,
+    int? transitMaxDailyDrivingDistance,
+    int? transitMaxDailyDrivingTime,
+    int? vacationMaxDailyDrivingDistance,
+    int? vacationMaxDailyDrivingTime,
   }) {
     return TripPreferences(
       id: id ?? this.id,
       tripId: tripId ?? this.tripId,
-      maxDailyDrivingDistance: maxDailyDrivingDistance ?? this.maxDailyDrivingDistance,
+      maxDailyDrivingDistance:
+          maxDailyDrivingDistance ?? this.maxDailyDrivingDistance,
       maxDailyDrivingTime: maxDailyDrivingTime ?? this.maxDailyDrivingTime,
-      preferredDrivingSpeed: preferredDrivingSpeed ?? this.preferredDrivingSpeed,
+      preferredDrivingSpeed:
+          preferredDrivingSpeed ?? this.preferredDrivingSpeed,
       includeRestStops: includeRestStops ?? this.includeRestStops,
       restStopInterval: restStopInterval ?? this.restStopInterval,
       avoidTolls: avoidTolls ?? this.avoidTolls,
       avoidHighways: avoidHighways ?? this.avoidHighways,
       preferScenicRoutes: preferScenicRoutes ?? this.preferScenicRoutes,
+      transitMaxDailyDrivingDistance:
+          transitMaxDailyDrivingDistance ?? this.transitMaxDailyDrivingDistance,
+      transitMaxDailyDrivingTime:
+          transitMaxDailyDrivingTime ?? this.transitMaxDailyDrivingTime,
+      vacationMaxDailyDrivingDistance: vacationMaxDailyDrivingDistance ??
+          this.vacationMaxDailyDrivingDistance,
+      vacationMaxDailyDrivingTime:
+          vacationMaxDailyDrivingTime ?? this.vacationMaxDailyDrivingTime,
     );
   }
 
@@ -143,5 +192,9 @@ class TripPreferences extends Equatable {
         avoidTolls,
         avoidHighways,
         preferScenicRoutes,
+        transitMaxDailyDrivingDistance,
+        transitMaxDailyDrivingTime,
+        vacationMaxDailyDrivingDistance,
+        vacationMaxDailyDrivingTime,
       ];
 }

@@ -10,48 +10,51 @@ import 'package:vanvoyage/infrastructure/services/demo_routes.dart';
 // Mock classes
 class MockRouteRepository implements RouteRepository {
   final Map<String, Route> _routes = {};
-  
+
   @override
   Future<void> insert(Route route) async {
     _routes[route.id] = route;
   }
-  
+
   @override
   Future<Route?> findById(String id) async {
     return _routes[id];
   }
-  
+
   @override
   Future<List<Route>> findByTripId(String tripId) async {
     return _routes.values.where((r) => r.tripId == tripId).toList();
   }
-  
+
   @override
-  Future<Route?> findByWaypoints(String fromWaypointId, String toWaypointId) async {
+  Future<Route?> findByWaypoints(
+      String fromWaypointId, String toWaypointId) async {
     try {
       return _routes.values.firstWhere(
-        (r) => r.fromWaypointId == fromWaypointId && r.toWaypointId == toWaypointId,
+        (r) =>
+            r.fromWaypointId == fromWaypointId &&
+            r.toWaypointId == toWaypointId,
       );
     } catch (e) {
       return null;
     }
   }
-  
+
   @override
   Future<void> update(Route route) async {
     _routes[route.id] = route;
   }
-  
+
   @override
   Future<void> delete(String id) async {
     _routes.remove(id);
   }
-  
+
   @override
   Future<void> deleteByTripId(String tripId) async {
     _routes.removeWhere((key, route) => route.tripId == tripId);
   }
-  
+
   @override
   Future<List<Route>> findAll() async {
     return _routes.values.toList();
@@ -69,12 +72,13 @@ class MockMapboxService implements MapboxService {
     RoutingProfile profile = RoutingProfile.driving,
   }) async {
     return MapboxRoute(
-      geometry: '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
+      geometry:
+          '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
       distanceMeters: 10000.0,
       durationSeconds: 600.0,
     );
   }
-  
+
   @override
   Future<List<MapboxRoute>> calculateRouteWithAlternatives(
     double startLat,
@@ -85,29 +89,33 @@ class MockMapboxService implements MapboxService {
   }) async {
     return [
       MapboxRoute(
-        geometry: '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
+        geometry:
+            '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
         distanceMeters: 10000.0,
         durationSeconds: 600.0,
       ),
       MapboxRoute(
-        geometry: '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
+        geometry:
+            '{"type":"LineString","coordinates":[[$startLng,$startLat],[$endLng,$endLat]]}',
         distanceMeters: 11000.0,
         durationSeconds: 660.0,
       ),
     ];
   }
-  
+
   @override
   void dispose() {}
-  
+
   @override
   Future<MapboxLocation?> geocode(String address) => throw UnimplementedError();
-  
+
   @override
-  Future<String?> reverseGeocode(double latitude, double longitude) => throw UnimplementedError();
-  
+  Future<String?> reverseGeocode(double latitude, double longitude) =>
+      throw UnimplementedError();
+
   @override
-  Future<List<MapboxLocation>> searchPlaces(String query) => throw UnimplementedError();
+  Future<List<MapboxLocation>> searchPlaces(String query) =>
+      throw UnimplementedError();
 }
 
 /// Mock Mapbox service that throws errors to simulate API failures
@@ -223,7 +231,8 @@ void main() {
       expect(routes[1].distance, equals(11.0));
     });
 
-    test('getTripRouteSummary calculates total distance and duration', () async {
+    test('getTripRouteSummary calculates total distance and duration',
+        () async {
       final route1 = Route.create(
         tripId: 'trip-1',
         fromWaypointId: 'wp-1',

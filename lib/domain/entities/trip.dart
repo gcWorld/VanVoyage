@@ -6,25 +6,37 @@ import '../enums/trip_status.dart';
 class Trip extends Equatable {
   /// Unique identifier
   final String id;
-  
+
   /// User-defined trip name
   final String name;
-  
+
   /// Optional trip description
   final String? description;
-  
-  /// Trip start date
+
+  /// Trip start date (overall trip including transit)
   final DateTime startDate;
-  
-  /// Trip end date
+
+  /// Trip end date (overall trip including transit)
   final DateTime endDate;
-  
+
+  /// Optional transit start date (outbound transit begins)
+  final DateTime? transitStartDate;
+
+  /// Optional transit end date (return transit ends)
+  final DateTime? transitEndDate;
+
+  /// Optional location start date (vacation on location begins)
+  final DateTime? locationStartDate;
+
+  /// Optional location end date (vacation on location ends)
+  final DateTime? locationEndDate;
+
   /// Current trip status
   final TripStatus status;
-  
+
   /// Creation timestamp
   final DateTime createdAt;
-  
+
   /// Last modification timestamp
   final DateTime updatedAt;
 
@@ -34,6 +46,10 @@ class Trip extends Equatable {
     this.description,
     required this.startDate,
     required this.endDate,
+    this.transitStartDate,
+    this.transitEndDate,
+    this.locationStartDate,
+    this.locationEndDate,
     required this.status,
     required this.createdAt,
     required this.updatedAt,
@@ -45,6 +61,10 @@ class Trip extends Equatable {
     String? description,
     required DateTime startDate,
     required DateTime endDate,
+    DateTime? transitStartDate,
+    DateTime? transitEndDate,
+    DateTime? locationStartDate,
+    DateTime? locationEndDate,
     TripStatus status = TripStatus.planning,
   }) {
     final now = DateTime.now();
@@ -54,6 +74,10 @@ class Trip extends Equatable {
       description: description,
       startDate: startDate,
       endDate: endDate,
+      transitStartDate: transitStartDate,
+      transitEndDate: transitEndDate,
+      locationStartDate: locationStartDate,
+      locationEndDate: locationEndDate,
       status: status,
       createdAt: now,
       updatedAt: now,
@@ -68,6 +92,20 @@ class Trip extends Equatable {
       description: map['description'] as String?,
       startDate: DateTime.fromMillisecondsSinceEpoch(map['start_date'] as int),
       endDate: DateTime.fromMillisecondsSinceEpoch(map['end_date'] as int),
+      transitStartDate: map['transit_start_date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              map['transit_start_date'] as int)
+          : null,
+      transitEndDate: map['transit_end_date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['transit_end_date'] as int)
+          : null,
+      locationStartDate: map['location_start_date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              map['location_start_date'] as int)
+          : null,
+      locationEndDate: map['location_end_date'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['location_end_date'] as int)
+          : null,
       status: TripStatus.fromString(map['status'] as String),
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
       updatedAt: DateTime.fromMillisecondsSinceEpoch(map['updated_at'] as int),
@@ -82,6 +120,10 @@ class Trip extends Equatable {
       'description': description,
       'start_date': startDate.millisecondsSinceEpoch,
       'end_date': endDate.millisecondsSinceEpoch,
+      'transit_start_date': transitStartDate?.millisecondsSinceEpoch,
+      'transit_end_date': transitEndDate?.millisecondsSinceEpoch,
+      'location_start_date': locationStartDate?.millisecondsSinceEpoch,
+      'location_end_date': locationEndDate?.millisecondsSinceEpoch,
       'status': status.toDbString(),
       'created_at': createdAt.millisecondsSinceEpoch,
       'updated_at': updatedAt.millisecondsSinceEpoch,
@@ -95,6 +137,10 @@ class Trip extends Equatable {
     String? description,
     DateTime? startDate,
     DateTime? endDate,
+    DateTime? transitStartDate,
+    DateTime? transitEndDate,
+    DateTime? locationStartDate,
+    DateTime? locationEndDate,
     TripStatus? status,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -105,6 +151,10 @@ class Trip extends Equatable {
       description: description ?? this.description,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
+      transitStartDate: transitStartDate ?? this.transitStartDate,
+      transitEndDate: transitEndDate ?? this.transitEndDate,
+      locationStartDate: locationStartDate ?? this.locationStartDate,
+      locationEndDate: locationEndDate ?? this.locationEndDate,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -123,6 +173,10 @@ class Trip extends Equatable {
         description,
         startDate,
         endDate,
+        transitStartDate,
+        transitEndDate,
+        locationStartDate,
+        locationEndDate,
         status,
         createdAt,
         updatedAt,

@@ -4,10 +4,10 @@ import 'package:equatable/equatable.dart';
 enum ViolationSeverity {
   /// Informational message, no violation
   info,
-  
+
   /// Warning - value is outside recommended range but acceptable
   warning,
-  
+
   /// Error - value is outside safe limits
   error,
 }
@@ -16,16 +16,16 @@ enum ViolationSeverity {
 class ConstraintViolation extends Equatable {
   /// Field that has the violation
   final String field;
-  
+
   /// Human-readable message describing the violation
   final String message;
-  
+
   /// Severity of the violation
   final ViolationSeverity severity;
-  
+
   /// Current value that caused the violation
   final dynamic currentValue;
-  
+
   /// Expected/recommended value or range
   final String? expectedValue;
 

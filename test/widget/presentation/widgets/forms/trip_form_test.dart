@@ -5,12 +5,16 @@ import 'package:vanvoyage/domain/entities/trip.dart';
 
 void main() {
   group('TripForm Widget Tests', () {
-    testWidgets('renders form with all required fields', (WidgetTester tester) async {
+    testWidgets('renders form with all required fields',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -28,27 +32,36 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
       );
 
-      // Tap submit button without entering data
-      await tester.tap(find.text('Create Trip'));
+      // Ensure submit button is visible and tap it without entering data
+      await tester.ensureVisible(find.text('Create Trip'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Create Trip'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify validation error appears
       expect(find.text('Please enter a trip name'), findsOneWidget);
     });
 
-    testWidgets('validates trip name minimum length', (WidgetTester tester) async {
+    testWidgets('validates trip name minimum length',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -56,14 +69,21 @@ void main() {
 
       // Enter a name that's too short
       await tester.enterText(find.byType(TextFormField).first, 'ab');
-      await tester.tap(find.text('Create Trip'));
+      await tester.pumpAndSettle();
+
+      // Ensure submit button is visible before tapping
+      await tester.ensureVisible(find.text('Create Trip'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Create Trip'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify validation error appears
-      expect(find.text('Trip name must be at least 3 characters'), findsOneWidget);
+      expect(
+          find.text('Trip name must be at least 3 characters'), findsOneWidget);
     });
 
-    testWidgets('shows edit mode for existing trip', (WidgetTester tester) async {
+    testWidgets('shows edit mode for existing trip',
+        (WidgetTester tester) async {
       final trip = Trip.create(
         name: 'Test Trip',
         startDate: DateTime.now(),
@@ -73,9 +93,12 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              trip: trip,
-              onSubmit: (name, description, startDate, endDate) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                trip: trip,
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -84,7 +107,7 @@ void main() {
       // Verify edit mode button text
       expect(find.text('Save Changes'), findsOneWidget);
       expect(find.text('Create Trip'), findsNothing);
-      
+
       // Verify pre-filled name
       expect(find.text('Test Trip'), findsOneWidget);
     });
@@ -93,8 +116,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -106,12 +132,16 @@ void main() {
       expect(find.textContaining('Duration:'), findsOneWidget);
     });
 
-    testWidgets('can open date picker for start date', (WidgetTester tester) async {
+    testWidgets('can open date picker for start date',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {},
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {},
+              ),
             ),
           ),
         ),
@@ -122,7 +152,7 @@ void main() {
         of: find.text('Start Date'),
         matching: find.byType(ListTile),
       );
-      
+
       await tester.tap(startDateCard);
       await tester.pumpAndSettle();
 
@@ -139,13 +169,16 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: TripForm(
-              onSubmit: (name, description, startDate, endDate) {
-                submittedName = name;
-                submittedDescription = description;
-                submittedStartDate = startDate;
-                submittedEndDate = endDate;
-              },
+            body: SingleChildScrollView(
+              child: TripForm(
+                onSubmit: (name, description, startDate, endDate, transitStart,
+                    transitEnd, locationStart, locationEnd) {
+                  submittedName = name;
+                  submittedDescription = description;
+                  submittedStartDate = startDate;
+                  submittedEndDate = endDate;
+                },
+              ),
             ),
           ),
         ),
@@ -153,12 +186,17 @@ void main() {
 
       // Enter valid trip name
       await tester.enterText(find.byType(TextFormField).first, 'My Trip');
-      
+
       // Enter description
-      await tester.enterText(find.byType(TextFormField).at(1), 'A great adventure');
-      
+      await tester.enterText(
+          find.byType(TextFormField).at(1), 'A great adventure');
+
+      // Ensure submit button is visible before tapping
+      await tester.ensureVisible(find.text('Create Trip'));
+      await tester.pumpAndSettle();
+
       // Submit form
-      await tester.tap(find.text('Create Trip'));
+      await tester.tap(find.text('Create Trip'), warnIfMissed: false);
       await tester.pumpAndSettle();
 
       // Verify form was submitted

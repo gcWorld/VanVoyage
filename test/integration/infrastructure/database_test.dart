@@ -6,13 +6,16 @@ void main() {
   // Initialize FFI for testing
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize sqflite once at the start using NoIsolate to avoid concurrency issues
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfiNoIsolate;
+  });
+
   group('DatabaseProvider', () {
     setUp(() async {
-      // Initialize sqflite for testing
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-      
       // Clean up any existing test database
+      await DatabaseProvider.close();
       await DatabaseProvider.deleteDb();
     });
 
@@ -44,6 +47,8 @@ void main() {
       expect(tableNames, contains('activities'));
       expect(tableNames, contains('trip_preferences'));
       expect(tableNames, contains('routes'));
+      expect(tableNames, contains('vehicles'));
+      expect(tableNames, contains('app_settings'));
     });
 
     test('should create indexes for trips table', () async {

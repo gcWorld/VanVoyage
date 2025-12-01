@@ -10,12 +10,15 @@ void main() {
 
   late TripRepository repository;
 
-  setUp(() async {
-    // Initialize sqflite for testing
+  // Initialize sqflite once at the start using NoIsolate to avoid concurrency issues
+  setUpAll(() {
     sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    databaseFactory = databaseFactoryFfiNoIsolate;
+  });
 
+  setUp(() async {
     // Clean up and initialize database
+    await DatabaseProvider.close();
     await DatabaseProvider.deleteDb();
     final db = await DatabaseProvider.database;
     repository = TripRepository(db);

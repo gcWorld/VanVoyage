@@ -9,7 +9,7 @@ class TripItineraryTimeline extends StatelessWidget {
   final Trip trip;
   final List<Waypoint> waypoints;
   final Function(Waypoint)? onWaypointTap;
-  
+
   const TripItineraryTimeline({
     super.key,
     required this.trip,
@@ -48,7 +48,7 @@ class TripItineraryTimeline extends StatelessWidget {
   Widget _buildTripHeader(BuildContext context) {
     final dateFormat = DateFormat('MMM dd, yyyy');
     final duration = trip.endDate.difference(trip.startDate).inDays;
-    
+
     return Card(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
@@ -67,8 +67,9 @@ class TripItineraryTimeline extends StatelessWidget {
                   child: Text(
                     trip.name,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
                   ),
                 ),
               ],
@@ -85,8 +86,8 @@ class TripItineraryTimeline extends StatelessWidget {
                 Text(
                   '${dateFormat.format(trip.startDate)} - ${dateFormat.format(trip.endDate)}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                 ),
               ],
             ),
@@ -102,8 +103,8 @@ class TripItineraryTimeline extends StatelessWidget {
                 Text(
                   '$duration ${duration == 1 ? 'day' : 'days'}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  ),
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                 ),
               ],
             ),
@@ -129,15 +130,15 @@ class TripItineraryTimeline extends StatelessWidget {
             Text(
               'No waypoints added yet',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
               'Add destinations to see your itinerary',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
             ),
           ],
         ),
@@ -153,7 +154,7 @@ class TripItineraryTimeline extends StatelessWidget {
       itemBuilder: (context, index) {
         final waypoint = sortedWaypoints[index];
         final isLast = index == sortedWaypoints.length - 1;
-        
+
         return _buildTimelineItem(
           context,
           waypoint,
@@ -169,10 +170,10 @@ class TripItineraryTimeline extends StatelessWidget {
     bool isLast,
   ) {
     final dateFormat = DateFormat('MMM dd');
-    final hasStayInfo = waypoint.arrivalDate != null || 
-                       waypoint.departureDate != null || 
-                       waypoint.stayDuration != null;
-    
+    final hasStayInfo = waypoint.arrivalDate != null ||
+        waypoint.departureDate != null ||
+        waypoint.stayDuration != null;
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -202,17 +203,21 @@ class TripItineraryTimeline extends StatelessWidget {
                     child: Container(
                       width: 2,
                       margin: const EdgeInsets.symmetric(vertical: 4),
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withOpacity(0.3),
                     ),
                   ),
               ],
             ),
           ),
-          
+
           // Content
           Expanded(
             child: GestureDetector(
-              onTap: onWaypointTap != null ? () => onWaypointTap!(waypoint) : null,
+              onTap:
+                  onWaypointTap != null ? () => onWaypointTap!(waypoint) : null,
               child: Card(
                 margin: const EdgeInsets.only(bottom: 16, right: 8),
                 child: Padding(
@@ -232,9 +237,10 @@ class TripItineraryTimeline extends StatelessWidget {
                           _buildTypeChip(context, waypoint),
                         ],
                       ),
-                      
+
                       // Description
-                      if (waypoint.description != null && waypoint.description!.isNotEmpty) ...[
+                      if (waypoint.description != null &&
+                          waypoint.description!.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Text(
                           waypoint.description!,
@@ -243,11 +249,12 @@ class TripItineraryTimeline extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
-                      
+
                       // Stay/Visit information
                       if (hasStayInfo) ...[
                         const SizedBox(height: 12),
-                        if (waypoint.waypointType == WaypointType.overnightStay) ...[
+                        if (waypoint.waypointType ==
+                            WaypointType.overnightStay) ...[
                           _buildStayInfo(context, waypoint, dateFormat),
                         ] else if (waypoint.arrivalDate != null) ...[
                           Row(
@@ -260,17 +267,23 @@ class TripItineraryTimeline extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 dateFormat.format(waypoint.arrivalDate!),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
                               ),
                             ],
                           ),
                         ],
                       ],
-                      
+
                       // Driving info
-                      if (waypoint.estimatedDrivingTime != null || waypoint.estimatedDistance != null) ...[
+                      if (waypoint.estimatedDrivingTime != null ||
+                          waypoint.estimatedDistance != null) ...[
                         const SizedBox(height: 8),
                         Row(
                           children: [
@@ -283,13 +296,19 @@ class TripItineraryTimeline extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 '${waypoint.estimatedDistance!.toStringAsFixed(1)} km',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
                               ),
                             ],
                             if (waypoint.estimatedDrivingTime != null) ...[
-                              if (waypoint.estimatedDistance != null) const SizedBox(width: 12),
+                              if (waypoint.estimatedDistance != null)
+                                const SizedBox(width: 12),
                               Icon(
                                 Icons.access_time,
                                 size: 14,
@@ -298,9 +317,14 @@ class TripItineraryTimeline extends StatelessWidget {
                               const SizedBox(width: 4),
                               Text(
                                 '${(waypoint.estimatedDrivingTime! / 60).toStringAsFixed(1)} hrs',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
                               ),
                             ],
                           ],
@@ -317,11 +341,12 @@ class TripItineraryTimeline extends StatelessWidget {
     );
   }
 
-  Widget _buildStayInfo(BuildContext context, Waypoint waypoint, DateFormat dateFormat) {
+  Widget _buildStayInfo(
+      BuildContext context, Waypoint waypoint, DateFormat dateFormat) {
     final hasArrival = waypoint.arrivalDate != null;
     final hasDeparture = waypoint.departureDate != null;
     final hasDuration = waypoint.stayDuration != null;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -330,7 +355,10 @@ class TripItineraryTimeline extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.3),
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondaryContainer
+                  .withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -345,9 +373,9 @@ class TripItineraryTimeline extends StatelessWidget {
                   Text(
                     dateFormat.format(waypoint.arrivalDate!),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
                 if (hasArrival && hasDeparture) ...[
@@ -369,9 +397,9 @@ class TripItineraryTimeline extends StatelessWidget {
                   Text(
                     dateFormat.format(waypoint.departureDate!),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
                 if (hasDuration) ...[
@@ -385,9 +413,9 @@ class TripItineraryTimeline extends StatelessWidget {
                   Text(
                     '${waypoint.stayDuration} ${waypoint.stayDuration == 1 ? 'night' : 'nights'}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ],
@@ -400,7 +428,7 @@ class TripItineraryTimeline extends StatelessWidget {
   Widget _buildTypeChip(BuildContext context, Waypoint waypoint) {
     String label;
     IconData icon;
-    
+
     switch (waypoint.waypointType) {
       case WaypointType.overnightStay:
         label = 'Stay';
@@ -415,7 +443,7 @@ class TripItineraryTimeline extends StatelessWidget {
         icon = Icons.route;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -434,9 +462,9 @@ class TripItineraryTimeline extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: _getWaypointColor(context, waypoint),
-              fontWeight: FontWeight.w500,
-            ),
+                  color: _getWaypointColor(context, waypoint),
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ],
       ),

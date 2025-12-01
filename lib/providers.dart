@@ -11,6 +11,8 @@ import 'infrastructure/database/database_helper.dart';
 import 'infrastructure/repositories/trip_repository.dart';
 import 'infrastructure/repositories/waypoint_repository.dart';
 import 'infrastructure/repositories/route_repository.dart';
+import 'infrastructure/repositories/settings_repository.dart';
+import 'infrastructure/repositories/vehicle_repository.dart';
 import 'domain/services/route_service.dart';
 import 'secrets.dart';
 
@@ -30,7 +32,8 @@ final tripRepositoryProvider = FutureProvider<TripRepository>((ref) async {
   return TripRepository(db);
 });
 
-final waypointRepositoryProvider = FutureProvider<WaypointRepository>((ref) async {
+final waypointRepositoryProvider =
+    FutureProvider<WaypointRepository>((ref) async {
   final db = await ref.read(databaseProvider.future);
   return WaypointRepository(db);
 });
@@ -60,4 +63,18 @@ final routeServiceProvider = Provider<RouteService>((ref) {
   final routeRepository = ref.read(routeRepositoryProvider);
   final mapboxService = ref.read(mapboxServiceProvider);
   return RouteService(routeRepository, mapboxService);
+});
+
+// Settings repository provider
+final settingsRepositoryProvider =
+    FutureProvider<SettingsRepository>((ref) async {
+  final db = await ref.read(databaseProvider.future);
+  return SettingsRepository(db);
+});
+
+// Vehicle repository provider
+final vehicleRepositoryProvider =
+    FutureProvider<VehicleRepository>((ref) async {
+  final db = await ref.read(databaseProvider.future);
+  return VehicleRepository(db);
 });

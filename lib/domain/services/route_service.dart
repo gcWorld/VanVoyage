@@ -187,7 +187,8 @@ class RouteService {
   }
 
   /// Get route between waypoints
-  Future<domain.Route?> getRoute(String fromWaypointId, String toWaypointId) async {
+  Future<domain.Route?> getRoute(
+      String fromWaypointId, String toWaypointId) async {
     return await _routeRepository.findByWaypoints(fromWaypointId, toWaypointId);
   }
 
@@ -209,7 +210,7 @@ class RouteService {
   /// Get total distance and duration for trip
   Future<TripRouteSummary?> getTripRouteSummary(String tripId) async {
     final routes = await _routeRepository.findByTripId(tripId);
-    
+
     if (routes.isEmpty) {
       return null;
     }
